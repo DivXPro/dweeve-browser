@@ -12,20 +12,24 @@ const doScopeFunctions = require('../functions/doScope')
 import 'core-js/modules/es.array.map';
 
 function run(dwl, payload, vars, attributes) {
- 
-    if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
-        var xml = payload.trim();
-        var doc = new DOMParser().parseFromString(xml);
-        payload = xml2js.toJsObj(doc);
-    } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
-        payload = payload.replace(/\r\n/g, '\n');
-        payload = JSON.parse(payload)
-    }
+    try {
+        if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
+            var xml = payload.trim();
+            var doc = new DOMParser().parseFromString(xml);
+            payload = xml2js.toJsObj(doc);
+        } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
+            payload = payload.replace(/\r\n/g, '\n');
+            payload = runDweeveScript(payload, {})
+        }
 
-    let t = typeof payload;
-    let result = innerRun (dwl, payload , vars, attributes);
-    
-    return result;
+        let t = typeof payload;
+        let result = innerRun (dwl, payload , vars, attributes);
+        
+        return result;
+    }
+    catch (err) {
+        return "Error parsing input payload:"+err.message
+    }
 }
 
 function innerRun (dwl, payload, vars, attributes) {
@@ -46,25 +50,7 @@ function innerRun (dwl, payload, vars, attributes) {
             map: coreFunctions.map,
             mapObject: coreFunctions.mapObject
         };
-        const grammar = dwgrammer.getGrammar();
-        const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-        dwl = dwl.replace(/\r\n/g, '\n');
-        parser.feed(dwl.trim());
-
-        if (parser.results.length === 0)
-        throw "Dweeve parser found no dweeve!"
-
-        if (parser.results.length > 1)
-        throw "Dweeve parser found more than one intepretation of the dweeve!"
-
-        const code = transpiler.transpile(parser.results[0]);
-        
-        const script = new vm.Script(code.decs + '\n' +code.text + '\n var result=dweeve()');
-        
-        const context = new vm.createContext(args);
-        script.runInContext(context);
-
-        let result = context.result
+        let result = runDweeveScript(dwl, args);
 
         return beautify(result, null,2,100);
     }
@@ -75,4 +61,21 @@ function innerRun (dwl, payload, vars, attributes) {
 
 export {run}
 
+
+function runDweeveScript(dwl, args) {
+    const grammar = dwgrammer.getGrammar();
+    const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+    dwl = dwl.replace(/\r\n/g, '\n');
+    parser.feed(dwl.trim());
+    if (parser.results.length === 0)
+        throw "Dweeve parser found no dweeve!";
+    if (parser.results.length > 1)
+        throw "Dweeve parser found more than one intepretation of the dweeve!";
+    const code = transpiler.transpile(parser.results[0]);
+    const script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
+    const context = new vm.createContext(args);
+    script.runInContext(context);
+    let result = context.result;
+    return result;
+}
 // module.exports = { run: run};

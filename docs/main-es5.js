@@ -3137,18 +3137,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     "./src/app/dweeve/src/functions/doScope.js");
 
     function run(dwl, payload, vars, attributes) {
-      if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
-        var xml = payload.trim();
-        var doc = new DOMParser().parseFromString(xml);
-        payload = xml2js.toJsObj(doc);
-      } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
-        payload = payload.replace(/\r\n/g, '\n');
-        payload = JSON.parse(payload);
-      }
+      try {
+        if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
+          var xml = payload.trim();
+          var doc = new DOMParser().parseFromString(xml);
+          payload = xml2js.toJsObj(doc);
+        } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
+          payload = payload.replace(/\r\n/g, '\n');
+          payload = runDweeveScript(payload, {});
+        }
 
-      var t = typeof payload;
-      var result = innerRun(dwl, payload, vars, attributes);
-      return result;
+        var t = typeof payload;
+        var result = innerRun(dwl, payload, vars, attributes);
+        return result;
+      } catch (err) {
+        return "Error parsing input payload:" + err.message;
+      }
     }
 
     function innerRun(dwl, payload, vars, attributes) {
@@ -3168,21 +3172,26 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           map: coreFunctions.map,
           mapObject: coreFunctions.mapObject
         };
-        var grammar = dwgrammer.getGrammar();
-        var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-        dwl = dwl.replace(/\r\n/g, '\n');
-        parser.feed(dwl.trim());
-        if (parser.results.length === 0) throw "Dweeve parser found no dweeve!";
-        if (parser.results.length > 1) throw "Dweeve parser found more than one intepretation of the dweeve!";
-        var code = transpiler.transpile(parser.results[0]);
-        var script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
-        var context = new vm.createContext(_args);
-        script.runInContext(context);
-        var result = context.result;
+        var result = runDweeveScript(dwl, _args);
         return beautify(result, null, 2, 100);
       } catch (err) {
         return err.message;
       }
+    }
+
+    function runDweeveScript(dwl, args) {
+      var grammar = dwgrammer.getGrammar();
+      var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+      dwl = dwl.replace(/\r\n/g, '\n');
+      parser.feed(dwl.trim());
+      if (parser.results.length === 0) throw "Dweeve parser found no dweeve!";
+      if (parser.results.length > 1) throw "Dweeve parser found more than one intepretation of the dweeve!";
+      var code = transpiler.transpile(parser.results[0]);
+      var script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
+      var context = new vm.createContext(args);
+      script.runInContext(context);
+      var result = context.result;
+      return result;
     } // module.exports = { run: run};
 
     /***/
