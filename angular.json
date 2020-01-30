@@ -24,9 +24,18 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.css",
+              "node_modules/bootstrap/dist/css/bootstrap-grid.css",
+              "node_modules/bootstrap/dist/css/bootstrap-reboot.css",
+              "node_modules/bootstrap/dist/css/bootstrap.css"
             ],
-            "scripts": []
+            "scripts": [
+              "src/app/js/browser-dweeve.js",
+              "node_modules/ace-builds/src-min/ace.js",
+              "node_modules/ace-builds/src-min/ext-language_tools.js",
+              "node_modules/ace-builds/src-min/theme-clouds.js"
+            ]
           },
           "configurations": {
             "production": {
