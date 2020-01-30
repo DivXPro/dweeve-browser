@@ -17,7 +17,11 @@ function run(dwl, payload, vars, attributes) {
         var xml = payload.trim();
         var doc = new DOMParser().parseFromString(xml);
         payload = xml2js.toJsObj(doc);
+    } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
+        payload = payload.replace(/\r\n/g, '\n');
+        payload = JSON.parse(payload)
     }
+
     let t = typeof payload;
     let result = innerRun (dwl, payload , vars, attributes);
     
@@ -26,6 +30,7 @@ function run(dwl, payload, vars, attributes) {
 
 function innerRun (dwl, payload, vars, attributes) {
     try {
+        
         const args = {
             payload: payload,
             vars: vars,

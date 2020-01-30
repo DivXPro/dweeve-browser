@@ -3141,6 +3141,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         var xml = payload.trim();
         var doc = new DOMParser().parseFromString(xml);
         payload = xml2js.toJsObj(doc);
+      } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
+        payload = payload.replace(/\r\n/g, '\n');
+        payload = JSON.parse(payload);
       }
 
       var t = typeof payload;
