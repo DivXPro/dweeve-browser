@@ -3166,12 +3166,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           __doDotDotStarOp: selectorFunctions.__doDotDotStarOp,
           __doDotDotOp: selectorFunctions.__doDotDotOp,
           __getIdentifierValue: selectorFunctions.__getIdentifierValue,
-          __execDoScope: doScopeFunctions.__execDoScope,
-          isOdd: coreFunctions.isOdd,
-          concat: coreFunctions.concat,
-          map: coreFunctions.map,
-          mapObject: coreFunctions.mapObject
+          __execDoScope: doScopeFunctions.__execDoScope
         };
+        coreFunctions.addFunctions(_args);
         var result = runDweeveScript(dwl, _args);
         return beautify(result, null, 2, 100);
       } catch (err) {
@@ -3875,10 +3872,37 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     !*** ./src/app/dweeve/src/functions/core.js ***!
     \**********************************************/
 
-  /*! no static exports found */
+  /*! exports provided: addFunctions */
 
   /***/
-  function srcAppDweeveSrcFunctionsCoreJs(module, exports) {
+  function srcAppDweeveSrcFunctionsCoreJs(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony export (binding) */
+
+
+    __webpack_require__.d(__webpack_exports__, "addFunctions", function () {
+      return addFunctions;
+    });
+
+    function addFunctions(context) {
+      context['isOdd'] = isOdd;
+      context['concat'] = concat;
+      context['abs'] = abs;
+      context['avg'] = avg;
+      context['ceil'] = ceil;
+      context['contains'] = contains;
+      context['daysBetween'] = daysBetween;
+      context['distinctBy'] = distinctBy;
+      context['endsWith'] = endsWith;
+      context['filter'] = filter;
+      context['filterObject'] = filterObject;
+      context['startsWith'] = startsWith;
+      context['map'] = map;
+      context['mapObject'] = mapObject;
+    }
+
     function isOdd(number) {
       return number % 2 ? true : false;
     }
@@ -3887,14 +3911,50 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return a + b;
     }
 
-    function map(source, mapFunc) {
-      var out = [];
-      var ewl = source['__extra-wrapped-list'];
+    function abs(num) {
+      return Math.abs(num);
+    }
 
-      for (var key in source) {
+    function avg(list) {
+      if (!Array.isArray(list)) return 0;
+
+      try {
+        var agg = 0;
+        list.forEach(function (m) {
+          agg += m;
+        });
+        return agg / list.length;
+      } catch (_unused) {}
+
+      return 0;
+    }
+
+    function ceil(num) {
+      return Math.ceil(num);
+    }
+
+    function contains(arr, item) {
+      return arr.includes(item);
+    }
+
+    function daysBetween(d1, d2) {
+      try {
+        var time = Date.parse(d2) - Date.parse(d1);
+        return time / (1000 * 60 * 60 * 24);
+      } catch (err) {
+        throw "Could not process dates for daysBetween:" + err.message;
+      }
+    }
+
+    function distinctBy(items, criteria) {
+      var out = [];
+      var distinctList = [];
+      var ewl = items['__extra-wrapped-list'];
+
+      for (var key in items) {
         if (key !== '__extra-wrapped-list') {
-          var _k = key;
-          var v = source[key];
+          var _k = items;
+          var v = items[key];
 
           if (ewl) {
             _k = Object.keys(v)[0];
@@ -3902,7 +3962,89 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           }
 
           _k = isNaN(parseInt(_k)) ? _k : parseInt(_k);
-          out.push(mapFunc(v, _k));
+          var candidate = JSON.stringify(criteria(v, _k));
+
+          if (!distinctList.includes(candidate)) {
+            distinctList.push(candidate);
+            out.push(v);
+          }
+        }
+      }
+
+      return out;
+    }
+
+    function endsWith(s1, s2) {
+      return String(s1).endsWith(s2);
+    }
+
+    function filter(arr, criteria) {
+      var out = [];
+      var ewl = arr['__extra-wrapped-list'];
+
+      for (var key in arr) {
+        if (key !== '__extra-wrapped-list') {
+          var _k2 = key;
+          var v = arr[key];
+
+          if (ewl) {
+            _k2 = Object.keys(v)[0];
+            v = Object.values(v)[0];
+          }
+
+          _k2 = isNaN(parseInt(_k2)) ? _k2 : parseInt(_k2);
+          if (criteria(v, _k2)) out.push(v);
+        }
+      }
+
+      return out;
+    }
+
+    function filterObject(source, criteria) {
+      var out = {
+        '__extra-wrapped-list': true
+      };
+      var ewl = source['__extra-wrapped-list'];
+      var idx = 0;
+
+      for (var key in source) {
+        if (key !== '__extra-wrapped-list') {
+          var _k3 = key;
+          var v = source[key];
+
+          if (ewl) {
+            _k3 = Object.keys(v)[0];
+            v = Object.values(v)[0];
+          }
+
+          _k3 = isNaN(parseInt(_k3)) ? _k3 : parseInt(_k3);
+          if (criteria(v, _k3)) out['__key' + idx++] = _defineProperty({}, _k3, v);
+        }
+      }
+
+      return out;
+    }
+
+    function startsWith(s1, s2) {
+      return String(s1).startsWith(s2);
+    }
+
+    function map(source, mapFunc) {
+      var out = [];
+      var ewl = source['__extra-wrapped-list'];
+
+      for (var key in source) {
+        if (key !== '__extra-wrapped-list') {
+          var _k4 = key;
+          var v = source[key];
+
+          if (ewl) {
+            _k4 = Object.keys(v)[0];
+            v = Object.values(v)[0];
+          }
+
+          _k4 = isNaN(parseInt(_k4)) ? _k4 : parseInt(_k4);
+          out.push(mapFunc(v, _k4));
         }
       }
 
@@ -3918,29 +4060,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       for (var key in source) {
         if (key !== '__extra-wrapped-list') {
-          var _k2 = key;
+          var _k5 = key;
           var v = source[key];
 
           if (ewl) {
-            _k2 = Object.keys(v)[0];
+            _k5 = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k2 = isNaN(parseInt(_k2)) ? _k2 : parseInt(_k2);
-          out['__key' + idx++] = mapFunc(v, _k2);
+          _k5 = isNaN(parseInt(_k5)) ? _k5 : parseInt(_k5);
+          out['__key' + idx++] = mapFunc(v, _k5);
         }
       }
 
       return out;
     }
-
-    module.exports = {
-      isOdd: isOdd,
-      concat: concat,
-      map: map,
-      mapObject: mapObject
-    };
     /***/
+
   },
 
   /***/
@@ -4108,13 +4244,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var vs = [];
       if (typeof obj !== 'object') return []; // two loops to go down before in, to match dataweave 2.0 ordering
 
-      for (var _k3 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k3);
+      for (var _k6 in obj) {
+        var kvp = dewrapKeyedObj(obj, _k6);
         if (kvp.key === key) vs.push(kvp.val);
       }
 
-      for (var _k4 in obj) {
-        var _kvp = dewrapKeyedObj(obj, _k4);
+      for (var _k7 in obj) {
+        var _kvp = dewrapKeyedObj(obj, _k7);
 
         vs = vs.concat(getDescendentValues(_kvp.val, key));
       }
@@ -4136,8 +4272,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var vs = [];
       if (typeof obj !== 'object') return [];
 
-      for (var _k5 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k5);
+      for (var _k8 in obj) {
+        var kvp = dewrapKeyedObj(obj, _k8);
 
         if (kvp.key === key) {
           vs.push(kvp.val);
@@ -4145,8 +4281,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }
 
-      for (var _k6 in obj) {
-        var _kvp2 = dewrapKeyedObj(obj, _k6);
+      for (var _k9 in obj) {
+        var _kvp2 = dewrapKeyedObj(obj, _k9);
 
         vs = vs.concat(getFirstDescendentValue(_kvp2.val, key));
       }
@@ -4168,8 +4304,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       if (!Array.isArray(lhs) && lhs['__extra-wrapped-list']) lhs = Object.values(lhs);else if (!Array.isArray(lhs) && !lhs['__extra-wrapped-list']) {
         arr = [];
 
-        for (var _k7 in lhs) {
-          arr.push(_defineProperty({}, _k7, lhs[_k7]));
+        for (var _k10 in lhs) {
+          arr.push(_defineProperty({}, _k10, lhs[_k10]));
         }
 
         lhs = arr;
@@ -4253,7 +4389,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       },
       headerend: '---',
       comment: /\/\/.*?$/,
-      number: /0|[1-9][0-9]*\.?[0-9]*/,
+      number: /[\-]?(?:0|[1-9][0-9]*\.?[0-9]*)/,
       regex: /\/(?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+\//,
       bool: /(?:true|false)/,
       null: /null/,
@@ -5120,6 +5256,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           return {
             type: 'literal',
             value: data[0]
+          };
+        }
+      }, {
+        "name": "literal",
+        "symbols": [lexer.has("number") ? {
+          type: "number"
+        } : number, lexer.has("number") ? {
+          type: "number"
+        } : number],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'number',
+            value: parseFloat(data[0]) + parseFloat(data[1])
           };
         }
       }, {
