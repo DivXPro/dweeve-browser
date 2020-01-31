@@ -159,6 +159,7 @@ var grammar = {
     {"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
     {"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
     {"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+    {"name": "literal", "symbols": [(lexer.has("regex") ? {type: "regex"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
     {"name": "literal", "symbols": [(lexer.has("null") ? {type: "null"} : null)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
     {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
     {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number), (lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'number', value: parseFloat(data[0])+parseFloat(data[1]) } )},
