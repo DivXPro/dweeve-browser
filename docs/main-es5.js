@@ -3898,6 +3898,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       context['endsWith'] = endsWith;
       context['filter'] = filter;
       context['filterObject'] = filterObject;
+      context['find'] = find;
+      context['flatMap'] = flatMap;
+      context['flatten'] = flatten;
+      context['floor'] = floor;
       context['startsWith'] = startsWith;
       context['map'] = map;
       context['mapObject'] = mapObject;
@@ -4025,6 +4029,84 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return out;
     }
 
+    function find(arr, matcher) {
+      if (Array.isArray(arr)) {
+        var out = [];
+        var ewl = arr['__extra-wrapped-list'];
+        var idx = 0;
+
+        for (var key in arr) {
+          if (key !== '__extra-wrapped-list') {
+            var _k4 = key;
+            var v = arr[key];
+
+            if (ewl) {
+              _k4 = Object.keys(v)[0];
+              v = Object.values(v)[0];
+            }
+
+            _k4 = isNaN(parseInt(_k4)) ? _k4 : parseInt(_k4);
+            if (String(v).match(matcher)) out.push(_k4);
+          }
+        }
+
+        return out;
+      } else if (matcher.source !== undefined) {
+        var str = String(arr);
+        var _out2 = [];
+        var gmatcher = new RegExp(matcher.source, 'g');
+        var ms = String(str).match(gmatcher);
+        var lastidx = 0;
+        ms.forEach(function (m) {
+          var idx = str.indexOf(m, lastidx);
+
+          _out2.push([idx, idx + m.length]);
+
+          lastidx = idx + 1;
+        });
+        return _out2;
+      } else {
+        var _str = String(arr);
+
+        var _out3 = [];
+
+        var _gmatcher = new RegExp(matcher, 'g');
+
+        var _ms = String(_str).match(_gmatcher);
+
+        var _lastidx = 0;
+
+        _ms.forEach(function (m) {
+          var idx = _str.indexOf(m, _lastidx);
+
+          _out3.push(idx);
+
+          _lastidx = idx + 1;
+        });
+
+        return _out3;
+      }
+    }
+
+    function flatMap(source, mapFunc) {
+      return flatten(map(source, mapFunc));
+    }
+
+    function flatten(source) {
+      if (source == null || !Array.isArray(source)) return source;
+      var out = [];
+      source.forEach(function (m) {
+        if (Array.isArray(m)) m.forEach(function (im) {
+          return out.push(im);
+        });else out.push(m);
+      });
+      return out;
+    }
+
+    function floor(num) {
+      return Math.floor(num);
+    }
+
     function startsWith(s1, s2) {
       return String(s1).startsWith(s2);
     }
@@ -4035,16 +4117,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       for (var key in source) {
         if (key !== '__extra-wrapped-list') {
-          var _k4 = key;
+          var _k5 = key;
           var v = source[key];
 
           if (ewl) {
-            _k4 = Object.keys(v)[0];
+            _k5 = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k4 = isNaN(parseInt(_k4)) ? _k4 : parseInt(_k4);
-          out.push(mapFunc(v, _k4));
+          _k5 = isNaN(parseInt(_k5)) ? _k5 : parseInt(_k5);
+          out.push(mapFunc(v, _k5));
         }
       }
 
@@ -4060,16 +4142,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
       for (var key in source) {
         if (key !== '__extra-wrapped-list') {
-          var _k5 = key;
+          var _k6 = key;
           var v = source[key];
 
           if (ewl) {
-            _k5 = Object.keys(v)[0];
+            _k6 = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k5 = isNaN(parseInt(_k5)) ? _k5 : parseInt(_k5);
-          out['__key' + idx++] = mapFunc(v, _k5);
+          _k6 = isNaN(parseInt(_k6)) ? _k6 : parseInt(_k6);
+          out['__key' + idx++] = mapFunc(v, _k6);
         }
       }
 
@@ -4244,13 +4326,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var vs = [];
       if (typeof obj !== 'object') return []; // two loops to go down before in, to match dataweave 2.0 ordering
 
-      for (var _k6 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k6);
+      for (var _k7 in obj) {
+        var kvp = dewrapKeyedObj(obj, _k7);
         if (kvp.key === key) vs.push(kvp.val);
       }
 
-      for (var _k7 in obj) {
-        var _kvp = dewrapKeyedObj(obj, _k7);
+      for (var _k8 in obj) {
+        var _kvp = dewrapKeyedObj(obj, _k8);
 
         vs = vs.concat(getDescendentValues(_kvp.val, key));
       }
@@ -4272,8 +4354,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var vs = [];
       if (typeof obj !== 'object') return [];
 
-      for (var _k8 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k8);
+      for (var _k9 in obj) {
+        var kvp = dewrapKeyedObj(obj, _k9);
 
         if (kvp.key === key) {
           vs.push(kvp.val);
@@ -4281,8 +4363,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }
 
-      for (var _k9 in obj) {
-        var _kvp2 = dewrapKeyedObj(obj, _k9);
+      for (var _k10 in obj) {
+        var _kvp2 = dewrapKeyedObj(obj, _k10);
 
         vs = vs.concat(getFirstDescendentValue(_kvp2.val, key));
       }
@@ -4304,8 +4386,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       if (!Array.isArray(lhs) && lhs['__extra-wrapped-list']) lhs = Object.values(lhs);else if (!Array.isArray(lhs) && !lhs['__extra-wrapped-list']) {
         arr = [];
 
-        for (var _k10 in lhs) {
-          arr.push(_defineProperty({}, _k10, lhs[_k10]));
+        for (var _k11 in lhs) {
+          arr.push(_defineProperty({}, _k11, lhs[_k11]));
         }
 
         lhs = arr;
@@ -5238,6 +5320,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }, {
         "name": "literal",
+        "symbols": [lexer.has("regex") ? {
+          type: "regex"
+        } : bool],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'literal',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "literal",
         "symbols": [lexer.has("null") ? {
           type: "null"
         } : null],
@@ -5686,6 +5779,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     };
 
     codeGenFor['null'] = function (context, code) {
+      code.addCode(context.node.value);
+    };
+
+    codeGenFor['regex'] = function (context, code) {
       code.addCode(context.node.value);
     };
 
