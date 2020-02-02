@@ -1525,7 +1525,7 @@ $({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('map') }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<div class=\"container\" style = \"background-color: lightgrey\">\n  <div class=\"col-md-8\" role=\"banner\">\n    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n  \n  </div>\n    <div class=\"row\">\n      <div class=\"col-md-1\"></div>\n      <div class=\"col-md-5\">\n        <p>d~weeve:</p>\n        <ace-editor #dweditor style=\"height:350px;\">\n        </ace-editor>\n      </div>\n      <div class=\"col-md-5\">\n        <p>payload:</p>\n        <ace-editor #pleditor style=\"height:350px;\">\n        </ace-editor>\n      </div>\n      <div class=\"col-md-1\"></div>\n    </div>\n    <br>\n    <div class=\"row\">\n      <div class=\"col-md-1\"></div>\n      <div class=\"col-md-10\">\n        <p>Result:</p>\n        <ace-editor #reditor style=\"height:250px;\">\n        </ace-editor>\n      </div>\n      \n      <div class=\"col-md-1\"></div>\n    </div>\n    <br>\n    <br>\n</div>\n\n\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <p>payload:</p>\n                        <ace-editor #pleditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
 
 /***/ }),
 
@@ -1767,7 +1767,7 @@ function __importDefault(mod) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIn0= */");
+/* harmony default export */ __webpack_exports__["default"] = ("#wrapper {\r\n    padding-left: 70px;\r\n    padding-right: 70px;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #sidebar-wrapper {\r\n    margin-left: 0px;\r\n    left:70px;\r\n    width: 250px;\r\n    background: #CCC;\r\n    position: fixed;\r\n    height: 100%;\r\n    overflow-y: visible;\r\n    z-index: 1000;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #page-content-wrapper {\r\n    width: 100%;\r\n  }\r\n  \r\n  .sidebar-nav {\r\n    position: absolute;\r\n    background: #CCC;\r\n    color: #333;\r\n    top: 0;\r\n    width: 250px;\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n  }\r\n  \r\n  @media (max-width:767px) {\r\n  \r\n      #wrapper {\r\n        padding-left: 0;\r\n      }\r\n  \r\n      #sidebar-wrapper {\r\n        left: 0;\r\n      }\r\n  \r\n      #wrapper.active {\r\n        position: relative;\r\n        left: 250px;\r\n      }\r\n  \r\n      #wrapper.active #sidebar-wrapper {\r\n        left: 250px;\r\n        width: 250px;\r\n        -webkit-transition: all 0.4s ease 0s;\r\n        transition: all 0.4s ease 0s;\r\n      }\r\n  \r\n  }\r\n  \r\n  #sidebar-wrapper li{\r\n    margin: 10px 10px;\r\n \r\n  }\r\n  \r\n  #sidebar-wrapper li a {\r\n    color: #333;\r\n \r\n  }  \r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxrQkFBa0I7SUFDbEIsbUJBQW1CO0lBQ25CLG9DQUE0QjtJQUE1Qiw0QkFBNEI7RUFDOUI7O0VBRUE7SUFDRSxnQkFBZ0I7SUFDaEIsU0FBUztJQUNULFlBQVk7SUFDWixnQkFBZ0I7SUFDaEIsZUFBZTtJQUNmLFlBQVk7SUFDWixtQkFBbUI7SUFDbkIsYUFBYTtJQUNiLG9DQUE0QjtJQUE1Qiw0QkFBNEI7RUFDOUI7O0VBRUE7SUFDRSxXQUFXO0VBQ2I7O0VBRUE7SUFDRSxrQkFBa0I7SUFDbEIsZ0JBQWdCO0lBQ2hCLFdBQVc7SUFDWCxNQUFNO0lBQ04sWUFBWTtJQUNaLGdCQUFnQjtJQUNoQixTQUFTO0lBQ1QsVUFBVTtFQUNaOztFQUVBOztNQUVJO1FBQ0UsZUFBZTtNQUNqQjs7TUFFQTtRQUNFLE9BQU87TUFDVDs7TUFFQTtRQUNFLGtCQUFrQjtRQUNsQixXQUFXO01BQ2I7O01BRUE7UUFDRSxXQUFXO1FBQ1gsWUFBWTtRQUNaLG9DQUE0QjtRQUE1Qiw0QkFBNEI7TUFDOUI7O0VBRUo7O0VBRUE7SUFDRSxpQkFBaUI7O0VBRW5COztFQUVBO0lBQ0UsV0FBVzs7RUFFYiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI3dyYXBwZXIge1xyXG4gICAgcGFkZGluZy1sZWZ0OiA3MHB4O1xyXG4gICAgcGFkZGluZy1yaWdodDogNzBweDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgbWFyZ2luLWxlZnQ6IDBweDtcclxuICAgIGxlZnQ6NzBweDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBwb3NpdGlvbjogZml4ZWQ7XHJcbiAgICBoZWlnaHQ6IDEwMCU7XHJcbiAgICBvdmVyZmxvdy15OiB2aXNpYmxlO1xyXG4gICAgei1pbmRleDogMTAwMDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNwYWdlLWNvbnRlbnQtd3JhcHBlciB7XHJcbiAgICB3aWR0aDogMTAwJTtcclxuICB9XHJcbiAgXHJcbiAgLnNpZGViYXItbmF2IHtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBjb2xvcjogIzMzMztcclxuICAgIHRvcDogMDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGxpc3Qtc3R5bGU6IG5vbmU7XHJcbiAgICBtYXJnaW46IDA7XHJcbiAgICBwYWRkaW5nOiAwO1xyXG4gIH1cclxuICBcclxuICBAbWVkaWEgKG1heC13aWR0aDo3NjdweCkge1xyXG4gIFxyXG4gICAgICAjd3JhcHBlciB7XHJcbiAgICAgICAgcGFkZGluZy1sZWZ0OiAwO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgICAgICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDA7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlIHtcclxuICAgICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICAgICAgbGVmdDogMjUwcHg7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDI1MHB4O1xyXG4gICAgICAgIHdpZHRoOiAyNTBweDtcclxuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC40cyBlYXNlIDBzO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgfVxyXG5cclxuICAjc2lkZWJhci13cmFwcGVyIGxpe1xyXG4gICAgbWFyZ2luOiAxMHB4IDEwcHg7XHJcbiBcclxuICB9ICBcclxuXHJcbiAgI3NpZGViYXItd3JhcHBlciBsaSBhIHtcclxuICAgIGNvbG9yOiAjMzMzO1xyXG4gXHJcbiAgfSAgIl19 */");
 
 /***/ }),
 
@@ -1790,8 +1790,12 @@ __webpack_require__.r(__webpack_exports__);
 let AppComponent = class AppComponent {
     constructor() {
         this.title = 'dweeve-ui';
+        this.exampleBar = false;
     }
     ngOnInit() {
+    }
+    toggleExampleBar() {
+        this.exampleBar = !this.exampleBar;
     }
     ngAfterViewInit() {
         this.dweditor.getEditor().setOptions({
@@ -1800,13 +1804,11 @@ let AppComponent = class AppComponent {
         });
         this.dweditor.theme = 'clouds';
         this.dweditor.text = `%dw 2.0
-output application/xml
----
-{
-    prices: payload.prices mapObject (value, key) -> {
-        (key): (value + 5)
-    }
-}`;
+    var a = 2 * 3 + 4
+    var b = 2 + 3 * 4
+    ---
+    {a:a, b: b}
+    `;
         this.dweditor.registerOnChange(() => {
             this.reDweeve();
         });
@@ -1833,6 +1835,164 @@ output application/xml
     }
     reDweeve() {
         this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
+    }
+    loadExample(exName) {
+        if (exName === 'Simple function') {
+            this.dweditor.text = `%dw 2.0
+fun toUser(obj) = {
+  firstName: obj.field1,
+  lastName: obj.field2
+}
+
+---
+toUser(payload)`;
+            this.pleditor.text = `{
+  "field1": "Bob",
+  "field2": "Jones"
+}`;
+        }
+        if (exName === 'Get people') {
+            this.dweditor.text = `%dw 2.0
+
+output application/json
+---
+payload.people.person.address.street`;
+            this.pleditor.text = `{
+"people": [
+    {
+    "person": {
+        "name": "Nial",
+        "address": {
+        "street": {
+            "name": "Italia",
+            "number": 2164
+        },
+        "area": {
+            "zone": "San Isidro",
+            "name": "Martinez"
+        }
+        }
+    }
+    },
+    {
+    "person": {
+        "name": "Coty",
+        "address": {
+        "street": {
+            "name": "Monroe",
+            "number": 323
+        },
+        "area": {
+            "zone": "BA",
+            "name": "Belgrano"
+        }
+        }
+    }
+    }
+]
+}`;
+        }
+        if (exName === 'All descendents') {
+            this.dweditor.text = `%dw 2.0
+output application/json
+---
+payload.users..*name`;
+            this.pleditor.text = `{ "users" : {
+  "user": {"name":"a"},
+  "user": {"name":"b"},
+  "user": {"name":"c", "name":"d"}
+  }
+}`;
+        }
+        if (exName === 'Mixed matching') {
+            this.dweditor.text = `%dw 2.0
+---
+{
+  a: payload.string match {
+    case str if str == "Emiliano" -> str ++ " Lesende"
+    case myVar if (myVar == "strings") -> ("strings =" ++ myVar)
+    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ " was matched"
+  },
+  b: payload.bool match {
+    case num is Boolean -> "could be true or false:" ++ num
+    case is Object -> "we got an Object"
+    case "bob"  -> "is bob!"
+    case word: "bang" ->  word ++ " was matched"
+  },
+  c: payload.name match {
+    case str if str == "Emiliano" -> str ++ " Lesende"
+    case myVar if (myVar == "strings") -> ("strings =" ++ myVar)
+    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ " was matched"
+  },
+  d: payload.object match {
+    case num is Boolean -> "could be true or false:" ++ num
+    case is Object -> "we got an Object"
+    case "bob"  -> "is bob!"
+    case word: "bang" ->  word ++ " was matched"
+  },
+  e: payload.strings match {
+    case str if str == "Emiliano" -> str ++ " Lesende"
+    case myVar if (myVar == "strings") -> ("strings =" ++ myVar)
+    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ " was matched"
+  },
+  f: payload.object.name match {
+    case num is Boolean -> "could be true or false:" ++ num
+    case is Object -> "we got an Object"
+    case "bob"  -> "is bob!"
+    case word: "bang" ->  word ++ " was matched"
+  },
+  g: payload.bangtest match {
+    case num is Boolean -> "could be true or false:" ++ num
+    case is Object -> "we got an Object"
+    case "bob"  -> "is bob!"
+    case word: "bang" ->  word ++ " was matched"
+  },
+  h: payload.number match {
+    case num is Boolean -> "could be true or false:" ++ num
+    case is Object -> "we got an Object"
+    case "bob"  -> "is bob!"
+    case word: "bang" ->  word ++ " was matched"
+  }
+}`;
+            this.pleditor.text = `{ "string": "hello fred", "number": 90,
+      "object" : {"name" : "bob"}, "bool" : true,
+      "name" : "Emiliano", "strings" : "strings", "bangtest" : "bang"}`;
+        }
+        if (exName === 'Simple Lambda') {
+            this.dweditor.text = `%dw 2.0
+var myLambda = (a,b)-> { (a) : b}
+---
+myLambda("key","value")`;
+            this.pleditor.text = ``;
+        }
+        if (exName === 'Do scope') {
+            this.dweditor.text = `%dw 2.0
+output application/json
+fun test(p) = do {
+    var a = "Foo" ++ p
+    ---
+    a
+}
+---
+{ result: test(" Bar") }`;
+            this.pleditor.text = ``;
+        }
+        if (exName === 'Xml input') {
+            this.dweditor.text = `%dw 2.0
+output application/xml
+---
+{
+    prices: payload.prices mapObject (value, key) -> {
+        (key): (value + 5)
+    }
+}`;
+            this.pleditor.text = `<?xml version='1.0' encoding='UTF-8'?>
+<prices>
+    <basic>14.99</basic>
+    <premium>53.01</premium>
+    <vip>398.99</vip>
+</prices>`;
+        }
     }
 };
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1979,7 +2139,7 @@ function str(key, holder, limit) {
 // JSON numbers must be finite. Encode non-finite numbers as null.
 
         return isFinite(value)
-            ? String(value)
+            ? String( Number(value) === value && value % 1 !== 0 ?  value.toFixed(2): value)
             : 'null';
 
     case 'boolean':
@@ -3027,6 +3187,7 @@ function find(arr, matcher){
         let gmatcher = new RegExp(matcher.source, 'g')
         let ms = String(str).match(gmatcher)
         let lastidx = 0
+        if (ms==null) return out
         ms.forEach(m => {
             let idx = str.indexOf(m, lastidx)
             out.push([idx, idx + m.length ])
@@ -3361,121 +3522,153 @@ const lexer = moo.compile({
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "dweeve$ebnf$1", "symbols": ["d_header"], "postprocess": id},
-    {"name": "dweeve$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "dweeve", "symbols": ["dweeve$ebnf$1", "d_body"], "postprocess": (data) => ( { type:'dweeve', header: data[0], body: data[1] } )},
-    {"name": "d_header$ebnf$1", "symbols": [(lexer.has("header") ? {type: "header"} : header)], "postprocess": id},
-    {"name": "d_header$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "d_header$ebnf$2", "symbols": []},
-    {"name": "d_header$ebnf$2", "symbols": ["d_header$ebnf$2", "h_declaration"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "d_header", "symbols": ["d_header$ebnf$1", "d_header$ebnf$2", {"literal":"---"}], "postprocess": (data) => ( { type:'dweeve', header: data[0], decs: data[1] } )},
-    {"name": "d_body", "symbols": ["expression"], "postprocess": (data) => ( { type:'body', value: data[0] } )},
-    {"name": "h_declaration", "symbols": ["h_input_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-    {"name": "h_declaration", "symbols": ["h_output_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-    {"name": "h_declaration", "symbols": ["h_var_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-    {"name": "h_declaration", "symbols": ["h_fun_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-    {"name": "h_input_dec", "symbols": [{"literal":"input"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'input-dec', mimetype: data[1]} )},
-    {"name": "h_output_dec", "symbols": [{"literal":"output"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'output-dec', mimetype: data[1]} )},
-    {"name": "h_var_dec", "symbols": [{"literal":"var"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess": (data) => ( { type: 'var-dec', varName: data[1], varVal: data[3]} )},
-    {"name": "h_fun_dec$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
-    {"name": "h_fun_dec$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "h_fun_dec$ebnf$2", "symbols": []},
-    {"name": "h_fun_dec$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
-    {"name": "h_fun_dec$ebnf$2", "symbols": ["h_fun_dec$ebnf$2", "h_fun_dec$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "h_fun_dec", "symbols": [{"literal":"fun"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("lparen") ? {type: "lparen"} : lparen), "h_fun_dec$ebnf$1", "h_fun_dec$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess":  (data) => ( { 
-        type:"fun-def", func:data[1], args: [data[3], ...(data[4].flat().filter(a=>a.type!=='comma') ) ],
-        body: data[7]
-        } )},
-    {"name": "h_dec_expression", "symbols": ["expression"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "h_dec_expression", "symbols": [{"literal":"do"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "dweeve", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type: 'do-dweeve', dweeve: data[2]} )},
-    {"name": "object$ebnf$1", "symbols": []},
-    {"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "keyvaluepair"]},
-    {"name": "object$ebnf$1", "symbols": ["object$ebnf$1", "object$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "keyvaluepair", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
-        members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
-    {"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
-    {"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
-    {"name": "key", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-    {"name": "key", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-    {"name": "key", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-    {"name": "key", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'dynamic-key', value: data[1] } )},
-    {"name": "expression", "symbols": ["result"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "expression", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "expression", "symbols": ["defaultexp"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "expression", "symbols": ["expression", (lexer.has("word") ? {type: "word"} : word), "expression"], "postprocess":  (data) => ( { type:'fun-call',  fun:data[1], 
-        args: { args: [ data[0], data[2] ] } } ) },
-    {"name": "expression$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
-    {"name": "expression$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "expression$ebnf$2", "symbols": []},
-    {"name": "expression$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
-    {"name": "expression$ebnf$2", "symbols": ["expression$ebnf$2", "expression$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "expression", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression$ebnf$1", "expression$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"], "postprocess":  (data) => ( { type:'lambda', ident: data[0],func:data[1], 
-        args: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ],
-        expression: data[5] } ) },
-    {"name": "expression", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-    {"name": "defaultexp", "symbols": ["expression", {"literal":"default"}, "expression"], "postprocess": (data) => ( { type:'default-expression', value: data[0], default: data[2] } )},
-    {"name": "ifconditional", "symbols": [{"literal":"if"}, (lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen), "expression", {"literal":"else"}, "expression"], "postprocess":  (data) => ( { type:'if-conditional', 
-        condition: data[2], then: data[4],                        
-        else: data[6] } ) },
-    {"name": "matcher$ebnf$1$subexpression$1", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
-    {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1$subexpression$1"]},
-    {"name": "matcher$ebnf$1$subexpression$2", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
-    {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1", "matcher$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "matcher$ebnf$2$subexpression$1", "symbols": [{"literal":"else"}, {"literal":"->"}, "expression"]},
-    {"name": "matcher$ebnf$2", "symbols": ["matcher$ebnf$2$subexpression$1"], "postprocess": id},
-    {"name": "matcher$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "matcher", "symbols": ["expression", {"literal":"match"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "matcher$ebnf$1", "matcher$ebnf$2", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:'pattern-match', 
-        input: data[0], then: data[4],                        
-        cases: data[3].map (c=>( { match: c[1], result:c[3]}) ),
-        else: (data[4])==null ? null : data[4][2] } ) },
-    {"name": "matchcond$ebnf$1$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":":"}]},
-    {"name": "matchcond$ebnf$1", "symbols": ["matchcond$ebnf$1$subexpression$1"], "postprocess": id},
-    {"name": "matchcond$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "matchcond", "symbols": ["matchcond$ebnf$1", "literal"], "postprocess":  (data) => ( { type:'match-literal', var:(data[0]==null) ? null : data[0][0],
-        litMatch:data[1] } ) },
-    {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"if"}, "expression"], "postprocess": (data) => ( { type:'match-if-exp', var:data[0], expMatch:data[2] } )},
-    {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"matches"}, (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'match-regex', var:data[0], regex:data[2] } )},
-    {"name": "matchcond$ebnf$2$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)]},
-    {"name": "matchcond$ebnf$2", "symbols": ["matchcond$ebnf$2$subexpression$1"], "postprocess": id},
-    {"name": "matchcond$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
-        typeName:data[2] } ) },
-    {"name": "result", "symbols": ["result", (lexer.has("mathbinop") ? {type: "mathbinop"} : mathbinop), "operand"], "postprocess": (data) => ( { type:'bin-op', lhs:data[0], op:data[1], rhs:data[2] } )},
-    {"name": "result", "symbols": ["result", "dotops", "operand"], "postprocess": (data) => ( { type:'dot-op', lhs:data[0], op:data[1], rhs:data[2] } )},
-    {"name": "result", "symbols": ["operand"], "postprocess": (data) =>( { type:'some-operand', value: data[0] } )},
-    {"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
-    {"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
-    {"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
-    {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "arglist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2] } )},
-    {"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
-    {"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
-    {"name": "array", "symbols": [(lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "arglist", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'array',  members:data[1] } )},
-    {"name": "arglist$ebnf$1", "symbols": ["expression"], "postprocess": id},
-    {"name": "arglist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "arglist$ebnf$2", "symbols": []},
-    {"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "expression"]},
-    {"name": "arglist$ebnf$2", "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "arglist", "symbols": ["arglist$ebnf$1", "arglist$ebnf$2"], "postprocess":  (data) => ( { type:"arg-list",
-        args: [data[0], ...(data[1].flat().filter(a=>a.type!=='comma') ) ] } ) },
-    {"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("regex") ? {type: "regex"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("null") ? {type: "null"} : null)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-    {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number), (lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'number', value: parseFloat(data[0])+parseFloat(data[1]) } )},
-    {"name": "dotops", "symbols": [(lexer.has("dotbinop") ? {type: "dotbinop"} : dotbinop)], "postprocess": (data) => ( { type:'dot', value: data[0] } )},
-    {"name": "dotops", "symbols": [(lexer.has("dotstarbinop") ? {type: "dotstarbinop"} : dotstarbinop)], "postprocess": (data) => ( { type:'dotstar', value: data[0] } )},
-    {"name": "dotops", "symbols": [(lexer.has("dotdotstarbinop") ? {type: "dotdotstarbinop"} : dotdotstarbinop)], "postprocess": (data) => ( { type:'dotdotstar', value: data[0] } )},
-    {"name": "dotops", "symbols": [(lexer.has("dotdotbinop") ? {type: "dotdotbinop"} : dotdotbinop)], "postprocess": (data) => ( { type:'dotdot', value: data[0] } )}
-]
-  , ParserStart: "dweeve"
-}
-
-
+        {"name": "dweeve$ebnf$1", "symbols": ["d_header"], "postprocess": id},
+        {"name": "dweeve$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "dweeve", "symbols": ["dweeve$ebnf$1", "d_body"], "postprocess": (data) => ( { type:'dweeve', header: data[0], body: data[1] } )},
+        {"name": "d_header$ebnf$1", "symbols": [(lexer.has("header") ? {type: "header"} : header)], "postprocess": id},
+        {"name": "d_header$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "d_header$ebnf$2", "symbols": []},
+        {"name": "d_header$ebnf$2", "symbols": ["d_header$ebnf$2", "h_declaration"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "d_header", "symbols": ["d_header$ebnf$1", "d_header$ebnf$2", {"literal":"---"}], "postprocess": (data) => ( { type:'dweeve', header: data[0], decs: data[1] } )},
+        {"name": "d_body", "symbols": ["expression"], "postprocess": (data) => ( { type:'body', value: data[0] } )},
+        {"name": "h_declaration", "symbols": ["h_input_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+        {"name": "h_declaration", "symbols": ["h_output_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+        {"name": "h_declaration", "symbols": ["h_var_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+        {"name": "h_declaration", "symbols": ["h_fun_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+        {"name": "h_input_dec", "symbols": [{"literal":"input"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'input-dec', mimetype: data[1]} )},
+        {"name": "h_output_dec", "symbols": [{"literal":"output"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'output-dec', mimetype: data[1]} )},
+        {"name": "h_var_dec", "symbols": [{"literal":"var"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess": (data) => ( { type: 'var-dec', varName: data[1], varVal: data[3]} )},
+        {"name": "h_fun_dec$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
+        {"name": "h_fun_dec$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "h_fun_dec$ebnf$2", "symbols": []},
+        {"name": "h_fun_dec$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
+        {"name": "h_fun_dec$ebnf$2", "symbols": ["h_fun_dec$ebnf$2", "h_fun_dec$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "h_fun_dec", "symbols": [{"literal":"fun"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("lparen") ? {type: "lparen"} : lparen), "h_fun_dec$ebnf$1", "h_fun_dec$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess":  (data) => ( { 
+            type:"fun-def", func:data[1], args: [data[3], ...(data[4].flat().filter(a=>a.type!=='comma') ) ],
+            body: data[7]
+            } )},
+        {"name": "h_dec_expression", "symbols": ["expression"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "h_dec_expression", "symbols": [{"literal":"do"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "dweeve", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type: 'do-dweeve', dweeve: data[2]} )},
+        {"name": "object$ebnf$1", "symbols": []},
+        {"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "keyvaluepair"]},
+        {"name": "object$ebnf$1", "symbols": ["object$ebnf$1", "object$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "keyvaluepair", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
+            members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
+        {"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
+        {"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
+        {"name": "key", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+        {"name": "key", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+        {"name": "key", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+        {"name": "key", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'dynamic-key', value: data[1] } )},
+        {"name": "expression", "symbols": ["result"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "expression", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "expression", "symbols": ["defaultexp"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "expression", "symbols": ["expression", (lexer.has("word") ? {type: "word"} : word), "expression"], "postprocess":  (data) => ( { type:'fun-call',  fun:data[1], 
+            args: { args: [ data[0], data[2] ] } } ) },
+        {"name": "expression$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
+        {"name": "expression$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "expression$ebnf$2", "symbols": []},
+        {"name": "expression$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
+        {"name": "expression$ebnf$2", "symbols": ["expression$ebnf$2", "expression$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "expression", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression$ebnf$1", "expression$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"], "postprocess":  (data) => ( { type:'lambda', ident: data[0],func:data[1], 
+            args: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ],
+            expression: data[5] } ) },
+        {"name": "expression", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+        {"name": "defaultexp", "symbols": ["expression", {"literal":"default"}, "expression"], "postprocess": (data) => ( { type:'default-expression', value: data[0], default: data[2] } )},
+        {"name": "ifconditional", "symbols": [{"literal":"if"}, (lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen), "expression", {"literal":"else"}, "expression"], "postprocess":  (data) => ( { type:'if-conditional', 
+            condition: data[2], then: data[4],                        
+            else: data[6] } ) },
+        {"name": "matcher$ebnf$1$subexpression$1", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
+        {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1$subexpression$1"]},
+        {"name": "matcher$ebnf$1$subexpression$2", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
+        {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1", "matcher$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "matcher$ebnf$2$subexpression$1", "symbols": [{"literal":"else"}, {"literal":"->"}, "expression"]},
+        {"name": "matcher$ebnf$2", "symbols": ["matcher$ebnf$2$subexpression$1"], "postprocess": id},
+        {"name": "matcher$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "matcher", "symbols": ["expression", {"literal":"match"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "matcher$ebnf$1", "matcher$ebnf$2", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:'pattern-match', 
+            input: data[0], then: data[4],                        
+            cases: data[3].map (c=>( { match: c[1], result:c[3]}) ),
+            else: (data[4])==null ? null : data[4][2] } ) },
+        {"name": "matchcond$ebnf$1$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":":"}]},
+        {"name": "matchcond$ebnf$1", "symbols": ["matchcond$ebnf$1$subexpression$1"], "postprocess": id},
+        {"name": "matchcond$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "matchcond", "symbols": ["matchcond$ebnf$1", "literal"], "postprocess":  (data) => ( { type:'match-literal', var:(data[0]==null) ? null : data[0][0],
+            litMatch:data[1] } ) },
+        {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"if"}, "expression"], "postprocess": (data) => ( { type:'match-if-exp', var:data[0], expMatch:data[2] } )},
+        {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"matches"}, (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'match-regex', var:data[0], regex:data[2] } )},
+        {"name": "matchcond$ebnf$2$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)]},
+        {"name": "matchcond$ebnf$2", "symbols": ["matchcond$ebnf$2$subexpression$1"], "postprocess": id},
+        {"name": "matchcond$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
+            typeName:data[2] } ) },
+        {"name": "result", "symbols": ["mathresult"], "postprocess": (data) => ( { type:'math-result', value:data[0].value } )},
+        {"name": "result", "symbols": ["result", "dotops", "operand"], "postprocess": (data) => ( { type:'dot-op', lhs:data[0], op:data[1], rhs:data[2] } )},
+        {"name": "mathresult", "symbols": ["l2ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l1ops", "symbols": ["l1ops", "l8operator", "l2ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l1ops", "symbols": ["l2ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l2ops", "symbols": ["l2ops", "l7operator", "l3ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l2ops", "symbols": ["l3ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l3ops", "symbols": ["l3ops", "l6operator", "l4ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l3ops", "symbols": ["l4ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l4ops", "symbols": ["l4ops", "l5operator", "l5ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l4ops", "symbols": ["l5ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l5ops", "symbols": ["l5ops", "l4operator", "l6ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l5ops", "symbols": ["l6ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l6ops", "symbols": ["l6ops", "l3operator", "l7ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l6ops", "symbols": ["l7ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l7ops", "symbols": ["l7ops", "l2operator", "operand"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
+        {"name": "l7ops", "symbols": ["operand"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
+        {"name": "l2operator", "symbols": [{"literal":"as"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l3operator", "symbols": [{"literal":"*"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l3operator", "symbols": [{"literal":"/"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l4operator", "symbols": [{"literal":"+"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l4operator", "symbols": [{"literal":"++"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l4operator", "symbols": [{"literal":"-"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l4operator", "symbols": [{"literal":">>"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l4operator", "symbols": [{"literal":"<<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":">"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":"="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":"<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":">="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":"<="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l5operator", "symbols": [{"literal":"is"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l6operator", "symbols": [{"literal":"!="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l6operator", "symbols": [{"literal":"~="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l6operator", "symbols": [{"literal":"=="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l7operator", "symbols": [{"literal":"and"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "l8operator", "symbols": [{"literal":"or"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+        {"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
+        {"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
+        {"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+        {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "arglist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2] } )},
+        {"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
+        {"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
+        {"name": "array", "symbols": [(lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "arglist", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'array',  members:data[1] } )},
+        {"name": "arglist$ebnf$1", "symbols": ["expression"], "postprocess": id},
+        {"name": "arglist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+        {"name": "arglist$ebnf$2", "symbols": []},
+        {"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "expression"]},
+        {"name": "arglist$ebnf$2", "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+        {"name": "arglist", "symbols": ["arglist$ebnf$1", "arglist$ebnf$2"], "postprocess":  (data) => ( { type:"arg-list",
+            args: [data[0], ...(data[1].flat().filter(a=>a.type!=='comma') ) ] } ) },
+        {"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("null") ? {type: "null"} : null)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+        {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number), (lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'number', value: data[0]+data[1] } )},
+        {"name": "dotops", "symbols": [(lexer.has("dotbinop") ? {type: "dotbinop"} : dotbinop)], "postprocess": (data) => ( { type:'dot', value: data[0] } )},
+        {"name": "dotops", "symbols": [(lexer.has("dotstarbinop") ? {type: "dotstarbinop"} : dotstarbinop)], "postprocess": (data) => ( { type:'dotstar', value: data[0] } )},
+        {"name": "dotops", "symbols": [(lexer.has("dotdotstarbinop") ? {type: "dotdotstarbinop"} : dotdotstarbinop)], "postprocess": (data) => ( { type:'dotdotstar', value: data[0] } )},
+        {"name": "dotops", "symbols": [(lexer.has("dotdotbinop") ? {type: "dotdotbinop"} : dotdotbinop)], "postprocess": (data) => ( { type:'dotdot', value: data[0] } )}
+    ]
+      , ParserStart: "dweeve"
+    }
+    
 
 /***/ }),
 
@@ -3602,7 +3795,7 @@ codeGenFor['do-dweeve'] = (context, code) => {
     context.compiler({node: doDweeve.dweeve, compiler:context.compiler}, doCode);
     doCode.addCode(')\n');
 
-    args=''
+    let args=''
     if (context.argList!==undefined && context.argList!=null) {
         context.argList.forEach(arg => {
             if (arg!==null)
@@ -3898,6 +4091,66 @@ module.exports = {addTranspilerFeatures : addTranspilerFeatures}
 
 /***/ }),
 
+/***/ "./src/app/dweeve/src/transpiler/transpiler-math-op.js":
+/*!*************************************************************!*\
+  !*** ./src/app/dweeve/src/transpiler/transpiler-math-op.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Dictionary = __webpack_require__(/*! dictionaryjs */ "./node_modules/dictionaryjs/Dictionary.js");
+
+let codeGenFor = new Dictionary.Dictionary();
+let opfuncs = new Dictionary.Dictionary();
+
+opfuncs['++'] = stringConcat
+
+codeGenFor['math-result'] = (context, code) => { 
+    let op = context.node;
+    if (op.value.op)
+        opCodeGen(op.value.lhs, op.value.op, op.value.rhs, context, code)
+    else
+        context.compiler({parentType: 'math-result', node: op.value, compiler:context.compiler}, code);
+};
+
+function opCodeGen(lhs, op, rhs, context,code) {
+    code.addCode('(');
+    if (opfuncs[op.value]!=undefined)
+        opfuncs[op.value](lhs, op, rhs, context, code)
+    else
+         jsopCodeGen(lhs, op, rhs, context, code)
+    code.addCode(')');
+}
+function jsopCodeGen(lhs, op, rhs, context,code) {
+    emitOperand(lhs, context, code)
+    code.addCode(op.value);
+    emitOperand(rhs, context, code)
+}
+
+function stringConcat(lhs, op, rhs, context,code) {
+    emitOperand(lhs, context, code)
+    code.addCode('+');
+    emitOperand(rhs, context, code)
+}
+
+function emitOperand(operand, context, code) {
+    if (operand.op)
+        opCodeGen(operand.lhs, operand.op, operand.rhs, context, code)
+    else
+        context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, code);
+}
+
+function addTranspilerFeatures(preDict, postDict) {
+    for (k in codeGenFor)
+        preDict[k]=codeGenFor[k];
+    
+        
+}
+
+module.exports = {addTranspilerFeatures : addTranspilerFeatures}
+
+/***/ }),
+
 /***/ "./src/app/dweeve/src/transpiler/transpiler.js":
 /*!*****************************************************!*\
   !*** ./src/app/dweeve/src/transpiler/transpiler.js ***!
@@ -3911,6 +4164,7 @@ const ConditionalsFeatures = __webpack_require__(/*! ./transpiler-conditionals *
 const FuncAndSelectorFeatures = __webpack_require__(/*! ./transpiler-funcs-and-selectors */ "./src/app/dweeve/src/transpiler/transpiler-funcs-and-selectors.js")
 const ExpressionFeatures = __webpack_require__(/*! ./transpiler-expressions */ "./src/app/dweeve/src/transpiler/transpiler-expressions.js")
 const DoScopeFeatures = __webpack_require__(/*! ./transpiler-do-scope */ "./src/app/dweeve/src/transpiler/transpiler-do-scope.js")
+const MathOpFeatures = __webpack_require__(/*! ./transpiler-math-op */ "./src/app/dweeve/src/transpiler/transpiler-math-op.js")
 
 let codeGenFor = new Dictionary.Dictionary();
 let codeGenAfter = new Dictionary.Dictionary();
@@ -3920,7 +4174,7 @@ ConditionalsFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 FuncAndSelectorFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 ExpressionFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 DoScopeFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
-
+MathOpFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 
 function transpile(dweeve){
 

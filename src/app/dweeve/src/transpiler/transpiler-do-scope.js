@@ -13,7 +13,7 @@ codeGenFor['do-dweeve'] = (context, code) => {
     context.compiler({node: doDweeve.dweeve, compiler:context.compiler}, doCode);
     doCode.addCode(')\n');
 
-    args=''
+    let args=''
     if (context.argList!==undefined && context.argList!=null) {
         context.argList.forEach(arg => {
             if (arg!==null)

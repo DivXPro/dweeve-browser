@@ -1,36 +1,58 @@
-<div class="container" style = "background-color: lightgrey">
-  <div class="col-md-8" role="banner">
-    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>
+
+<div id="wrapper">
+    <div *ngIf="exampleBar" id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li><button (click)="toggleExampleBar()" >&lt;-- Hide</button></li>
+            <li class="sidebar-brand"><ul>Dweeve Examples</ul></li>
+            <li><a (click)="loadExample('Simple function')" href="#">Simple function</a></li>
+            <li><a (click)="loadExample('Get people')"href="#">Get people</a></li>
+            <li><a (click)="loadExample('All descendents')"href="#">All descendents</a></li>
+            <li><a (click)="loadExample('Mixed matching')"href="#">Mixed matching</a></li>
+            <li><a (click)="loadExample('Simple Lambda')"href="#">Simple Lambda</a></li>
+            <li><a (click)="loadExample('Do scope')"href="#">Do scope</a></li>
+            <li><a (click)="loadExample('Xml input')"href="#">Xml input</a></li>
+        </ul>
+    </div>
+    <div id="page-content-wrapper">
+        <div class="page-content">
   
-  </div>
-    <div class="row">
-      <div class="col-md-1"></div>
-      <div class="col-md-5">
-        <p>d~weeve:</p>
-        <ace-editor #dweditor style="height:350px;">
-        </ace-editor>
-      </div>
-      <div class="col-md-5">
-        <p>payload:</p>
-        <ace-editor #pleditor style="height:350px;">
-        </ace-editor>
-      </div>
-      <div class="col-md-1"></div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-1"></div>
-      <div class="col-md-10">
-        <p>Result:</p>
-        <ace-editor #reditor style="height:250px;">
-        </ace-editor>
-      </div>
-      
-      <div class="col-md-1"></div>
-    </div>
-    <br>
-    <br>
-</div>
 
+            <div class="xxcontainer" style = "background-color: lightgrey">
 
+              
+              
+              <div class="content" style="padding-left: 20px; padding-right: 20px">
+                  <div class="col-lg-10" role="banner">
+                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>
+                    <button (click)="toggleExampleBar()"  >--&gt;Examples Bar</button>
+                  </div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <p>d~weeve:</p>
+                        <ace-editor #dweditor style="height:350px;">
+                        </ace-editor>
+                      </div>
+                      <div class="col-lg-6">
+                        <p>payload:</p>
+                        <ace-editor #pleditor style="height:350px;">
+                        </ace-editor>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <p>Result:</p>
+                        <ace-editor #reditor style="height:250px;">
+                        </ace-editor>
+                      </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+              
+            </div>  
+
+          </div>
+        </div>
+    </div>
 

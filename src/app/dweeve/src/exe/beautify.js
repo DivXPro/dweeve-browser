@@ -71,7 +71,7 @@ function str(key, holder, limit) {
 // JSON numbers must be finite. Encode non-finite numbers as null.
 
         return isFinite(value)
-            ? String(value)
+            ? String( Number(value) === value && value % 1 !== 0 ?  value.toFixed(2): value)
             : 'null';
 
     case 'boolean':

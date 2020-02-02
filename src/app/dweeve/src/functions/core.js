@@ -163,6 +163,7 @@ function find(arr, matcher){
         let gmatcher = new RegExp(matcher.source, 'g')
         let ms = String(str).match(gmatcher)
         let lastidx = 0
+        if (ms==null) return out
         ms.forEach(m => {
             let idx = str.indexOf(m, lastidx)
             out.push([idx, idx + m.length ])

@@ -2102,7 +2102,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<div class=\"container\" style = \"background-color: lightgrey\">\n  <div class=\"col-md-8\" role=\"banner\">\n    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n  \n  </div>\n    <div class=\"row\">\n      <div class=\"col-md-1\"></div>\n      <div class=\"col-md-5\">\n        <p>d~weeve:</p>\n        <ace-editor #dweditor style=\"height:350px;\">\n        </ace-editor>\n      </div>\n      <div class=\"col-md-5\">\n        <p>payload:</p>\n        <ace-editor #pleditor style=\"height:350px;\">\n        </ace-editor>\n      </div>\n      <div class=\"col-md-1\"></div>\n    </div>\n    <br>\n    <div class=\"row\">\n      <div class=\"col-md-1\"></div>\n      <div class=\"col-md-10\">\n        <p>Result:</p>\n        <ace-editor #reditor style=\"height:250px;\">\n        </ace-editor>\n      </div>\n      \n      <div class=\"col-md-1\"></div>\n    </div>\n    <br>\n    <br>\n</div>\n\n\n\n";
+    __webpack_exports__["default"] = "\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <p>payload:</p>\n                        <ace-editor #pleditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n";
     /***/
   },
 
@@ -2680,7 +2680,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIn0= */";
+    __webpack_exports__["default"] = "#wrapper {\r\n    padding-left: 70px;\r\n    padding-right: 70px;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #sidebar-wrapper {\r\n    margin-left: 0px;\r\n    left:70px;\r\n    width: 250px;\r\n    background: #CCC;\r\n    position: fixed;\r\n    height: 100%;\r\n    overflow-y: visible;\r\n    z-index: 1000;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #page-content-wrapper {\r\n    width: 100%;\r\n  }\r\n  \r\n  .sidebar-nav {\r\n    position: absolute;\r\n    background: #CCC;\r\n    color: #333;\r\n    top: 0;\r\n    width: 250px;\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n  }\r\n  \r\n  @media (max-width:767px) {\r\n  \r\n      #wrapper {\r\n        padding-left: 0;\r\n      }\r\n  \r\n      #sidebar-wrapper {\r\n        left: 0;\r\n      }\r\n  \r\n      #wrapper.active {\r\n        position: relative;\r\n        left: 250px;\r\n      }\r\n  \r\n      #wrapper.active #sidebar-wrapper {\r\n        left: 250px;\r\n        width: 250px;\r\n        -webkit-transition: all 0.4s ease 0s;\r\n        transition: all 0.4s ease 0s;\r\n      }\r\n  \r\n  }\r\n  \r\n  #sidebar-wrapper li{\r\n    margin: 10px 10px;\r\n \r\n  }\r\n  \r\n  #sidebar-wrapper li a {\r\n    color: #333;\r\n \r\n  }  \r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxrQkFBa0I7SUFDbEIsbUJBQW1CO0lBQ25CLG9DQUE0QjtJQUE1Qiw0QkFBNEI7RUFDOUI7O0VBRUE7SUFDRSxnQkFBZ0I7SUFDaEIsU0FBUztJQUNULFlBQVk7SUFDWixnQkFBZ0I7SUFDaEIsZUFBZTtJQUNmLFlBQVk7SUFDWixtQkFBbUI7SUFDbkIsYUFBYTtJQUNiLG9DQUE0QjtJQUE1Qiw0QkFBNEI7RUFDOUI7O0VBRUE7SUFDRSxXQUFXO0VBQ2I7O0VBRUE7SUFDRSxrQkFBa0I7SUFDbEIsZ0JBQWdCO0lBQ2hCLFdBQVc7SUFDWCxNQUFNO0lBQ04sWUFBWTtJQUNaLGdCQUFnQjtJQUNoQixTQUFTO0lBQ1QsVUFBVTtFQUNaOztFQUVBOztNQUVJO1FBQ0UsZUFBZTtNQUNqQjs7TUFFQTtRQUNFLE9BQU87TUFDVDs7TUFFQTtRQUNFLGtCQUFrQjtRQUNsQixXQUFXO01BQ2I7O01BRUE7UUFDRSxXQUFXO1FBQ1gsWUFBWTtRQUNaLG9DQUE0QjtRQUE1Qiw0QkFBNEI7TUFDOUI7O0VBRUo7O0VBRUE7SUFDRSxpQkFBaUI7O0VBRW5COztFQUVBO0lBQ0UsV0FBVzs7RUFFYiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI3dyYXBwZXIge1xyXG4gICAgcGFkZGluZy1sZWZ0OiA3MHB4O1xyXG4gICAgcGFkZGluZy1yaWdodDogNzBweDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgbWFyZ2luLWxlZnQ6IDBweDtcclxuICAgIGxlZnQ6NzBweDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBwb3NpdGlvbjogZml4ZWQ7XHJcbiAgICBoZWlnaHQ6IDEwMCU7XHJcbiAgICBvdmVyZmxvdy15OiB2aXNpYmxlO1xyXG4gICAgei1pbmRleDogMTAwMDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNwYWdlLWNvbnRlbnQtd3JhcHBlciB7XHJcbiAgICB3aWR0aDogMTAwJTtcclxuICB9XHJcbiAgXHJcbiAgLnNpZGViYXItbmF2IHtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBjb2xvcjogIzMzMztcclxuICAgIHRvcDogMDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGxpc3Qtc3R5bGU6IG5vbmU7XHJcbiAgICBtYXJnaW46IDA7XHJcbiAgICBwYWRkaW5nOiAwO1xyXG4gIH1cclxuICBcclxuICBAbWVkaWEgKG1heC13aWR0aDo3NjdweCkge1xyXG4gIFxyXG4gICAgICAjd3JhcHBlciB7XHJcbiAgICAgICAgcGFkZGluZy1sZWZ0OiAwO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgICAgICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDA7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlIHtcclxuICAgICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICAgICAgbGVmdDogMjUwcHg7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDI1MHB4O1xyXG4gICAgICAgIHdpZHRoOiAyNTBweDtcclxuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC40cyBlYXNlIDBzO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgfVxyXG5cclxuICAjc2lkZWJhci13cmFwcGVyIGxpe1xyXG4gICAgbWFyZ2luOiAxMHB4IDEwcHg7XHJcbiBcclxuICB9ICBcclxuXHJcbiAgI3NpZGViYXItd3JhcHBlciBsaSBhIHtcclxuICAgIGNvbG9yOiAjMzMzO1xyXG4gXHJcbiAgfSAgIl19 */";
     /***/
   },
 
@@ -2729,11 +2729,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         _classCallCheck(this, AppComponent);
 
         this.title = 'dweeve-ui';
+        this.exampleBar = false;
       }
 
       _createClass(AppComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {}
+      }, {
+        key: "toggleExampleBar",
+        value: function toggleExampleBar() {
+          this.exampleBar = !this.exampleBar;
+        }
       }, {
         key: "ngAfterViewInit",
         value: function ngAfterViewInit() {
@@ -2744,7 +2750,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
             tabSize: 2
           });
           this.dweditor.theme = 'clouds';
-          this.dweditor.text = "%dw 2.0\noutput application/xml\n---\n{\n    prices: payload.prices mapObject (value, key) -> {\n        (key): (value + 5)\n    }\n}";
+          this.dweditor.text = "%dw 2.0\n    var a = 2 * 3 + 4\n    var b = 2 + 3 * 4\n    ---\n    {a:a, b: b}\n    ";
           this.dweditor.registerOnChange(function () {
             _this.reDweeve();
           });
@@ -2768,6 +2774,44 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         key: "reDweeve",
         value: function reDweeve() {
           this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
+        }
+      }, {
+        key: "loadExample",
+        value: function loadExample(exName) {
+          if (exName === 'Simple function') {
+            this.dweditor.text = "%dw 2.0\nfun toUser(obj) = {\n  firstName: obj.field1,\n  lastName: obj.field2\n}\n\n---\ntoUser(payload)";
+            this.pleditor.text = "{\n  \"field1\": \"Bob\",\n  \"field2\": \"Jones\"\n}";
+          }
+
+          if (exName === 'Get people') {
+            this.dweditor.text = "%dw 2.0\n\noutput application/json\n---\npayload.people.person.address.street";
+            this.pleditor.text = "{\n\"people\": [\n    {\n    \"person\": {\n        \"name\": \"Nial\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Italia\",\n            \"number\": 2164\n        },\n        \"area\": {\n            \"zone\": \"San Isidro\",\n            \"name\": \"Martinez\"\n        }\n        }\n    }\n    },\n    {\n    \"person\": {\n        \"name\": \"Coty\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Monroe\",\n            \"number\": 323\n        },\n        \"area\": {\n            \"zone\": \"BA\",\n            \"name\": \"Belgrano\"\n        }\n        }\n    }\n    }\n]\n}";
+          }
+
+          if (exName === 'All descendents') {
+            this.dweditor.text = "%dw 2.0\noutput application/json\n---\npayload.users..*name";
+            this.pleditor.text = "{ \"users\" : {\n  \"user\": {\"name\":\"a\"},\n  \"user\": {\"name\":\"b\"},\n  \"user\": {\"name\":\"c\", \"name\":\"d\"}\n  }\n}";
+          }
+
+          if (exName === 'Mixed matching') {
+            this.dweditor.text = "%dw 2.0\n---\n{\n  a: payload.string match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  b: payload.bool match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  c: payload.name match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  d: payload.object match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  e: payload.strings match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  f: payload.object.name match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  g: payload.bangtest match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  h: payload.number match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  }\n}";
+            this.pleditor.text = "{ \"string\": \"hello fred\", \"number\": 90,\n      \"object\" : {\"name\" : \"bob\"}, \"bool\" : true,\n      \"name\" : \"Emiliano\", \"strings\" : \"strings\", \"bangtest\" : \"bang\"}";
+          }
+
+          if (exName === 'Simple Lambda') {
+            this.dweditor.text = "%dw 2.0\nvar myLambda = (a,b)-> { (a) : b}\n---\nmyLambda(\"key\",\"value\")";
+            this.pleditor.text = "";
+          }
+
+          if (exName === 'Do scope') {
+            this.dweditor.text = "%dw 2.0\noutput application/json\nfun test(p) = do {\n    var a = \"Foo\" ++ p\n    ---\n    a\n}\n---\n{ result: test(\" Bar\") }";
+            this.pleditor.text = "";
+          }
+
+          if (exName === 'Xml input') {
+            this.dweditor.text = "%dw 2.0\noutput application/xml\n---\n{\n    prices: payload.prices mapObject (value, key) -> {\n        (key): (value + 5)\n    }\n}";
+            this.pleditor.text = "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n    <basic>14.99</basic>\n    <premium>53.01</premium>\n    <vip>398.99</vip>\n</prices>";
+          }
         }
       }]);
 
@@ -2932,7 +2976,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
         case 'number':
           // JSON numbers must be finite. Encode non-finite numbers as null.
-          return isFinite(value) ? String(value) : 'null';
+          return isFinite(value) ? String(Number(value) === value && value % 1 !== 0 ? value.toFixed(2) : value) : 'null';
 
         case 'boolean':
         case 'null':
@@ -3157,7 +3201,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     function innerRun(dwl, payload, vars, attributes) {
       try {
-        var _args = {
+        var args = {
           payload: payload,
           vars: vars,
           attributes: attributes,
@@ -3168,8 +3212,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           __getIdentifierValue: selectorFunctions.__getIdentifierValue,
           __execDoScope: doScopeFunctions.__execDoScope
         };
-        coreFunctions.addFunctions(_args);
-        var result = runDweeveScript(dwl, _args);
+        coreFunctions.addFunctions(args);
+        var result = runDweeveScript(dwl, args);
         return beautify(result, null, 2, 100);
       } catch (err) {
         return err.message;
@@ -4057,6 +4101,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         var gmatcher = new RegExp(matcher.source, 'g');
         var ms = String(str).match(gmatcher);
         var lastidx = 0;
+        if (ms == null) return _out2;
         ms.forEach(function (m) {
           var idx = str.indexOf(m, lastidx);
 
@@ -5136,15 +5181,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }, {
         "name": "result",
-        "symbols": ["result", lexer.has("mathbinop") ? {
-          type: "mathbinop"
-        } : mathbinop, "operand"],
+        "symbols": ["mathresult"],
         "postprocess": function postprocess(data) {
           return {
-            type: 'bin-op',
-            lhs: data[0],
-            op: data[1],
-            rhs: data[2]
+            type: 'math-result',
+            value: data[0].value
           };
         }
       }, {
@@ -5159,11 +5200,374 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           };
         }
       }, {
-        "name": "result",
+        "name": "mathresult",
+        "symbols": ["l2ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l1ops",
+        "symbols": ["l1ops", "l8operator", "l2ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l1ops",
+        "symbols": ["l2ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l2ops",
+        "symbols": ["l2ops", "l7operator", "l3ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l2ops",
+        "symbols": ["l3ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l3ops",
+        "symbols": ["l3ops", "l6operator", "l4ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l3ops",
+        "symbols": ["l4ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l4ops",
+        "symbols": ["l4ops", "l5operator", "l5ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l4ops",
+        "symbols": ["l5ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l5ops",
+        "symbols": ["l5ops", "l4operator", "l6ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l5ops",
+        "symbols": ["l6ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l6ops",
+        "symbols": ["l6ops", "l3operator", "l7ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l6ops",
+        "symbols": ["l7ops"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l7ops",
+        "symbols": ["l7ops", "l2operator", "operand"],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'op',
+            value: {
+              lhs: data[0].value,
+              op: data[1].value,
+              rhs: data[2].value
+            }
+          };
+        }
+      }, {
+        "name": "l7ops",
         "symbols": ["operand"],
         "postprocess": function postprocess(data) {
           return {
-            type: 'some-operand',
+            type: 'operand',
+            value: data[0].value
+          };
+        }
+      }, {
+        "name": "l2operator",
+        "symbols": [{
+          "literal": "as"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l3operator",
+        "symbols": [{
+          "literal": "*"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l3operator",
+        "symbols": [{
+          "literal": "/"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l4operator",
+        "symbols": [{
+          "literal": "+"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l4operator",
+        "symbols": [{
+          "literal": "++"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l4operator",
+        "symbols": [{
+          "literal": "-"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l4operator",
+        "symbols": [{
+          "literal": ">>"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l4operator",
+        "symbols": [{
+          "literal": "<<"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": ">"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": "="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": "<"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": ">="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": "<="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l5operator",
+        "symbols": [{
+          "literal": "is"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l6operator",
+        "symbols": [{
+          "literal": "!="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l6operator",
+        "symbols": [{
+          "literal": "~="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l6operator",
+        "symbols": [{
+          "literal": "=="
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l7operator",
+        "symbols": [{
+          "literal": "and"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "l8operator",
+        "symbols": [{
+          "literal": "or"
+        }],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'operator',
             value: data[0]
           };
         }
@@ -5320,17 +5724,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }, {
         "name": "literal",
-        "symbols": [lexer.has("regex") ? {
-          type: "regex"
-        } : bool],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "literal",
         "symbols": [lexer.has("null") ? {
           type: "null"
         } : null],
@@ -5353,6 +5746,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }, {
         "name": "literal",
+        "symbols": [lexer.has("regex") ? {
+          type: "regex"
+        } : regex],
+        "postprocess": function postprocess(data) {
+          return {
+            type: 'literal',
+            value: data[0]
+          };
+        }
+      }, {
+        "name": "literal",
         "symbols": [lexer.has("number") ? {
           type: "number"
         } : number, lexer.has("number") ? {
@@ -5361,7 +5765,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         "postprocess": function postprocess(data) {
           return {
             type: 'number',
-            value: parseFloat(data[0]) + parseFloat(data[1])
+            value: data[0] + data[1]
           };
         }
       }, {
@@ -5585,7 +5989,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         compiler: context.compiler
       }, doCode);
       doCode.addCode(')\n');
-      args = '';
+      var args = '';
 
       if (context.argList !== undefined && context.argList != null) {
         context.argList.forEach(function (arg) {
@@ -5997,6 +6401,71 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
+  "./src/app/dweeve/src/transpiler/transpiler-math-op.js":
+  /*!*************************************************************!*\
+    !*** ./src/app/dweeve/src/transpiler/transpiler-math-op.js ***!
+    \*************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function srcAppDweeveSrcTranspilerTranspilerMathOpJs(module, exports, __webpack_require__) {
+    var Dictionary = __webpack_require__(
+    /*! dictionaryjs */
+    "./node_modules/dictionaryjs/Dictionary.js");
+
+    var codeGenFor = new Dictionary.Dictionary();
+    var opfuncs = new Dictionary.Dictionary();
+    opfuncs['++'] = stringConcat;
+
+    codeGenFor['math-result'] = function (context, code) {
+      var op = context.node;
+      if (op.value.op) opCodeGen(op.value.lhs, op.value.op, op.value.rhs, context, code);else context.compiler({
+        parentType: 'math-result',
+        node: op.value,
+        compiler: context.compiler
+      }, code);
+    };
+
+    function opCodeGen(lhs, op, rhs, context, code) {
+      code.addCode('(');
+      if (opfuncs[op.value] != undefined) opfuncs[op.value](lhs, op, rhs, context, code);else jsopCodeGen(lhs, op, rhs, context, code);
+      code.addCode(')');
+    }
+
+    function jsopCodeGen(lhs, op, rhs, context, code) {
+      emitOperand(lhs, context, code);
+      code.addCode(op.value);
+      emitOperand(rhs, context, code);
+    }
+
+    function stringConcat(lhs, op, rhs, context, code) {
+      emitOperand(lhs, context, code);
+      code.addCode('+');
+      emitOperand(rhs, context, code);
+    }
+
+    function emitOperand(operand, context, code) {
+      if (operand.op) opCodeGen(operand.lhs, operand.op, operand.rhs, context, code);else context.compiler({
+        parentType: 'math-result',
+        node: operand,
+        compiler: context.compiler
+      }, code);
+    }
+
+    function addTranspilerFeatures(preDict, postDict) {
+      for (k in codeGenFor) {
+        preDict[k] = codeGenFor[k];
+      }
+    }
+
+    module.exports = {
+      addTranspilerFeatures: addTranspilerFeatures
+    };
+    /***/
+  },
+
+  /***/
   "./src/app/dweeve/src/transpiler/transpiler.js":
   /*!*****************************************************!*\
     !*** ./src/app/dweeve/src/transpiler/transpiler.js ***!
@@ -6030,6 +6499,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ./transpiler-do-scope */
     "./src/app/dweeve/src/transpiler/transpiler-do-scope.js");
 
+    var MathOpFeatures = __webpack_require__(
+    /*! ./transpiler-math-op */
+    "./src/app/dweeve/src/transpiler/transpiler-math-op.js");
+
     var codeGenFor = new Dictionary.Dictionary();
     var codeGenAfter = new Dictionary.Dictionary();
     HeaderFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
@@ -6037,6 +6510,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     FuncAndSelectorFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
     ExpressionFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
     DoScopeFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
+    MathOpFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 
     function transpile(dweeve) {
       var code = {
