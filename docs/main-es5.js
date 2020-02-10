@@ -1,19 +1,3 @@
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"], {
   /***/
   "./$$_lazy_route_resource lazy recursive":
@@ -84,16 +68,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/object-create */
     "./node_modules/core-js/internals/object-create.js");
 
-    var hide = __webpack_require__(
-    /*! ../internals/hide */
-    "./node_modules/core-js/internals/hide.js");
+    var definePropertyModule = __webpack_require__(
+    /*! ../internals/object-define-property */
+    "./node_modules/core-js/internals/object-define-property.js");
 
     var UNSCOPABLES = wellKnownSymbol('unscopables');
     var ArrayPrototype = Array.prototype; // Array.prototype[@@unscopables]
     // https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
 
     if (ArrayPrototype[UNSCOPABLES] == undefined) {
-      hide(ArrayPrototype, UNSCOPABLES, create(null));
+      definePropertyModule.f(ArrayPrototype, UNSCOPABLES, {
+        configurable: true,
+        value: create(null)
+      });
     } // add a key to Array.prototype[@@unscopables]
 
 
@@ -193,8 +180,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   /***/
   function node_modulesCoreJsInternalsArrayIterationJs(module, exports, __webpack_require__) {
     var bind = __webpack_require__(
-    /*! ../internals/bind-context */
-    "./node_modules/core-js/internals/bind-context.js");
+    /*! ../internals/function-bind-context */
+    "./node_modules/core-js/internals/function-bind-context.js");
 
     var IndexedObject = __webpack_require__(
     /*! ../internals/indexed-object */
@@ -231,31 +218,29 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         var target = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
         var value, result;
 
-        for (; length > index; index++) {
-          if (NO_HOLES || index in self) {
-            value = self[index];
-            result = boundFunction(value, index, O);
+        for (; length > index; index++) if (NO_HOLES || index in self) {
+          value = self[index];
+          result = boundFunction(value, index, O);
 
-            if (TYPE) {
-              if (IS_MAP) target[index] = result; // map
-              else if (result) switch (TYPE) {
-                  case 3:
-                    return true;
-                  // some
+          if (TYPE) {
+            if (IS_MAP) target[index] = result; // map
+            else if (result) switch (TYPE) {
+                case 3:
+                  return true;
+                // some
 
-                  case 5:
-                    return value;
-                  // find
+                case 5:
+                  return value;
+                // find
 
-                  case 6:
-                    return index;
-                  // findIndex
+                case 6:
+                  return index;
+                // findIndex
 
-                  case 2:
-                    push.call(target, value);
-                  // filter
-                } else if (IS_EVERY) return false; // every
-            }
+                case 2:
+                  push.call(target, value);
+                // filter
+              } else if (IS_EVERY) return false; // every
           }
         }
 
@@ -307,10 +292,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/well-known-symbol */
     "./node_modules/core-js/internals/well-known-symbol.js");
 
+    var V8_VERSION = __webpack_require__(
+    /*! ../internals/engine-v8-version */
+    "./node_modules/core-js/internals/engine-v8-version.js");
+
     var SPECIES = wellKnownSymbol('species');
 
     module.exports = function (METHOD_NAME) {
-      return !fails(function () {
+      // We can't use this feature detection in V8 since it causes
+      // deoptimization and serious performance degradation
+      // https://github.com/zloirock/core-js/issues/677
+      return V8_VERSION >= 51 || !fails(function () {
         var array = [];
         var constructor = array.constructor = {};
 
@@ -321,6 +313,58 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         };
 
         return array[METHOD_NAME](Boolean).foo !== 1;
+      });
+    };
+    /***/
+
+  },
+
+  /***/
+  "./node_modules/core-js/internals/array-method-uses-to-length.js":
+  /*!***********************************************************************!*\
+    !*** ./node_modules/core-js/internals/array-method-uses-to-length.js ***!
+    \***********************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsArrayMethodUsesToLengthJs(module, exports, __webpack_require__) {
+    var DESCRIPTORS = __webpack_require__(
+    /*! ../internals/descriptors */
+    "./node_modules/core-js/internals/descriptors.js");
+
+    var fails = __webpack_require__(
+    /*! ../internals/fails */
+    "./node_modules/core-js/internals/fails.js");
+
+    var has = __webpack_require__(
+    /*! ../internals/has */
+    "./node_modules/core-js/internals/has.js");
+
+    var defineProperty = Object.defineProperty;
+    var cache = {};
+
+    var thrower = function thrower(it) {
+      throw it;
+    };
+
+    module.exports = function (METHOD_NAME, options) {
+      if (has(cache, METHOD_NAME)) return cache[METHOD_NAME];
+      if (!options) options = {};
+      var method = [][METHOD_NAME];
+      var ACCESSORS = has(options, 'ACCESSORS') ? options.ACCESSORS : false;
+      var argument0 = has(options, 0) ? options[0] : thrower;
+      var argument1 = has(options, 1) ? options[1] : undefined;
+      return cache[METHOD_NAME] = !!method && !fails(function () {
+        if (ACCESSORS && !DESCRIPTORS) return true;
+        var O = {
+          length: -1
+        };
+        if (ACCESSORS) defineProperty(O, 1, {
+          enumerable: true,
+          get: thrower
+        });else O[1] = 1;
+        method.call(O, argument0, argument1);
       });
     };
     /***/
@@ -365,57 +409,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }
 
       return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
-    };
-    /***/
-
-  },
-
-  /***/
-  "./node_modules/core-js/internals/bind-context.js":
-  /*!********************************************************!*\
-    !*** ./node_modules/core-js/internals/bind-context.js ***!
-    \********************************************************/
-
-  /*! no static exports found */
-
-  /***/
-  function node_modulesCoreJsInternalsBindContextJs(module, exports, __webpack_require__) {
-    var aFunction = __webpack_require__(
-    /*! ../internals/a-function */
-    "./node_modules/core-js/internals/a-function.js"); // optional / simple context binding
-
-
-    module.exports = function (fn, that, length) {
-      aFunction(fn);
-      if (that === undefined) return fn;
-
-      switch (length) {
-        case 0:
-          return function () {
-            return fn.call(that);
-          };
-
-        case 1:
-          return function (a) {
-            return fn.call(that, a);
-          };
-
-        case 2:
-          return function (a, b) {
-            return fn.call(that, a, b);
-          };
-
-        case 3:
-          return function (a, b, c) {
-            return fn.call(that, a, b, c);
-          };
-      }
-
-      return function ()
-      /* ...args */
-      {
-        return fn.apply(that, arguments);
-      };
     };
     /***/
 
@@ -481,6 +474,37 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
+  "./node_modules/core-js/internals/create-non-enumerable-property.js":
+  /*!**************************************************************************!*\
+    !*** ./node_modules/core-js/internals/create-non-enumerable-property.js ***!
+    \**************************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsCreateNonEnumerablePropertyJs(module, exports, __webpack_require__) {
+    var DESCRIPTORS = __webpack_require__(
+    /*! ../internals/descriptors */
+    "./node_modules/core-js/internals/descriptors.js");
+
+    var definePropertyModule = __webpack_require__(
+    /*! ../internals/object-define-property */
+    "./node_modules/core-js/internals/object-define-property.js");
+
+    var createPropertyDescriptor = __webpack_require__(
+    /*! ../internals/create-property-descriptor */
+    "./node_modules/core-js/internals/create-property-descriptor.js");
+
+    module.exports = DESCRIPTORS ? function (object, key, value) {
+      return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+    } : function (object, key, value) {
+      object[key] = value;
+      return object;
+    };
+    /***/
+  },
+
+  /***/
   "./node_modules/core-js/internals/create-property-descriptor.js":
   /*!**********************************************************************!*\
     !*** ./node_modules/core-js/internals/create-property-descriptor.js ***!
@@ -518,11 +542,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
     module.exports = !fails(function () {
-      return Object.defineProperty({}, 'a', {
+      return Object.defineProperty({}, 1, {
         get: function get() {
           return 7;
         }
-      }).a != 7;
+      })[1] != 7;
     });
     /***/
   },
@@ -554,6 +578,63 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     };
     /***/
 
+  },
+
+  /***/
+  "./node_modules/core-js/internals/engine-user-agent.js":
+  /*!*************************************************************!*\
+    !*** ./node_modules/core-js/internals/engine-user-agent.js ***!
+    \*************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsEngineUserAgentJs(module, exports, __webpack_require__) {
+    var getBuiltIn = __webpack_require__(
+    /*! ../internals/get-built-in */
+    "./node_modules/core-js/internals/get-built-in.js");
+
+    module.exports = getBuiltIn('navigator', 'userAgent') || '';
+    /***/
+  },
+
+  /***/
+  "./node_modules/core-js/internals/engine-v8-version.js":
+  /*!*************************************************************!*\
+    !*** ./node_modules/core-js/internals/engine-v8-version.js ***!
+    \*************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsEngineV8VersionJs(module, exports, __webpack_require__) {
+    var global = __webpack_require__(
+    /*! ../internals/global */
+    "./node_modules/core-js/internals/global.js");
+
+    var userAgent = __webpack_require__(
+    /*! ../internals/engine-user-agent */
+    "./node_modules/core-js/internals/engine-user-agent.js");
+
+    var process = global.process;
+    var versions = process && process.versions;
+    var v8 = versions && versions.v8;
+    var match, version;
+
+    if (v8) {
+      match = v8.split('.');
+      version = match[0] + match[1];
+    } else if (userAgent) {
+      match = userAgent.match(/Edge\/(\d+)/);
+
+      if (!match || match[1] >= 74) {
+        match = userAgent.match(/Chrome\/(\d+)/);
+        if (match) version = match[1];
+      }
+    }
+
+    module.exports = version && +version;
+    /***/
   },
 
   /***/
@@ -589,9 +670,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/object-get-own-property-descriptor */
     "./node_modules/core-js/internals/object-get-own-property-descriptor.js").f;
 
-    var hide = __webpack_require__(
-    /*! ../internals/hide */
-    "./node_modules/core-js/internals/hide.js");
+    var createNonEnumerableProperty = __webpack_require__(
+    /*! ../internals/create-non-enumerable-property */
+    "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
     var redefine = __webpack_require__(
     /*! ../internals/redefine */
@@ -655,7 +736,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
         if (options.sham || targetProperty && targetProperty.sham) {
-          hide(sourceProperty, 'sham', true);
+          createNonEnumerableProperty(sourceProperty, 'sham', true);
         } // extend global
 
 
@@ -688,21 +769,54 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
-  "./node_modules/core-js/internals/function-to-string.js":
-  /*!**************************************************************!*\
-    !*** ./node_modules/core-js/internals/function-to-string.js ***!
-    \**************************************************************/
+  "./node_modules/core-js/internals/function-bind-context.js":
+  /*!*****************************************************************!*\
+    !*** ./node_modules/core-js/internals/function-bind-context.js ***!
+    \*****************************************************************/
 
   /*! no static exports found */
 
   /***/
-  function node_modulesCoreJsInternalsFunctionToStringJs(module, exports, __webpack_require__) {
-    var shared = __webpack_require__(
-    /*! ../internals/shared */
-    "./node_modules/core-js/internals/shared.js");
+  function node_modulesCoreJsInternalsFunctionBindContextJs(module, exports, __webpack_require__) {
+    var aFunction = __webpack_require__(
+    /*! ../internals/a-function */
+    "./node_modules/core-js/internals/a-function.js"); // optional / simple context binding
 
-    module.exports = shared('native-function-to-string', Function.toString);
+
+    module.exports = function (fn, that, length) {
+      aFunction(fn);
+      if (that === undefined) return fn;
+
+      switch (length) {
+        case 0:
+          return function () {
+            return fn.call(that);
+          };
+
+        case 1:
+          return function (a) {
+            return fn.call(that, a);
+          };
+
+        case 2:
+          return function (a, b) {
+            return fn.call(that, a, b);
+          };
+
+        case 3:
+          return function (a, b, c) {
+            return fn.call(that, a, b, c);
+          };
+      }
+
+      return function ()
+      /* ...args */
+      {
+        return fn.apply(that, arguments);
+      };
+    };
     /***/
+
   },
 
   /***/
@@ -744,15 +858,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function node_modulesCoreJsInternalsGlobalJs(module, exports) {
-    var O = 'object';
-
     var check = function check(it) {
       return it && it.Math == Math && it;
     }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
     module.exports = // eslint-disable-next-line no-undef
-    check(typeof globalThis == O && globalThis) || check(typeof window == O && window) || check(typeof self == O && self) || check(typeof global == O && global) || // eslint-disable-next-line no-new-func
+    check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof global == 'object' && global) || // eslint-disable-next-line no-new-func
     Function('return this')();
     /***/
   },
@@ -787,37 +899,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   /***/
   function node_modulesCoreJsInternalsHiddenKeysJs(module, exports) {
     module.exports = {};
-    /***/
-  },
-
-  /***/
-  "./node_modules/core-js/internals/hide.js":
-  /*!************************************************!*\
-    !*** ./node_modules/core-js/internals/hide.js ***!
-    \************************************************/
-
-  /*! no static exports found */
-
-  /***/
-  function node_modulesCoreJsInternalsHideJs(module, exports, __webpack_require__) {
-    var DESCRIPTORS = __webpack_require__(
-    /*! ../internals/descriptors */
-    "./node_modules/core-js/internals/descriptors.js");
-
-    var definePropertyModule = __webpack_require__(
-    /*! ../internals/object-define-property */
-    "./node_modules/core-js/internals/object-define-property.js");
-
-    var createPropertyDescriptor = __webpack_require__(
-    /*! ../internals/create-property-descriptor */
-    "./node_modules/core-js/internals/create-property-descriptor.js");
-
-    module.exports = DESCRIPTORS ? function (object, key, value) {
-      return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
-    } : function (object, key, value) {
-      object[key] = value;
-      return object;
-    };
     /***/
   },
 
@@ -903,6 +984,32 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
+  "./node_modules/core-js/internals/inspect-source.js":
+  /*!**********************************************************!*\
+    !*** ./node_modules/core-js/internals/inspect-source.js ***!
+    \**********************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsInspectSourceJs(module, exports, __webpack_require__) {
+    var store = __webpack_require__(
+    /*! ../internals/shared-store */
+    "./node_modules/core-js/internals/shared-store.js");
+
+    var functionToString = Function.toString; // this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
+
+    if (typeof store.inspectSource != 'function') {
+      store.inspectSource = function (it) {
+        return functionToString.call(it);
+      };
+    }
+
+    module.exports = store.inspectSource;
+    /***/
+  },
+
+  /***/
   "./node_modules/core-js/internals/internal-state.js":
   /*!**********************************************************!*\
     !*** ./node_modules/core-js/internals/internal-state.js ***!
@@ -924,9 +1031,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/is-object */
     "./node_modules/core-js/internals/is-object.js");
 
-    var hide = __webpack_require__(
-    /*! ../internals/hide */
-    "./node_modules/core-js/internals/hide.js");
+    var createNonEnumerableProperty = __webpack_require__(
+    /*! ../internals/create-non-enumerable-property */
+    "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
     var objectHas = __webpack_require__(
     /*! ../internals/has */
@@ -982,7 +1089,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       hiddenKeys[STATE] = true;
 
       set = function set(it, metadata) {
-        hide(it, STATE, metadata);
+        createNonEnumerableProperty(it, STATE, metadata);
         return metadata;
       };
 
@@ -1127,12 +1234,12 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/global */
     "./node_modules/core-js/internals/global.js");
 
-    var nativeFunctionToString = __webpack_require__(
-    /*! ../internals/function-to-string */
-    "./node_modules/core-js/internals/function-to-string.js");
+    var inspectSource = __webpack_require__(
+    /*! ../internals/inspect-source */
+    "./node_modules/core-js/internals/inspect-source.js");
 
     var WeakMap = global.WeakMap;
-    module.exports = typeof WeakMap === 'function' && /native code/.test(nativeFunctionToString.call(WeakMap));
+    module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
     /***/
   },
 
@@ -1174,57 +1281,88 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/shared-key */
     "./node_modules/core-js/internals/shared-key.js");
 
-    var IE_PROTO = sharedKey('IE_PROTO');
+    var GT = '>';
+    var LT = '<';
     var PROTOTYPE = 'prototype';
+    var SCRIPT = 'script';
+    var IE_PROTO = sharedKey('IE_PROTO');
 
-    var Empty = function Empty() {
+    var EmptyConstructor = function EmptyConstructor() {
       /* empty */
+    };
+
+    var scriptTag = function scriptTag(content) {
+      return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+    }; // Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+
+
+    var NullProtoObjectViaActiveX = function NullProtoObjectViaActiveX(activeXDocument) {
+      activeXDocument.write(scriptTag(''));
+      activeXDocument.close();
+      var temp = activeXDocument.parentWindow.Object;
+      activeXDocument = null; // avoid memory leak
+
+      return temp;
     }; // Create object with fake `null` prototype: use iframe Object with cleared prototype
 
 
-    var _createDict = function createDict() {
+    var NullProtoObjectViaIFrame = function NullProtoObjectViaIFrame() {
       // Thrash, waste and sodomy: IE GC bug
       var iframe = documentCreateElement('iframe');
-      var length = enumBugKeys.length;
-      var lt = '<';
-      var script = 'script';
-      var gt = '>';
-      var js = 'java' + script + ':';
+      var JS = 'java' + SCRIPT + ':';
       var iframeDocument;
       iframe.style.display = 'none';
-      html.appendChild(iframe);
-      iframe.src = String(js);
+      html.appendChild(iframe); // https://github.com/zloirock/core-js/issues/475
+
+      iframe.src = String(JS);
       iframeDocument = iframe.contentWindow.document;
       iframeDocument.open();
-      iframeDocument.write(lt + script + gt + 'document.F=Object' + lt + '/' + script + gt);
+      iframeDocument.write(scriptTag('document.F=Object'));
       iframeDocument.close();
-      _createDict = iframeDocument.F;
+      return iframeDocument.F;
+    }; // Check for document.domain and active x support
+    // No need to use active x approach when document.domain is not set
+    // see https://github.com/es-shims/es5-shim/issues/150
+    // variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+    // avoid IE GC bug
 
-      while (length--) {
-        delete _createDict[PROTOTYPE][enumBugKeys[length]];
+
+    var activeXDocument;
+
+    var _NullProtoObject = function NullProtoObject() {
+      try {
+        /* global ActiveXObject */
+        activeXDocument = document.domain && new ActiveXObject('htmlfile');
+      } catch (error) {
+        /* ignore */
       }
 
-      return _createDict();
-    }; // `Object.create` method
-    // https://tc39.github.io/ecma262/#sec-object.create
+      _NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+      var length = enumBugKeys.length;
 
+      while (length--) delete _NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+
+      return _NullProtoObject();
+    };
+
+    hiddenKeys[IE_PROTO] = true; // `Object.create` method
+    // https://tc39.github.io/ecma262/#sec-object.create
 
     module.exports = Object.create || function create(O, Properties) {
       var result;
 
       if (O !== null) {
-        Empty[PROTOTYPE] = anObject(O);
-        result = new Empty();
-        Empty[PROTOTYPE] = null; // add "__proto__" for Object.getPrototypeOf polyfill
+        EmptyConstructor[PROTOTYPE] = anObject(O);
+        result = new EmptyConstructor();
+        EmptyConstructor[PROTOTYPE] = null; // add "__proto__" for Object.getPrototypeOf polyfill
 
         result[IE_PROTO] = O;
-      } else result = _createDict();
+      } else result = _NullProtoObject();
 
       return Properties === undefined ? result : defineProperties(result, Properties);
     };
-
-    hiddenKeys[IE_PROTO] = true;
     /***/
+
   },
 
   /***/
@@ -1262,9 +1400,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var index = 0;
       var key;
 
-      while (length > index) {
-        definePropertyModule.f(O, key = keys[index++], Properties[key]);
-      }
+      while (length > index) definePropertyModule.f(O, key = keys[index++], Properties[key]);
 
       return O;
     };
@@ -1444,15 +1580,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var result = [];
       var key;
 
-      for (key in O) {
-        !has(hiddenKeys, key) && has(O, key) && result.push(key);
-      } // Don't enum bug & hidden keys
+      for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key); // Don't enum bug & hidden keys
 
 
-      while (names.length > i) {
-        if (has(O, key = names[i++])) {
-          ~indexOf(result, key) || result.push(key);
-        }
+      while (names.length > i) if (has(O, key = names[i++])) {
+        ~indexOf(result, key) || result.push(key);
       }
 
       return result;
@@ -1561,9 +1693,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function node_modulesCoreJsInternalsPathJs(module, exports, __webpack_require__) {
-    module.exports = __webpack_require__(
+    var global = __webpack_require__(
     /*! ../internals/global */
     "./node_modules/core-js/internals/global.js");
+
+    module.exports = global;
     /***/
   },
 
@@ -1581,13 +1715,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/global */
     "./node_modules/core-js/internals/global.js");
 
-    var shared = __webpack_require__(
-    /*! ../internals/shared */
-    "./node_modules/core-js/internals/shared.js");
-
-    var hide = __webpack_require__(
-    /*! ../internals/hide */
-    "./node_modules/core-js/internals/hide.js");
+    var createNonEnumerableProperty = __webpack_require__(
+    /*! ../internals/create-non-enumerable-property */
+    "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
     var has = __webpack_require__(
     /*! ../internals/has */
@@ -1597,9 +1727,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/set-global */
     "./node_modules/core-js/internals/set-global.js");
 
-    var nativeFunctionToString = __webpack_require__(
-    /*! ../internals/function-to-string */
-    "./node_modules/core-js/internals/function-to-string.js");
+    var inspectSource = __webpack_require__(
+    /*! ../internals/inspect-source */
+    "./node_modules/core-js/internals/inspect-source.js");
 
     var InternalStateModule = __webpack_require__(
     /*! ../internals/internal-state */
@@ -1607,17 +1737,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     var getInternalState = InternalStateModule.get;
     var enforceInternalState = InternalStateModule.enforce;
-    var TEMPLATE = String(nativeFunctionToString).split('toString');
-    shared('inspectSource', function (it) {
-      return nativeFunctionToString.call(it);
-    });
+    var TEMPLATE = String(String).split('String');
     (module.exports = function (O, key, value, options) {
       var unsafe = options ? !!options.unsafe : false;
       var simple = options ? !!options.enumerable : false;
       var noTargetGet = options ? !!options.noTargetGet : false;
 
       if (typeof value == 'function') {
-        if (typeof key == 'string' && !has(value, 'name')) hide(value, 'name', key);
+        if (typeof key == 'string' && !has(value, 'name')) createNonEnumerableProperty(value, 'name', key);
         enforceInternalState(value).source = TEMPLATE.join(typeof key == 'string' ? key : '');
       }
 
@@ -1630,9 +1757,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         simple = true;
       }
 
-      if (simple) O[key] = value;else hide(O, key, value); // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+      if (simple) O[key] = value;else createNonEnumerableProperty(O, key, value); // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
     })(Function.prototype, 'toString', function toString() {
-      return typeof this == 'function' && getInternalState(this).source || nativeFunctionToString.call(this);
+      return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
     });
     /***/
   },
@@ -1671,13 +1798,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/global */
     "./node_modules/core-js/internals/global.js");
 
-    var hide = __webpack_require__(
-    /*! ../internals/hide */
-    "./node_modules/core-js/internals/hide.js");
+    var createNonEnumerableProperty = __webpack_require__(
+    /*! ../internals/create-non-enumerable-property */
+    "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
     module.exports = function (key, value) {
       try {
-        hide(global, key, value);
+        createNonEnumerableProperty(global, key, value);
       } catch (error) {
         global[key] = value;
       }
@@ -1716,6 +1843,30 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
+  "./node_modules/core-js/internals/shared-store.js":
+  /*!********************************************************!*\
+    !*** ./node_modules/core-js/internals/shared-store.js ***!
+    \********************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsSharedStoreJs(module, exports, __webpack_require__) {
+    var global = __webpack_require__(
+    /*! ../internals/global */
+    "./node_modules/core-js/internals/global.js");
+
+    var setGlobal = __webpack_require__(
+    /*! ../internals/set-global */
+    "./node_modules/core-js/internals/set-global.js");
+
+    var SHARED = '__core-js_shared__';
+    var store = global[SHARED] || setGlobal(SHARED, {});
+    module.exports = store;
+    /***/
+  },
+
+  /***/
   "./node_modules/core-js/internals/shared.js":
   /*!**************************************************!*\
     !*** ./node_modules/core-js/internals/shared.js ***!
@@ -1725,26 +1876,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function node_modulesCoreJsInternalsSharedJs(module, exports, __webpack_require__) {
-    var global = __webpack_require__(
-    /*! ../internals/global */
-    "./node_modules/core-js/internals/global.js");
-
-    var setGlobal = __webpack_require__(
-    /*! ../internals/set-global */
-    "./node_modules/core-js/internals/set-global.js");
-
     var IS_PURE = __webpack_require__(
     /*! ../internals/is-pure */
     "./node_modules/core-js/internals/is-pure.js");
 
-    var SHARED = '__core-js_shared__';
-    var store = global[SHARED] || setGlobal(SHARED, {});
+    var store = __webpack_require__(
+    /*! ../internals/shared-store */
+    "./node_modules/core-js/internals/shared-store.js");
+
     (module.exports = function (key, value) {
       return store[key] || (store[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.2.1',
+      version: '3.6.4',
       mode: IS_PURE ? 'pure' : 'global',
-      copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+      copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
     });
     /***/
   },
@@ -1766,7 +1911,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     var max = Math.max;
     var min = Math.min; // Helper for a popular repeating case of the spec:
     // Let integer be ? ToInteger(index).
-    // If integer < 0, let result be max((length + integer), 0); else let result be min(length, length).
+    // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 
     module.exports = function (index, length) {
       var integer = toInteger(index);
@@ -1921,6 +2066,26 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   },
 
   /***/
+  "./node_modules/core-js/internals/use-symbol-as-uid.js":
+  /*!*************************************************************!*\
+    !*** ./node_modules/core-js/internals/use-symbol-as-uid.js ***!
+    \*************************************************************/
+
+  /*! no static exports found */
+
+  /***/
+  function node_modulesCoreJsInternalsUseSymbolAsUidJs(module, exports, __webpack_require__) {
+    var NATIVE_SYMBOL = __webpack_require__(
+    /*! ../internals/native-symbol */
+    "./node_modules/core-js/internals/native-symbol.js");
+
+    module.exports = NATIVE_SYMBOL // eslint-disable-next-line no-undef
+    && !Symbol.sham // eslint-disable-next-line no-undef
+    && typeof Symbol.iterator == 'symbol';
+    /***/
+  },
+
+  /***/
   "./node_modules/core-js/internals/well-known-symbol.js":
   /*!*************************************************************!*\
     !*** ./node_modules/core-js/internals/well-known-symbol.js ***!
@@ -1938,6 +2103,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/shared */
     "./node_modules/core-js/internals/shared.js");
 
+    var has = __webpack_require__(
+    /*! ../internals/has */
+    "./node_modules/core-js/internals/has.js");
+
     var uid = __webpack_require__(
     /*! ../internals/uid */
     "./node_modules/core-js/internals/uid.js");
@@ -1946,11 +2115,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/native-symbol */
     "./node_modules/core-js/internals/native-symbol.js");
 
+    var USE_SYMBOL_AS_UID = __webpack_require__(
+    /*! ../internals/use-symbol-as-uid */
+    "./node_modules/core-js/internals/use-symbol-as-uid.js");
+
+    var WellKnownSymbolsStore = shared('wks');
     var Symbol = global.Symbol;
-    var store = shared('wks');
+    var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
 
     module.exports = function (name) {
-      return store[name] || (store[name] = NATIVE_SYMBOL && Symbol[name] || (NATIVE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+      if (!has(WellKnownSymbolsStore, name)) {
+        if (NATIVE_SYMBOL && has(Symbol, name)) WellKnownSymbolsStore[name] = Symbol[name];else WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+      }
+
+      return WellKnownSymbolsStore[name];
     };
     /***/
 
@@ -1978,15 +2156,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     var arrayMethodHasSpeciesSupport = __webpack_require__(
     /*! ../internals/array-method-has-species-support */
-    "./node_modules/core-js/internals/array-method-has-species-support.js"); // `Array.prototype.filter` method
+    "./node_modules/core-js/internals/array-method-has-species-support.js");
+
+    var arrayMethodUsesToLength = __webpack_require__(
+    /*! ../internals/array-method-uses-to-length */
+    "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+    var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter'); // Edge 14- issue
+
+    var USES_TO_LENGTH = arrayMethodUsesToLength('filter'); // `Array.prototype.filter` method
     // https://tc39.github.io/ecma262/#sec-array.prototype.filter
     // with adding support of @@species
-
 
     $({
       target: 'Array',
       proto: true,
-      forced: !arrayMethodHasSpeciesSupport('filter')
+      forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH
     }, {
       filter: function filter(callbackfn
       /* , thisArg */
@@ -2021,8 +2206,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*! ../internals/add-to-unscopables */
     "./node_modules/core-js/internals/add-to-unscopables.js");
 
+    var arrayMethodUsesToLength = __webpack_require__(
+    /*! ../internals/array-method-uses-to-length */
+    "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
     var FIND = 'find';
-    var SKIPS_HOLES = true; // Shouldn't skip holes
+    var SKIPS_HOLES = true;
+    var USES_TO_LENGTH = arrayMethodUsesToLength(FIND); // Shouldn't skip holes
 
     if (FIND in []) Array(1)[FIND](function () {
       SKIPS_HOLES = false;
@@ -2032,7 +2222,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     $({
       target: 'Array',
       proto: true,
-      forced: SKIPS_HOLES
+      forced: SKIPS_HOLES || !USES_TO_LENGTH
     }, {
       find: function find(callbackfn
       /* , that = undefined */
@@ -2067,15 +2257,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     var arrayMethodHasSpeciesSupport = __webpack_require__(
     /*! ../internals/array-method-has-species-support */
-    "./node_modules/core-js/internals/array-method-has-species-support.js"); // `Array.prototype.map` method
+    "./node_modules/core-js/internals/array-method-has-species-support.js");
+
+    var arrayMethodUsesToLength = __webpack_require__(
+    /*! ../internals/array-method-uses-to-length */
+    "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+    var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map'); // FF49- issue
+
+    var USES_TO_LENGTH = arrayMethodUsesToLength('map'); // `Array.prototype.map` method
     // https://tc39.github.io/ecma262/#sec-array.prototype.map
     // with adding support of @@species
-
 
     $({
       target: 'Array',
       proto: true,
-      forced: !arrayMethodHasSpeciesSupport('map')
+      forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH
     }, {
       map: function map(callbackfn
       /* , thisArg */
@@ -2102,7 +2299,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <p>payload:</p>\n                        <ace-editor #pleditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n";
+    __webpack_exports__["default"] = "\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Payload\">\n                            <ace-editor #pleditor style=\"height:350px;\">\n                            </ace-editor>\n                          </mat-tab>\n                          <mat-tab label=\"Resource\">\n                            <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                            <ace-editor #rseditor style=\"height:290px;\">\n                            </ace-editor>\n                          </mat-tab>\n                        \n                        </mat-tab-group>\n                        \n\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n";
     /***/
   },
 
@@ -2263,9 +2460,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       } instanceof Array && function (d, b) {
         d.__proto__ = b;
       } || function (d, b) {
-        for (var p in b) {
-          if (b.hasOwnProperty(p)) d[p] = b[p];
-        }
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
       };
 
       return _extendStatics(d, b);
@@ -2286,9 +2481,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
 
-          for (var p in s) {
-            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-          }
+          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
 
         return t;
@@ -2300,9 +2493,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function __rest(s, e) {
       var t = {};
 
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
 
       if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
@@ -2314,9 +2505,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       var c = arguments.length,
           r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
           d;
-      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
-        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-      }
+      if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
       return c > 3 && r && Object.defineProperty(target, key, r), r;
     }
 
@@ -2389,76 +2578,74 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
 
-        while (_) {
-          try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
+        while (_) try {
+          if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+          if (y = 0, t) op = [op[0] & 2, t.value];
 
-            switch (op[0]) {
-              case 0:
-              case 1:
+          switch (op[0]) {
+            case 0:
+            case 1:
+              t = op;
+              break;
+
+            case 4:
+              _.label++;
+              return {
+                value: op[1],
+                done: false
+              };
+
+            case 5:
+              _.label++;
+              y = op[1];
+              op = [0];
+              continue;
+
+            case 7:
+              op = _.ops.pop();
+
+              _.trys.pop();
+
+              continue;
+
+            default:
+              if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                _ = 0;
+                continue;
+              }
+
+              if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                _.label = op[1];
+                break;
+              }
+
+              if (op[0] === 6 && _.label < t[1]) {
+                _.label = t[1];
                 t = op;
                 break;
+              }
 
-              case 4:
-                _.label++;
-                return {
-                  value: op[1],
-                  done: false
-                };
+              if (t && _.label < t[2]) {
+                _.label = t[2];
 
-              case 5:
-                _.label++;
-                y = op[1];
-                op = [0];
-                continue;
+                _.ops.push(op);
 
-              case 7:
-                op = _.ops.pop();
+                break;
+              }
 
-                _.trys.pop();
+              if (t[2]) _.ops.pop();
 
-                continue;
+              _.trys.pop();
 
-              default:
-                if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                  _ = 0;
-                  continue;
-                }
-
-                if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-                  _.label = op[1];
-                  break;
-                }
-
-                if (op[0] === 6 && _.label < t[1]) {
-                  _.label = t[1];
-                  t = op;
-                  break;
-                }
-
-                if (t && _.label < t[2]) {
-                  _.label = t[2];
-
-                  _.ops.push(op);
-
-                  break;
-                }
-
-                if (t[2]) _.ops.pop();
-
-                _.trys.pop();
-
-                continue;
-            }
-
-            op = body.call(thisArg, _);
-          } catch (e) {
-            op = [6, e];
-            y = 0;
-          } finally {
-            f = t = 0;
+              continue;
           }
+
+          op = body.call(thisArg, _);
+        } catch (e) {
+          op = [6, e];
+          y = 0;
+        } finally {
+          f = t = 0;
         }
 
         if (op[0] & 5) throw op[1];
@@ -2470,9 +2657,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function __exportStar(m, exports) {
-      for (var p in m) {
-        if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-      }
+      for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
     }
 
     function __values(o) {
@@ -2499,9 +2684,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           e;
 
       try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) {
-          ar.push(r.value);
-        }
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
       } catch (error) {
         e = {
           error: error
@@ -2518,23 +2701,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function __spread() {
-      for (var ar = [], i = 0; i < arguments.length; i++) {
-        ar = ar.concat(__read(arguments[i]));
-      }
+      for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
 
       return ar;
     }
 
     function __spreadArrays() {
-      for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-        s += arguments[i].length;
-      }
+      for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
 
-      for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-          r[k] = a[j];
-        }
-      }
+      for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
 
       return r;
     }
@@ -2648,9 +2823,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function __importStar(mod) {
       if (mod && mod.__esModule) return mod;
       var result = {};
-      if (mod != null) for (var k in mod) {
-        if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-      }
+      if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
       result.default = mod;
       return result;
     }
@@ -2721,103 +2894,125 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! ./dweeve/src/exe/dweeve.js */
     "./src/app/dweeve/src/exe/dweeve.js");
+    /* harmony import */
 
-    var AppComponent =
+
+    var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    /*! ./dweeve/src/functions/core.js */
+    "./src/app/dweeve/src/functions/core.js");
+    /* harmony import */
+
+
+    var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3___default =
     /*#__PURE__*/
-    function () {
-      function AppComponent() {
-        _classCallCheck(this, AppComponent);
+    __webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__);
 
+    let AppComponent = class AppComponent {
+      constructor() {
         this.title = 'dweeve-ui';
         this.exampleBar = false;
+        this.resourceNameText = '';
+        this.examples = {};
       }
 
-      _createClass(AppComponent, [{
-        key: "ngOnInit",
-        value: function ngOnInit() {}
-      }, {
-        key: "toggleExampleBar",
-        value: function toggleExampleBar() {
-          this.exampleBar = !this.exampleBar;
-        }
-      }, {
-        key: "ngAfterViewInit",
-        value: function ngAfterViewInit() {
-          var _this = this;
+      ngOnInit() {
+        this.createExamples();
+      }
 
-          this.dweditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-          });
-          this.dweditor.theme = 'clouds';
-          this.dweditor.text = "%dw 2.0\n    var a = 2 * 3 + 4\n    var b = 2 + 3 * 4\n    ---\n    {a:a, b: b}\n    ";
-          this.dweditor.registerOnChange(function () {
-            _this.reDweeve();
-          });
-          this.pleditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-          });
-          this.pleditor.theme = 'clouds';
-          this.pleditor.text = "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n    <basic>9.99</basic>\n    <premium>53.01</premium>\n    <vip>398.99</vip>\n</prices>";
-          this.pleditor.registerOnChange(function () {
-            _this.reDweeve();
-          });
-          this.reditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-          });
-          this.reditor.theme = 'clouds';
+      toggleExampleBar() {
+        this.exampleBar = !this.exampleBar;
+      }
+
+      ngAfterViewInit() {
+        this.dweditor.getEditor().setOptions({
+          showLineNumbers: true,
+          tabSize: 2
+        });
+        this.dweditor.theme = 'clouds';
+        this.dweditor.registerOnChange(() => {
           this.reDweeve();
+        });
+        this.pleditor.getEditor().setOptions({
+          showLineNumbers: true,
+          tabSize: 2
+        });
+        this.pleditor.theme = 'clouds';
+        this.pleditor.registerOnChange(() => {
+          this.reDweeve();
+        });
+        this.reditor.theme = 'clouds';
+        this.reditor.getEditor().setOptions({
+          showLineNumbers: true,
+          tabSize: 2
+        });
+        this.rseditor.theme = 'clouds';
+        this.rseditor.getEditor().setOptions({
+          showLineNumbers: true,
+          tabSize: 2
+        });
+        this.rseditor.registerOnChange(() => {
+          this.reDweeve();
+        });
+        this.toggleExampleBar();
+        this.loadExample('Simple function');
+      }
+
+      reDweeve() {
+        _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
+
+        this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
+      }
+
+      loadExample(name) {
+        if (this.examples[name]) {
+          const example = this.examples[name];
+          this.reditor.text = '';
+          this.rseditor.text = example.resourceText !== undefined ? example.resourceText : '';
+          this.resourceNameText = example.resourceName !== undefined ? example.resourceName : '';
+          this.pleditor.text = example.payload !== undefined ? example.payload : '';
+          this.dweditor.text = example.dwl !== undefined ? example.dwl : '';
+          this.toggleExampleBar();
         }
-      }, {
-        key: "reDweeve",
-        value: function reDweeve() {
-          this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
-        }
-      }, {
-        key: "loadExample",
-        value: function loadExample(exName) {
-          if (exName === 'Simple function') {
-            this.dweditor.text = "%dw 2.0\nfun toUser(obj) = {\n  firstName: obj.field1,\n  lastName: obj.field2\n}\n\n---\ntoUser(payload)";
-            this.pleditor.text = "{\n  \"field1\": \"Bob\",\n  \"field2\": \"Jones\"\n}";
-          }
+      }
 
-          if (exName === 'Get people') {
-            this.dweditor.text = "%dw 2.0\n\noutput application/json\n---\npayload.people.person.address.street";
-            this.pleditor.text = "{\n\"people\": [\n    {\n    \"person\": {\n        \"name\": \"Nial\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Italia\",\n            \"number\": 2164\n        },\n        \"area\": {\n            \"zone\": \"San Isidro\",\n            \"name\": \"Martinez\"\n        }\n        }\n    }\n    },\n    {\n    \"person\": {\n        \"name\": \"Coty\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Monroe\",\n            \"number\": 323\n        },\n        \"area\": {\n            \"zone\": \"BA\",\n            \"name\": \"Belgrano\"\n        }\n        }\n    }\n    }\n]\n}";
-          }
+      createExamples() {
+        this.examples['Simple function'] = {
+          "dwl": "%dw 2.0\nfun toUser(obj) = {\n  firstName: obj.field1,\n  lastName: obj.field2\n}\n---\ntoUser(payload)",
+          "payload": "{\n  \"field1\": \"Bob\",\n  \"field2\": \"Jones\"\n}"
+        };
+        this.examples['Get people'] = {
+          "dwl": "%dw 2.0\n\noutput application/json\n---\npayload.people.person.address.street",
+          "payload": "{\n\"people\": [\n    {\n    \"person\": {\n        \"name\": \"Nial\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Italia\",\n            \"number\": 2164\n        },\n        \"area\": {\n            \"zone\": \"San Isidro\",\n            \"name\": \"Martinez\"\n        }\n        }\n    }\n    },\n    {\n    \"person\": {\n        \"name\": \"Coty\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Monroe\",\n            \"number\": 323\n        },\n        \"area\": {\n            \"zone\": \"BA\",\n            \"name\": \"Belgrano\"\n        }\n        }\n    }\n    }\n]\n}"
+        };
+        this.examples['All descendents'] = {
+          "dwl": "%dw 2.0\noutput application/json\n---\npayload.users..*name",
+          "payload": "{ \"users\" : {\n  \"user\": {\"name\":\"a\"},\n  \"user\": {\"name\":\"b\"},\n  \"user\": {\"name\":\"c\", \"name\":\"d\"}\n  }\n}"
+        };
+        this.examples['Mixed matching'] = {
+          "dwl": "%dw 2.0\n---\n{\n  a: payload.string match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  b: payload.bool match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  c: payload.name match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  d: payload.object match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  e: payload.strings match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  f: payload.object.name match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  g: payload.bangtest match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  h: payload.number match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  }\n}",
+          "payload": "{ \"string\": \"hello fred\", \"number\": 90,\n      \"object\" : {\"name\" : \"bob\"}, \"bool\" : true,\n      \"name\" : \"Emiliano\", \"strings\" : \"strings\", \"bangtest\" : \"bang\"}"
+        };
+        this.examples['Simple Lambda'] = {
+          "dwl": "%dw 2.0\nvar myLambda = (a,b)-> { (a) : b}\n---\nmyLambda(\"key\",\"value\")",
+          "payload": ""
+        };
+        this.examples['Do scope'] = {
+          "dwl": "%dw 2.0\noutput application/json\nfun test(p) = do {\n    var a = \"Foo\" ++ p\n    ---\n    a\n}\n---\n{ result: test(\" Bar\") }",
+          "payload": ""
+        };
+        this.examples['Xml input'] = {
+          "dwl": "%dw 2.0\noutput application/xml\n---\n{\n    prices: payload.prices mapObject (value, key) -> {\n        (key): (value + 5)\n    }\n}",
+          "payload": "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n    <basic>14.99</basic>\n    <premium>53.01</premium>\n    <vip>398.99</vip>\n</prices>"
+        };
+        this.examples['Recursion!'] = {
+          "payload": "{\n        \"command\":{\n          \"version\":\"1.0.0\",\n          \"user\":\"ian\",\n          \"commandDate\":\"2019-10-20T11:15:30\",\n          \"response\":[\n            {\n              \"object\":{\n                \"type\":\"policyHeader\",\n                \"schema\":\"policyHeader\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"PH001\",\n                \"content\":{\n                  \"polifcyRef\":\"xyz-124\",\n                  \"inceptionDate\":\"2019-11-01T00:00:00\",\n                  \"expiryDate\":\"2020-10-31T23:59:59\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"customer\",\n                \"schema\":\"customer\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"CU001\",\n                \"content\":{\n                  \"extRef\":\"sf00001abc\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"broker\",\n                \"schema\":\"broker\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"BR001\",\n                \"content\":{\n                  \"brokerRef\":\"br00111\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"coverage\",\n                \"schema\":\"coverage\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"CV001\",\n                \"content\":{\n                  \"coverageRef\":\"covRef00111\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"insuredObject\",\n                \"schema\":\"insuredObject\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"IO001\",\n                \"content\":{\n                  \"insuredType\":\"motor\",\n                  \"make\":\"Ford\",\n                  \"model\":\"Fiesta\",\n                  \"engine\": \"2.0\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"insuredObject\",\n                \"schema\":\"insuredObject\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"IO002\",\n                \"content\":{\n                  \"insuredType\":\"property\",\n                  \"description\":\"office\",\n                  \"fire\":\"yes\"\n                }\n              }\n            },\n            {\n              \"relation\":{\n                \"from\":\"PH001\",\n                \"to\":\"CU001\",\n                \"rType\":\"belongsTo\"\n              }\n            },\n            {\n              \"relation\":{\n                \"from\":\"CU001\",\n                \"to\":\"PH001\",\n                \"rType\":\"hasPolicy\"\n              }\n            }\n          ]\n        }\n      }",
+          "resourceText": "{\n        \"view\":{\n          \"name\":\"motorPolicy-quote\",\n          \"version\":\"1.0.0\",\n          \"viewStyle\":\"hierarchy\",\n          \"viewElement\":{\n            \"object\":\"policyHeader\",\n            \"elementRef\":\"PH001\",\n            \"childObjects\":[\n              {\n                \"viewElement\":{\n                  \"object\":\"customer\",\n                  \"elementRef\":\"CU001\",\n                  \"multiplicity\":\"single\",\n                  \"relationFromParent\":\"belongsTo\",\n                  \"relationToParent\":\"hasPolicy\"\n                }\n              },\n              {\n                \"viewElement\":{\n                  \"object\":\"broker\",\n                  \"elementRef\":\"BR001\",\n                  \"multiplicity\":\"single\",\n                  \"relationFromParent\":\"managedBy\",\n                  \"relationToParent\":\"managesPolicy\"\n                }\n              },\n              {\n                \"viewElement\":{\n                  \"object\":\"coverage\",\n                  \"elementRef\":\"CV001\",\n                  \"multiplicity\":\"oneOrMore\",\n                  \"relationFromParent\":\"hasCover\",\n                  \"relationToParent\":\"coveredBy\",\n                  \"relationToOther\":{\n                    \"elementRef\":\"C001\",\n                    \"type\":\"hasCover\"\n                  },\n                  \"childObjects\":[\n                    {\n                      \"viewElement\":{\n                        \"object\":\"insuredObject\",\n                        \"elementRef\":\"IO001\",\n                        \"multiplicity\":\"oneOrMore\",\n                        \"relationFromParent\":\"covers\",\n                        \"relationToParent\":\"coveredBy\"\n                      }\n                    },\n                    {\n                      \"viewElement\":{\n                        \"object\":\"insuredObject\",\n                        \"elementRef\":\"IO002\",\n                        \"multiplicity\":\"oneOrMore\",\n                        \"relationFromParent\":\"covers\",\n                        \"relationToParent\":\"coveredBy\"\n                      }\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        }\n      }",
+          "resourceName": 'classpath://dw/data/view-metadata-policyHeader.json',
+          "dwl": "%dw 2.0\n    output application/json\n    \n    var policyHeaderView = readUrl(\"classpath://dw/data/view-metadata-policyHeader.json\")\n    \n    fun findObjectContent(objectType, commandId) = {\n         (objectType): payload.command.response filter ($.object.schema == objectType and $.object.commandId == commandId) map (object , index) ->\n            object.object.content\n    }\n    \n    fun findRelation(relation, relationFrom, relationType) = \n      (relation filter (($.from == relationFrom) and ($.rType == relationType))).to\n    \n    fun renderChildObjects(childObjectsArray) = {\n      children: childObjectsArray map ((child, childIndex) -> {\n        (child.viewElement.object) : findObjectContent(child.viewElement.object, child.viewElement.elementRef),\n        (if (child.viewElement.childObjects != null) \n           renderChildObjects(child.viewElement.childObjects) else {}\n        )\n      }\n      )\n    }\n    \n    var firstViewElement = policyHeaderView.view.viewElement\n    ---\n    \n    \n    {\n      (findObjectContent(firstViewElement.object, firstViewElement.elementRef)),\n      (if (firstViewElement.childObjects != null) renderChildObjects(firstViewElement.childObjects) else {})\n        //relation: findRelation(payload.command.response.relation, \"PH001\", policyHeaderView.view.viewElement.childObjects.viewElement[0].relationFromParent),\n    }"
+        };
+      }
 
-          if (exName === 'All descendents') {
-            this.dweditor.text = "%dw 2.0\noutput application/json\n---\npayload.users..*name";
-            this.pleditor.text = "{ \"users\" : {\n  \"user\": {\"name\":\"a\"},\n  \"user\": {\"name\":\"b\"},\n  \"user\": {\"name\":\"c\", \"name\":\"d\"}\n  }\n}";
-          }
-
-          if (exName === 'Mixed matching') {
-            this.dweditor.text = "%dw 2.0\n---\n{\n  a: payload.string match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  b: payload.bool match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  c: payload.name match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  d: payload.object match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  e: payload.strings match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  f: payload.object.name match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  g: payload.bangtest match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  h: payload.number match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  }\n}";
-            this.pleditor.text = "{ \"string\": \"hello fred\", \"number\": 90,\n      \"object\" : {\"name\" : \"bob\"}, \"bool\" : true,\n      \"name\" : \"Emiliano\", \"strings\" : \"strings\", \"bangtest\" : \"bang\"}";
-          }
-
-          if (exName === 'Simple Lambda') {
-            this.dweditor.text = "%dw 2.0\nvar myLambda = (a,b)-> { (a) : b}\n---\nmyLambda(\"key\",\"value\")";
-            this.pleditor.text = "";
-          }
-
-          if (exName === 'Do scope') {
-            this.dweditor.text = "%dw 2.0\noutput application/json\nfun test(p) = do {\n    var a = \"Foo\" ++ p\n    ---\n    a\n}\n---\n{ result: test(\" Bar\") }";
-            this.pleditor.text = "";
-          }
-
-          if (exName === 'Xml input') {
-            this.dweditor.text = "%dw 2.0\noutput application/xml\n---\n{\n    prices: payload.prices mapObject (value, key) -> {\n        (key): (value + 5)\n    }\n}";
-            this.pleditor.text = "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n    <basic>14.99</basic>\n    <premium>53.01</premium>\n    <vip>398.99</vip>\n</prices>";
-          }
-        }
-      }]);
-
-      return AppComponent;
-    }();
-
+    };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('dweditor', {
       static: false
     })], AppComponent.prototype, "dweditor", void 0);
@@ -2827,6 +3022,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('reditor', {
       static: false
     })], AppComponent.prototype, "reditor", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('rseditor', {
+      static: false
+    })], AppComponent.prototype, "rseditor", void 0);
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
       selector: 'app-root',
       template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
@@ -2885,26 +3083,48 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony import */
 
 
-    var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+    /*! @angular/forms */
+    "./node_modules/@angular/forms/fesm2015/forms.js");
+    /* harmony import */
+
+
+    var _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    /*! @angular/material/tabs */
+    "./node_modules/@angular/material/esm2015/tabs.js");
+    /* harmony import */
+
+
+    var _angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+    /*! @angular/platform-browser-dynamic */
+    "./node_modules/@angular/platform-browser-dynamic/fesm2015/platform-browser-dynamic.js");
+    /* harmony import */
+
+
+    var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+    /*! @angular/platform-browser/animations */
+    "./node_modules/@angular/platform-browser/fesm2015/animations.js");
+    /* harmony import */
+
+
+    var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
     /*! ng2-ace-editor */
     "./node_modules/ng2-ace-editor/index.js");
     /* harmony import */
 
 
-    var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+    var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
     /*! @ng-bootstrap/ng-bootstrap */
     "./node_modules/@ng-bootstrap/ng-bootstrap/fesm2015/ng-bootstrap.js");
 
-    var AppModule = function AppModule() {
-      _classCallCheck(this, AppModule);
-    };
-
+    let AppModule = class AppModule {};
     AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
       declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]],
-      imports: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbModule"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"], ng2_ace_editor__WEBPACK_IMPORTED_MODULE_4__["AceEditorModule"]],
+      imports: [_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__["NgbModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"], _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"], ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__["AceEditorModule"], _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__["MatTabsModule"]],
       providers: [],
       bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
     })], AppModule);
+    Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_6__["platformBrowserDynamic"])().bootstrapModule(AppModule);
     /***/
   },
 
@@ -2942,7 +3162,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       rx_escapable.lastIndex = 0;
       return rx_escapable.test(string) ? '"' + string.replace(rx_escapable, function (a) {
         var c = meta[a];
-        return typeof c === 'string' ? c : "\\u" + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+        return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
       }) + '"' : '"' + string + '"';
     }
 
@@ -3031,11 +3251,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           } else {
             // Otherwise, iterate through all of the keys in the object.
             //if it is one of dweeve'sspecial extra-wrapped-list, deal with that:
-            if (value['__extra-wrapped-list']) {
+            if (value['__ukey-obj']) {
               for (k in value) {
                 if (k.startsWith('__key')) {
-                  var v2 = value[k];
-                  var k2 = Object.keys(v2)[0];
+                  let v2 = value[k];
+                  let k2 = Object.keys(v2)[0];
 
                   if (Object.prototype.hasOwnProperty.call(v2, k2)) {
                     v = str(k2, v2, limit);
@@ -3140,43 +3360,47 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*#__PURE__*/
     __webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0__);
 
-    var nearley = __webpack_require__(
+    const nearley = __webpack_require__(
     /*! ./nearley */
     "./src/app/dweeve/src/exe/nearley.js");
 
-    var dwgrammer = __webpack_require__(
-    /*! ../parser/dweeve-grammar.js */
-    "./src/app/dweeve/src/parser/dweeve-grammar.js");
+    const strip = __webpack_require__(
+    /*! strip-comments */
+    "./node_modules/strip-comments/index.js");
 
-    var transpiler = __webpack_require__(
+    const dwgrammar = __webpack_require__(
+    /*! ../parser/dweeve-grammar2.js */
+    "./src/app/dweeve/src/parser/dweeve-grammar2.js");
+
+    const transpiler = __webpack_require__(
     /*! ../transpiler/transpiler.js */
     "./src/app/dweeve/src/transpiler/transpiler.js");
 
-    var beautify = __webpack_require__(
+    const beautify = __webpack_require__(
     /*! ./beautify.js */
     "./src/app/dweeve/src/exe/beautify.js");
 
-    var vm = __webpack_require__(
+    const vm = __webpack_require__(
     /*! vm-browserify */
     "./node_modules/vm-browserify/index.js");
 
-    var xml2js = __webpack_require__(
+    const xml2js = __webpack_require__(
     /*! ./xmldom2jsobj */
     "./src/app/dweeve/src/exe/xmldom2jsobj.js");
 
-    var DOMParser = __webpack_require__(
+    const DOMParser = __webpack_require__(
     /*! xmldom */
     "./node_modules/xmldom/dom-parser.js").DOMParser;
 
-    var selectorFunctions = __webpack_require__(
+    const selectorFunctions = __webpack_require__(
     /*! ../functions/selectors */
     "./src/app/dweeve/src/functions/selectors.js");
 
-    var coreFunctions = __webpack_require__(
+    const coreFunctions = __webpack_require__(
     /*! ../functions/core */
     "./src/app/dweeve/src/functions/core.js");
 
-    var doScopeFunctions = __webpack_require__(
+    const doScopeFunctions = __webpack_require__(
     /*! ../functions/doScope */
     "./src/app/dweeve/src/functions/doScope.js");
 
@@ -3191,8 +3415,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           payload = runDweeveScript(payload, {});
         }
 
-        var t = typeof payload;
-        var result = innerRun(dwl, payload, vars, attributes);
+        let t = typeof payload;
+        let result = innerRun(dwl, payload, vars, attributes);
         return result;
       } catch (err) {
         return "Error parsing input payload:" + err.message;
@@ -3201,19 +3425,12 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     function innerRun(dwl, payload, vars, attributes) {
       try {
-        var args = {
+        const args = {
           payload: payload,
           vars: vars,
-          attributes: attributes,
-          __doDotOp: selectorFunctions.__doDotOp,
-          __doDotStarOp: selectorFunctions.__doDotStarOp,
-          __doDotDotStarOp: selectorFunctions.__doDotDotStarOp,
-          __doDotDotOp: selectorFunctions.__doDotDotOp,
-          __getIdentifierValue: selectorFunctions.__getIdentifierValue,
-          __execDoScope: doScopeFunctions.__execDoScope
+          attributes: attributes
         };
-        coreFunctions.addFunctions(args);
-        var result = runDweeveScript(dwl, args);
+        let result = runDweeveScript(dwl, args);
         return beautify(result, null, 2, 100);
       } catch (err) {
         return err.message;
@@ -3221,20 +3438,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function runDweeveScript(dwl, args) {
-      var grammar = dwgrammer.getGrammar();
-      var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+      coreFunctions.addFunctions(args);
+      doScopeFunctions.addFunctions(args);
+      selectorFunctions.addFunctions(args);
+      const parser = new nearley.Parser(nearley.Grammar.fromCompiled(dwgrammar.getGrammar()));
       dwl = dwl.replace(/\r\n/g, '\n');
+      dwl = strip(dwl);
       parser.feed(dwl.trim());
       if (parser.results.length === 0) throw "Dweeve parser found no dweeve!";
       if (parser.results.length > 1) throw "Dweeve parser found more than one intepretation of the dweeve!";
-      var code = transpiler.transpile(parser.results[0]);
-      var script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
-      var context = new vm.createContext(args);
+      const code = transpiler.transpile(parser.results[0]);
+      const script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
+      const context = new vm.createContext(args);
       script.runInContext(context);
-      var result = context.result;
+      let result = context.result;
       return result;
-    } // module.exports = { run: run};
-
+    }
     /***/
 
   },
@@ -3806,14 +4025,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
   /***/
   function srcAppDweeveSrcExeXmldom2jsobjJs(module, exports) {
     function toJsObj(node) {
-      var nodeType = getNodeType(node);
+      let nodeType = getNodeType(node);
       console.log(nodeType);
 
       if (nodeType === 'Document') {
-        var nl = {};
+        let nl = {};
 
-        for (var idx = 0; idx < node.childNodes.length; idx++) {
-          var ce = node.childNodes.item(idx);
+        for (let idx = 0; idx < node.childNodes.length; idx++) {
+          let ce = node.childNodes.item(idx);
 
           if (getNodeType(ce) === 'Element') {
             nl = toJsObj(ce);
@@ -3824,42 +4043,46 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }
 
       if (nodeType === 'NodeList') {
-        var _nl = {
-          '__extra-wrapped-list': true
+        let nl = {
+          '__ukey-obj': true
         };
 
-        for (var _idx = 0; _idx < node.length; _idx++) {
-          var _ce = node.item(_idx);
+        for (let idx = 0; idx < node.length; idx++) {
+          let ce = node.item(idx);
 
-          if (getNodeType(_ce) === 'Element') {
-            var js = toJsObj(_ce);
-            _nl['__key' + _idx] = js;
+          if (getNodeType(ce) === 'Element') {
+            let js = toJsObj(ce);
+            nl['__key' + idx] = js;
           }
         }
 
-        return _nl;
+        return nl;
       }
 
       if (isTextOnlyElement(node)) {
-        return _defineProperty({}, node.nodeName, numberIfPossible(node.textContent));
+        return {
+          [node.nodeName]: numberIfPossible(node.textContent)
+        };
       }
 
       if (!hasText(node)) {
-        return _defineProperty({}, node.nodeName, toJsObj(node.childNodes));
+        return {
+          [node.nodeName]: toJsObj(node.childNodes)
+        };
       } else {
-        var inner = toJsObj(node.childNodes);
-        var ewl = {
-          '__extra-wrapped-list': true
+        let inner = toJsObj(node.childNodes);
+        let ewl = {
+          '__ukey-obj': true
         };
         ewl["__key0"] = {
           "__text": nodeOwnText(node)
         };
 
-        for (var _idx2 = 1; _idx2 <= Object.values(inner).length; _idx2++) {
-          if (Object.keys(inner)[_idx2 - 1].startsWith('__key')) ewl['__key' + _idx2] = Object.values(inner)[_idx2 - 1];
-        }
+        for (let idx = 1; idx <= Object.values(inner).length; idx++) if (Object.keys(inner)[idx - 1].startsWith('__key')) ewl['__key' + idx] = Object.values(inner)[idx - 1];
 
-        return _defineProperty({}, node.nodeName, ewl);
+        return {
+          [node.nodeName]: ewl
+        };
       }
     }
 
@@ -3883,9 +4106,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function hasText(node) {
       if (node.childNodes === undefined || node.childNodes === null || node.childNodes.length == 0) return false;
 
-      for (var idx = 0; idx < node.childNodes.length; idx++) {
-        if (node.childNodes.item(idx).constructor.name === "Text" && !/^\s*$/.test(node.childNodes.item(idx).textContent)) return true;
-      }
+      for (let idx = 0; idx < node.childNodes.length; idx++) if (node.childNodes.item(idx).constructor.name === "Text" && !/^\s*$/.test(node.childNodes.item(idx).textContent)) return true;
 
       return false;
     }
@@ -3893,9 +4114,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function nodeOwnText(node) {
       if (node.childNodes === undefined || node.childNodes === null || node.childNodes.length == 0) return "";
 
-      for (var idx = 0; idx < node.childNodes.length; idx++) {
-        if (node.childNodes.item(idx).constructor.name === "Text" && !/^\s*$/.test(node.childNodes.item(idx).textContent)) return node.childNodes.item(idx).textContent;
-      }
+      for (let idx = 0; idx < node.childNodes.length; idx++) if (node.childNodes.item(idx).constructor.name === "Text" && !/^\s*$/.test(node.childNodes.item(idx).textContent)) return node.childNodes.item(idx).textContent;
 
       return "";
     }
@@ -3916,20 +4135,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     !*** ./src/app/dweeve/src/functions/core.js ***!
     \**********************************************/
 
-  /*! exports provided: addFunctions */
+  /*! no static exports found */
 
   /***/
-  function srcAppDweeveSrcFunctionsCoreJs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "addFunctions", function () {
-      return addFunctions;
-    });
-
+  function srcAppDweeveSrcFunctionsCoreJs(module, exports) {
     function addFunctions(context) {
       context['isOdd'] = isOdd;
       context['concat'] = concat;
@@ -3949,6 +4158,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       context['startsWith'] = startsWith;
       context['map'] = map;
       context['mapObject'] = mapObject;
+      context['readUrl'] = readUrl;
     }
 
     function isOdd(number) {
@@ -3967,8 +4177,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       if (!Array.isArray(list)) return 0;
 
       try {
-        var agg = 0;
-        list.forEach(function (m) {
+        let agg = 0;
+        list.forEach(m => {
           agg += m;
         });
         return agg / list.length;
@@ -3987,7 +4197,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     function daysBetween(d1, d2) {
       try {
-        var time = Date.parse(d2) - Date.parse(d1);
+        let time = Date.parse(d2) - Date.parse(d1);
         return time / (1000 * 60 * 60 * 24);
       } catch (err) {
         throw "Could not process dates for daysBetween:" + err.message;
@@ -3995,22 +4205,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function distinctBy(items, criteria) {
-      var out = [];
-      var distinctList = [];
-      var ewl = items['__extra-wrapped-list'];
+      let out = [];
+      let distinctList = [];
+      let ewl = items['__ukey-obj'];
 
-      for (var key in items) {
-        if (key !== '__extra-wrapped-list') {
-          var _k = items;
-          var v = items[key];
+      for (let key in items) {
+        if (key !== '__ukey-obj') {
+          let k = items;
+          let v = items[key];
 
           if (ewl) {
-            _k = Object.keys(v)[0];
+            k = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k = isNaN(parseInt(_k)) ? _k : parseInt(_k);
-          var candidate = JSON.stringify(criteria(v, _k));
+          k = isNaN(parseInt(k)) ? k : parseInt(k);
+          let candidate = JSON.stringify(criteria(v, k));
 
           if (!distinctList.includes(candidate)) {
             distinctList.push(candidate);
@@ -4027,21 +4237,21 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function filter(arr, criteria) {
-      var out = [];
-      var ewl = arr['__extra-wrapped-list'];
+      let out = [];
+      let ewl = arr['__ukey-obj'];
 
-      for (var key in arr) {
-        if (key !== '__extra-wrapped-list') {
-          var _k2 = key;
-          var v = arr[key];
+      for (let key in arr) {
+        if (key !== '__ukey-obj') {
+          let k = key;
+          let v = arr[key];
 
           if (ewl) {
-            _k2 = Object.keys(v)[0];
+            k = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k2 = isNaN(parseInt(_k2)) ? _k2 : parseInt(_k2);
-          if (criteria(v, _k2)) out.push(v);
+          k = isNaN(parseInt(k)) ? k : parseInt(k);
+          if (criteria(v, k)) out.push(v);
         }
       }
 
@@ -4049,24 +4259,26 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function filterObject(source, criteria) {
-      var out = {
-        '__extra-wrapped-list': true
+      let out = {
+        '__ukey-obj': true
       };
-      var ewl = source['__extra-wrapped-list'];
-      var idx = 0;
+      let ewl = source['__ukey-obj'];
+      let idx = 0;
 
-      for (var key in source) {
-        if (key !== '__extra-wrapped-list') {
-          var _k3 = key;
-          var v = source[key];
+      for (let key in source) {
+        if (key !== '__ukey-obj') {
+          let k = key;
+          let v = source[key];
 
           if (ewl) {
-            _k3 = Object.keys(v)[0];
+            k = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k3 = isNaN(parseInt(_k3)) ? _k3 : parseInt(_k3);
-          if (criteria(v, _k3)) out['__key' + idx++] = _defineProperty({}, _k3, v);
+          k = isNaN(parseInt(k)) ? k : parseInt(k);
+          if (criteria(v, k)) out['__key' + idx++] = {
+            [k]: v
+          };
         }
       }
 
@@ -4075,61 +4287,51 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     function find(arr, matcher) {
       if (Array.isArray(arr)) {
-        var out = [];
-        var ewl = arr['__extra-wrapped-list'];
-        var idx = 0;
+        let out = [];
+        let ewl = arr['__ukey-obj'];
+        let idx = 0;
 
-        for (var key in arr) {
-          if (key !== '__extra-wrapped-list') {
-            var _k4 = key;
-            var v = arr[key];
+        for (let key in arr) {
+          if (key !== '__ukey-obj') {
+            let k = key;
+            let v = arr[key];
 
             if (ewl) {
-              _k4 = Object.keys(v)[0];
+              k = Object.keys(v)[0];
               v = Object.values(v)[0];
             }
 
-            _k4 = isNaN(parseInt(_k4)) ? _k4 : parseInt(_k4);
-            if (String(v).match(matcher)) out.push(_k4);
+            k = isNaN(parseInt(k)) ? k : parseInt(k);
+            if (String(v).match(matcher)) out.push(k);
           }
         }
 
         return out;
       } else if (matcher.source !== undefined) {
-        var str = String(arr);
-        var _out2 = [];
-        var gmatcher = new RegExp(matcher.source, 'g');
-        var ms = String(str).match(gmatcher);
-        var lastidx = 0;
-        if (ms == null) return _out2;
-        ms.forEach(function (m) {
-          var idx = str.indexOf(m, lastidx);
-
-          _out2.push([idx, idx + m.length]);
-
+        let str = String(arr);
+        let out = [];
+        let gmatcher = new RegExp(matcher.source, 'g');
+        let ms = String(str).match(gmatcher);
+        let lastidx = 0;
+        if (ms == null) return out;
+        ms.forEach(m => {
+          let idx = str.indexOf(m, lastidx);
+          out.push([idx, idx + m.length]);
           lastidx = idx + 1;
         });
-        return _out2;
+        return out;
       } else {
-        var _str = String(arr);
-
-        var _out3 = [];
-
-        var _gmatcher = new RegExp(matcher, 'g');
-
-        var _ms = String(_str).match(_gmatcher);
-
-        var _lastidx = 0;
-
-        _ms.forEach(function (m) {
-          var idx = _str.indexOf(m, _lastidx);
-
-          _out3.push(idx);
-
-          _lastidx = idx + 1;
+        let str = String(arr);
+        let out = [];
+        let gmatcher = new RegExp(matcher, 'g');
+        let ms = String(str).match(gmatcher);
+        let lastidx = 0;
+        ms.forEach(m => {
+          let idx = str.indexOf(m, lastidx);
+          out.push(idx);
+          lastidx = idx + 1;
         });
-
-        return _out3;
+        return out;
       }
     }
 
@@ -4139,11 +4341,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
     function flatten(source) {
       if (source == null || !Array.isArray(source)) return source;
-      var out = [];
-      source.forEach(function (m) {
-        if (Array.isArray(m)) m.forEach(function (im) {
-          return out.push(im);
-        });else out.push(m);
+      let out = [];
+      source.forEach(m => {
+        if (Array.isArray(m)) m.forEach(im => out.push(im));else out.push(m);
       });
       return out;
     }
@@ -4157,21 +4357,21 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function map(source, mapFunc) {
-      var out = [];
-      var ewl = source['__extra-wrapped-list'];
+      let out = [];
+      let ewl = source['__ukey-obj'];
 
-      for (var key in source) {
-        if (key !== '__extra-wrapped-list') {
-          var _k5 = key;
-          var v = source[key];
+      for (let key in source) {
+        if (key !== '__ukey-obj') {
+          let k = key;
+          let v = source[key];
 
           if (ewl) {
-            _k5 = Object.keys(v)[0];
+            k = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k5 = isNaN(parseInt(_k5)) ? _k5 : parseInt(_k5);
-          out.push(mapFunc(v, _k5));
+          k = isNaN(parseInt(k)) ? k : parseInt(k);
+          out.push(mapFunc(v, k));
         }
       }
 
@@ -4179,31 +4379,48 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function mapObject(source, mapFunc) {
-      var out = {
-        '__extra-wrapped-list': true
+      let out = {
+        '__ukey-obj': true
       };
-      var ewl = source['__extra-wrapped-list'];
-      var idx = 0;
+      let ewl = source['__ukey-obj'];
+      let idx = 0;
 
-      for (var key in source) {
-        if (key !== '__extra-wrapped-list') {
-          var _k6 = key;
-          var v = source[key];
+      for (let key in source) {
+        if (key !== '__ukey-obj') {
+          let k = key;
+          let v = source[key];
 
           if (ewl) {
-            _k6 = Object.keys(v)[0];
+            k = Object.keys(v)[0];
             v = Object.values(v)[0];
           }
 
-          _k6 = isNaN(parseInt(_k6)) ? _k6 : parseInt(_k6);
-          out['__key' + idx++] = mapFunc(v, _k6);
+          k = isNaN(parseInt(k)) ? k : parseInt(k);
+          out['__key' + idx++] = mapFunc(v, k);
         }
       }
 
       return out;
     }
-    /***/
 
+    function setResourceFileContent(name, text) {
+      resourceFileContent[name] = text;
+    }
+
+    var resourceFileContent = {};
+
+    function readUrl(path, contentType) {
+      const content = resourceFileContent[path];
+      if (content == null) return '';
+      if (contentType === "application/json" || content.trim().startsWith('{') && content.trim().endsWith('}')) return JSON.parse(content);
+      return content;
+    }
+
+    module.exports = {
+      addFunctions: addFunctions,
+      setResourceFileContent: setResourceFileContent
+    };
+    /***/
   },
 
   /***/
@@ -4216,19 +4433,24 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcFunctionsDoScopeJs(module, exports, __webpack_require__) {
-    var vm = __webpack_require__(
+    const vm = __webpack_require__(
     /*! vm-browserify */
     "./node_modules/vm-browserify/index.js");
 
+    function addFunctions(context) {
+      context['__execDoScope'] = __execDoScope;
+    }
+
     function __execDoScope(code, args) {
-      var script = new vm.Script(code + '\n var result=doScope()');
-      var context = new vm.createContext(args);
+      const script = new vm.Script(code + '\n var result=doScope()');
+      const context = new vm.createContext(args);
       script.runInContext(context);
       return context.result;
     }
 
     module.exports = {
-      __execDoScope: __execDoScope
+      __execDoScope: __execDoScope,
+      addFunctions: addFunctions
     };
     /***/
   },
@@ -4239,7 +4461,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     !*** ./src/app/dweeve/src/functions/selectors.js ***!
     \***************************************************/
 
-  /*! exports provided: __doDotOp, __doDotStarOp, __doDotDotStarOp, __doDotDotOp, __getIdentifierValue */
+  /*! exports provided: addFunctions */
 
   /***/
   function srcAppDweeveSrcFunctionsSelectorsJs(module, __webpack_exports__, __webpack_require__) {
@@ -4249,32 +4471,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony export (binding) */
 
 
-    __webpack_require__.d(__webpack_exports__, "__doDotOp", function () {
-      return __doDotOp;
-    });
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "__doDotStarOp", function () {
-      return __doDotStarOp;
-    });
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "__doDotDotStarOp", function () {
-      return __doDotDotStarOp;
-    });
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "__doDotDotOp", function () {
-      return __doDotDotOp;
-    });
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "__getIdentifierValue", function () {
-      return __getIdentifierValue;
+    __webpack_require__.d(__webpack_exports__, "addFunctions", function () {
+      return addFunctions;
     });
     /* harmony import */
 
@@ -4301,6 +4499,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /*#__PURE__*/
     __webpack_require__.n(core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_1__);
 
+    function addFunctions(context) {
+      context['__doDotOp'] = __doDotOp;
+      context['__doDotStarOp'] = __doDotStarOp;
+      context['__doDotDotStarOp'] = __doDotDotStarOp;
+      context['__doDotDotOp'] = __doDotDotOp;
+      context['__getIdentifierValue'] = __getIdentifierValue;
+      context['__flattenDynamicContent'] = __flattenDynamicContent;
+    }
+
     function __getIdentifierValue(identifier) {
       return identifier;
     }
@@ -4308,34 +4515,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function __doDotOp(lhs, rhs) {
       try {
         if (!Array.isArray(lhs)) {
-          if (lhs['__extra-wrapped-list']) {
-            var r = Object.values(lhs).filter(function (v) {
-              return typeof v === 'object';
-            }).find(function (kvp) {
-              return kvp[rhs];
-            })[rhs];
+          if (lhs['__ukey-obj']) {
+            let r = Object.values(lhs).filter(v => typeof v === 'object').find(kvp => kvp[rhs])[rhs];
             return r;
           } else {
-            var _r = lhs[rhs];
-            console.log(_r);
-            return _r;
+            let r = lhs[rhs];
+            console.log(r);
+            return r;
           }
         } else {
-          var _r2 = lhs.filter(function (m) {
-            return m['__extra-wrapped-list'] || m[rhs] !== undefined;
-          }).map(function (kvps) {
-            if (kvps['__extra-wrapped-list']) {
-              return Object.values(kvps).filter(function (v) {
-                return typeof v === 'object';
-              }).find(function (kvp) {
-                return kvp[rhs];
-              })[rhs];
+          let r = lhs.filter(m => m['__ukey-obj'] || m[rhs] !== undefined).map(kvps => {
+            if (kvps['__ukey-obj']) {
+              return Object.values(kvps).filter(v => typeof v === 'object').find(kvp => kvp[rhs])[rhs];
             } else {
               return kvps[rhs];
             }
           });
-
-          return _r2;
+          return r;
         }
       } catch (ex) {
         return null;
@@ -4346,11 +4542,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       lhs = convertJsonObjsToArray(lhs);
 
       try {
-        var r = lhs.filter(function (m) {
-          return m[rhs] !== undefined;
-        }).map(function (kvps) {
-          return kvps[rhs];
-        });
+        let r = lhs.filter(m => m[rhs] !== undefined).map(kvps => kvps[rhs]);
         return r;
       } catch (ex) {
         return null;
@@ -4360,7 +4552,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function __doDotDotStarOp(lhs, rhs) {
       //    lhs = convertJsonObjsToArray(lhs);
       try {
-        var r = getDescendentValues(lhs, rhs);
+        let r = getDescendentValues(lhs, rhs);
         return r;
       } catch (ex) {
         return null;
@@ -4368,18 +4560,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function getDescendentValues(obj, key) {
-      var vs = [];
+      let vs = [];
       if (typeof obj !== 'object') return []; // two loops to go down before in, to match dataweave 2.0 ordering
 
-      for (var _k7 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k7);
+      for (let k in obj) {
+        let kvp = dewrapKeyedObj(obj, k);
         if (kvp.key === key) vs.push(kvp.val);
       }
 
-      for (var _k8 in obj) {
-        var _kvp = dewrapKeyedObj(obj, _k8);
-
-        vs = vs.concat(getDescendentValues(_kvp.val, key));
+      for (let k in obj) {
+        let kvp = dewrapKeyedObj(obj, k);
+        vs = vs.concat(getDescendentValues(kvp.val, key));
       }
 
       return vs;
@@ -4388,7 +4579,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     function __doDotDotOp(lhs, rhs) {
       //    lhs = convertJsonObjsToArray(lhs);
       try {
-        var r = getFirstDescendentValue(lhs, rhs);
+        let r = getFirstDescendentValue(lhs, rhs);
         return r;
       } catch (ex) {
         return null;
@@ -4396,11 +4587,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function getFirstDescendentValue(obj, key) {
-      var vs = [];
+      let vs = [];
       if (typeof obj !== 'object') return [];
 
-      for (var _k9 in obj) {
-        var kvp = dewrapKeyedObj(obj, _k9);
+      for (let k in obj) {
+        let kvp = dewrapKeyedObj(obj, k);
 
         if (kvp.key === key) {
           vs.push(kvp.val);
@@ -4408,10 +4599,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }
 
-      for (var _k10 in obj) {
-        var _kvp2 = dewrapKeyedObj(obj, _k10);
-
-        vs = vs.concat(getFirstDescendentValue(_kvp2.val, key));
+      for (let k in obj) {
+        let kvp = dewrapKeyedObj(obj, k);
+        vs = vs.concat(getFirstDescendentValue(kvp.val, key));
       }
 
       return vs;
@@ -4427,38 +4617,66 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       };
     }
 
+    function __flattenDynamicContent(obj) {
+      if (!obj['__hasDynamicContent']) return obj;
+      const newObj = {
+        "__ukey-obj": true
+      };
+      let idx = 0;
+      Object.keys(obj).forEach(k => {
+        if (k.startsWith('__key')) {
+          newObj['__key' + idx++] = obj[k];
+        } else if (k.startsWith('__dkey')) {
+          if (Array.isArray(obj[k])) {
+            obj[k].forEach(m => {
+              newObj['__key' + idx++] = m;
+            });
+          } else {
+            Object.keys(obj[k]).forEach(dk => {
+              if (dk.startsWith('__key')) {
+                newObj['__key' + idx++] = obj[k][dk];
+              } else {
+                newObj['__key' + idx++] = {
+                  [dk]: obj[k][dk]
+                };
+              }
+            });
+          }
+        } else if (!k.startsWith('__')) {
+          newObj['__key' + idx++] = {
+            [k]: obj[k]
+          };
+        }
+      });
+      return newObj;
+    }
+
     function convertJsonObjsToArray(lhs) {
-      if (!Array.isArray(lhs) && lhs['__extra-wrapped-list']) lhs = Object.values(lhs);else if (!Array.isArray(lhs) && !lhs['__extra-wrapped-list']) {
+      if (!Array.isArray(lhs) && lhs['__ukey-obj']) lhs = Object.values(lhs);else if (!Array.isArray(lhs) && !lhs['__ukey-obj']) {
         arr = [];
 
-        for (var _k11 in lhs) {
-          arr.push(_defineProperty({}, _k11, lhs[_k11]));
-        }
+        for (let k in lhs) arr.push({
+          [k]: lhs[k]
+        });
 
         lhs = arr;
       }
       return lhs;
-    } //module.exports = {
-    //    __doDotOp:  __doDotOp,
-    //    __doDotStarOp: __doDotStarOp,
-    //    __doDotDotStarOp: __doDotDotStarOp,
-    //    __doDotDotOp: __doDotDotOp,
-    //    __getIdentifierValue: __getIdentifierValue}
-
+    }
     /***/
 
   },
 
   /***/
-  "./src/app/dweeve/src/parser/dweeve-grammar.js":
-  /*!*****************************************************!*\
-    !*** ./src/app/dweeve/src/parser/dweeve-grammar.js ***!
-    \*****************************************************/
+  "./src/app/dweeve/src/parser/dweeve-grammar2.js":
+  /*!******************************************************!*\
+    !*** ./src/app/dweeve/src/parser/dweeve-grammar2.js ***!
+    \******************************************************/
 
   /*! exports provided: getGrammar */
 
   /***/
-  function srcAppDweeveSrcParserDweeveGrammarJs(module, __webpack_exports__, __webpack_require__) {
+  function srcAppDweeveSrcParserDweeveGrammar2Js(module, __webpack_exports__, __webpack_require__) {
     "use strict";
 
     __webpack_require__.r(__webpack_exports__);
@@ -4495,7 +4713,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     // http://github.com/Hardmath123/nearley
 
 
-    var moo = __webpack_require__(
+    const moo = __webpack_require__(
     /*! moo */
     "./node_modules/moo/moo.js");
 
@@ -4507,16 +4725,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return grammar;
     }
 
-    var lexer = moo.compile({
+    const lexer = moo.compile({
       header: /^\%dw [0-9]+\.[0.9]+$/,
-      keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do'],
+      keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or'],
       WS: {
         match: /[ \t\n]+/,
         lineBreaks: true
       },
       headerend: '---',
       comment: /\/\/.*?$/,
-      number: /[\-]?(?:0|[1-9][0-9]*\.?[0-9]*)/,
       regex: /\/(?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+\//,
       bool: /(?:true|false)/,
       null: /null/,
@@ -4526,8 +4743,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       dotdotbinop: /\.\./,
       dotstarbinop: /\.\*/,
       dotbinop: /[.]/,
-      mathbinop: /==|\+\+|<=|>=|\|\||&&|!=|[><\-+/*|&\^]/,
-      assignment: /=/,
+      mathbinop: /==|\+\+|<=|>=|\|\||&&|!=|[=><\-+/*|&\^]/,
       dblstring: {
         match: /["](?:\\["\\]|[^\n"\\])*["]/
       },
@@ -4538,8 +4754,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       comma: /,/,
       mimetype: /(?:application|text)\/\w+/,
       word: {
-        match: /\w[\w0-9_]*/
+        match: /[A-Za-z$][\w0-9_$]*/
       },
+      number: /(?:0|[1-9][0-9]*\.?[0-9]*)/,
       lparen: '(',
       rparen: ')',
       lbrace: '{',
@@ -4548,24 +4765,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       rsquare: ']'
     });
 
-    lexer.next = function (next) {
-      return function () {
-        var tok;
+    lexer.next = (next => () => {
+      let tok;
 
-        while ((tok = next.call(lexer)) && tok.type === "WS") {}
+      while ((tok = next.call(lexer)) && tok.type === "WS") {}
 
-        return tok;
-      };
-    }(lexer.next);
+      return tok;
+    })(lexer.next);
 
-    var thing = function thing(name, data) {
-      return {
-        type: name,
-        data: Array.isArray(data) ? data.filter(function (e) {
-          return e !== null && (!Array.isArray(e) || e.length > 0);
-        }) : data
-      };
-    };
+    const thing = (name, data) => ({
+      type: name,
+      data: Array.isArray(data) ? data.filter(e => e !== null && (!Array.isArray(e) || e.length > 0)) : data
+    });
+
+    function newOpData(oldData) {
+      if (oldData.value) return oldData.value;
+      return oldData;
+    }
 
     var grammar = {
       Lexer: lexer,
@@ -4582,13 +4798,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }, {
         "name": "dweeve",
         "symbols": ["dweeve$ebnf$1", "d_body"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dweeve',
-            header: data[0],
-            body: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dweeve',
+          header: data[0],
+          body: data[1]
+        })
       }, {
         "name": "d_header$ebnf$1",
         "symbols": [lexer.has("header") ? {
@@ -4615,58 +4829,46 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         "symbols": ["d_header$ebnf$1", "d_header$ebnf$2", {
           "literal": "---"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dweeve',
-            header: data[0],
-            decs: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dweeve',
+          header: data[0],
+          decs: data[1]
+        })
       }, {
         "name": "d_body",
         "symbols": ["expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'body',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'body',
+          value: data[0]
+        })
       }, {
         "name": "h_declaration",
         "symbols": ["h_input_dec"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'head-dec',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'head-dec',
+          value: data[0]
+        })
       }, {
         "name": "h_declaration",
         "symbols": ["h_output_dec"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'head-dec',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'head-dec',
+          value: data[0]
+        })
       }, {
         "name": "h_declaration",
         "symbols": ["h_var_dec"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'head-dec',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'head-dec',
+          value: data[0]
+        })
       }, {
         "name": "h_declaration",
         "symbols": ["h_fun_dec"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'head-dec',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'head-dec',
+          value: data[0]
+        })
       }, {
         "name": "h_input_dec",
         "symbols": [{
@@ -4674,12 +4876,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }, lexer.has("mimetype") ? {
           type: "mimetype"
         } : mimetype],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'input-dec',
-            mimetype: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'input-dec',
+          mimetype: data[1]
+        })
       }, {
         "name": "h_output_dec",
         "symbols": [{
@@ -4687,28 +4887,24 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }, lexer.has("mimetype") ? {
           type: "mimetype"
         } : mimetype],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'output-dec',
-            mimetype: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'output-dec',
+          mimetype: data[1]
+        })
       }, {
         "name": "h_var_dec",
         "symbols": [{
           "literal": "var"
         }, lexer.has("word") ? {
           type: "word"
-        } : word, lexer.has("assignment") ? {
-          type: "assignment"
-        } : assignment, "h_dec_expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'var-dec',
-            varName: data[1],
-            varVal: data[3]
-          };
-        }
+        } : word, {
+          "literal": "="
+        }, "h_dec_expression"],
+        "postprocess": data => ({
+          type: 'var-dec',
+          varName: data[1],
+          varVal: data[3]
+        })
       }, {
         "name": "h_fun_dec$ebnf$1",
         "symbols": [lexer.has("word") ? {
@@ -4747,28 +4943,22 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           type: "lparen"
         } : lparen, "h_fun_dec$ebnf$1", "h_fun_dec$ebnf$2", lexer.has("rparen") ? {
           type: "rparen"
-        } : rparen, lexer.has("assignment") ? {
-          type: "assignment"
-        } : assignment, "h_dec_expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: "fun-def",
-            func: data[1],
-            args: [data[3]].concat(_toConsumableArray(data[4].flat().filter(function (a) {
-              return a.type !== 'comma';
-            }))),
-            body: data[7]
-          };
-        }
+        } : rparen, {
+          "literal": "="
+        }, "h_dec_expression"],
+        "postprocess": data => ({
+          type: "fun-def",
+          func: data[1],
+          args: [data[3], ...data[4].flat().filter(a => a.type !== 'comma')],
+          body: data[7]
+        })
       }, {
         "name": "h_dec_expression",
         "symbols": ["expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'expression',
+          value: data[0]
+        })
       }, {
         "name": "h_dec_expression",
         "symbols": [{
@@ -4778,12 +4968,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lbrace, "dweeve", lexer.has("rbrace") ? {
           type: "rbrace"
         } : rbrace],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'do-dweeve',
-            dweeve: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'do-dweeve',
+          dweeve: data[2]
+        })
       }, {
         "name": "object$ebnf$1",
         "symbols": []
@@ -4805,14 +4993,21 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lbrace, "keyvaluepair", "object$ebnf$1", lexer.has("rbrace") ? {
           type: "rbrace"
         } : rbrace],
-        "postprocess": function postprocess(data) {
-          return {
-            type: "member-list",
-            members: [data[1]].concat(_toConsumableArray(data[2].flat().filter(function (a) {
-              return a.type !== 'comma';
-            })))
-          };
-        }
+        "postprocess": data => ({
+          type: "member-list",
+          members: [data[1], ...data[2].flat().filter(a => a.type !== 'comma')]
+        })
+      }, {
+        "name": "object",
+        "symbols": [lexer.has("lbrace") ? {
+          type: "lbrace"
+        } : lbrace, lexer.has("rbrace") ? {
+          type: "rbrace"
+        } : rbrace],
+        "postprocess": data => ({
+          type: "member-list",
+          members: []
+        })
       }, {
         "name": "keyvaluepair$ebnf$1",
         "symbols": [lexer.has("comma") ? {
@@ -4830,46 +5025,49 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         "symbols": ["key", lexer.has("keyvalsep") ? {
           type: "keyvalsep"
         } : keyvalsep, "expression", "keyvaluepair$ebnf$1"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'member',
-            key: data[0],
-            value: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'member',
+          key: data[0],
+          value: data[2]
+        })
+      }, {
+        "name": "keyvaluepair",
+        "symbols": [lexer.has("lparen") ? {
+          type: "lparen"
+        } : lparen, "expression", lexer.has("rparen") ? {
+          type: "rparen"
+        } : rparen],
+        "postprocess": data => ({
+          type: 'bracket-operand',
+          value: data[1]
+        })
       }, {
         "name": "key",
         "symbols": [lexer.has("word") ? {
           type: "word"
         } : word],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'key',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'key',
+          value: data[0]
+        })
       }, {
         "name": "key",
         "symbols": [lexer.has("sglstring") ? {
           type: "sglstring"
         } : sglstring],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'key',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'key',
+          value: data[0]
+        })
       }, {
         "name": "key",
         "symbols": [lexer.has("dblstring") ? {
           type: "dblstring"
         } : dblstring],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'key',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'key',
+          value: data[0]
+        })
       }, {
         "name": "key",
         "symbols": [lexer.has("lparen") ? {
@@ -4877,140 +5075,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lparen, "expression", lexer.has("rparen") ? {
           type: "rparen"
         } : rparen],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dynamic-key',
-            value: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dynamic-key',
+          value: data[1]
+        })
       }, {
-        "name": "expression",
-        "symbols": ["result"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["object"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["defaultexp"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["ifconditional"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["matcher"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["expression", lexer.has("word") ? {
-          type: "word"
-        } : word, "expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'fun-call',
-            fun: data[1],
-            args: {
-              args: [data[0], data[2]]
-            }
-          };
-        }
-      }, {
-        "name": "expression$ebnf$1",
-        "symbols": [lexer.has("word") ? {
-          type: "word"
-        } : word],
-        "postprocess": id
-      }, {
-        "name": "expression$ebnf$1",
-        "symbols": [],
-        "postprocess": function postprocess(d) {
-          return null;
-        }
-      }, {
-        "name": "expression$ebnf$2",
-        "symbols": []
-      }, {
-        "name": "expression$ebnf$2$subexpression$1",
-        "symbols": [lexer.has("comma") ? {
-          type: "comma"
-        } : comma, lexer.has("word") ? {
-          type: "word"
-        } : word]
-      }, {
-        "name": "expression$ebnf$2",
-        "symbols": ["expression$ebnf$2", "expression$ebnf$2$subexpression$1"],
-        "postprocess": function arrpush(d) {
-          return d[0].concat([d[1]]);
-        }
-      }, {
-        "name": "expression",
-        "symbols": [lexer.has("lparen") ? {
-          type: "lparen"
-        } : lparen, "expression$ebnf$1", "expression$ebnf$2", lexer.has("rparen") ? {
-          type: "rparen"
-        } : rparen, lexer.has("thinarrow") ? {
-          type: "thinarrow"
-        } : thinarrow, "expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'lambda',
-            ident: data[0],
-            func: data[1],
-            args: [data[1]].concat(_toConsumableArray(data[2].flat().filter(function (a) {
-              return a.type !== 'comma';
-            }))),
-            expression: data[5]
-          };
-        }
-      }, {
-        "name": "expression",
-        "symbols": ["array"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'expression',
-            value: data[0]
-          };
-        }
-      }, {
-        "name": "defaultexp",
-        "symbols": ["expression", {
-          "literal": "default"
-        }, "expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'default-expression',
-            value: data[0],
-            default: data[2]
-          };
-        }
+        "name": "comment",
+        "symbols": [lexer.has("comment") ? {
+          type: "comment"
+        } : comment],
+        "postprocess": data => ({
+          type: 'commemt',
+          value: data[0]
+        })
       }, {
         "name": "ifconditional",
         "symbols": [{
@@ -5022,14 +5099,12 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : rparen, "expression", {
           "literal": "else"
         }, "expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'if-conditional',
-            condition: data[2],
-            then: data[4],
-            else: data[6]
-          };
-        }
+        "postprocess": data => ({
+          type: 'if-conditional',
+          condition: data[2],
+          then: data[4],
+          else: data[6]
+        })
       }, {
         "name": "matcher$ebnf$1$subexpression$1",
         "symbols": [{
@@ -5079,20 +5154,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lbrace, "matcher$ebnf$1", "matcher$ebnf$2", lexer.has("rbrace") ? {
           type: "rbrace"
         } : rbrace],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'pattern-match',
-            input: data[0],
-            then: data[4],
-            cases: data[3].map(function (c) {
-              return {
-                match: c[1],
-                result: c[3]
-              };
-            }),
-            else: data[4] == null ? null : data[4][2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'pattern-match',
+          input: data[0],
+          then: data[4],
+          cases: data[3].map(c => ({
+            match: c[1],
+            result: c[3]
+          })),
+          else: data[4] == null ? null : data[4][2]
+        })
       }, {
         "name": "matchcond$ebnf$1$subexpression$1",
         "symbols": [lexer.has("word") ? {
@@ -5113,13 +5184,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       }, {
         "name": "matchcond",
         "symbols": ["matchcond$ebnf$1", "literal"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'match-literal',
-            var: data[0] == null ? null : data[0][0],
-            litMatch: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'match-literal',
+          var: data[0] == null ? null : data[0][0],
+          litMatch: data[1]
+        })
       }, {
         "name": "matchcond",
         "symbols": [lexer.has("word") ? {
@@ -5127,13 +5196,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : word, {
           "literal": "if"
         }, "expression"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'match-if-exp',
-            var: data[0],
-            expMatch: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'match-if-exp',
+          var: data[0],
+          expMatch: data[2]
+        })
       }, {
         "name": "matchcond",
         "symbols": [lexer.has("word") ? {
@@ -5143,13 +5210,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }, lexer.has("regex") ? {
           type: "regex"
         } : regex],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'match-regex',
-            var: data[0],
-            regex: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'match-regex',
+          var: data[0],
+          regex: data[2]
+        })
       }, {
         "name": "matchcond$ebnf$2$subexpression$1",
         "symbols": [lexer.has("word") ? {
@@ -5172,423 +5237,377 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }, lexer.has("word") ? {
           type: "word"
         } : word],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'match-type',
-            var: data[0] == null ? null : data[0][0],
-            typeName: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'match-type',
+          var: data[0] == null ? null : data[0][0],
+          typeName: data[2]
+        })
+      }, {
+        "name": "expression",
+        "symbols": ["result"],
+        "postprocess": data => data[0]
+      }, {
+        "name": "expression",
+        "symbols": ["ifconditional"],
+        "postprocess": data => data[0]
+      }, {
+        "name": "expression",
+        "symbols": ["matcher"],
+        "postprocess": data => data[0]
       }, {
         "name": "result",
-        "symbols": ["mathresult"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'math-result',
-            value: data[0].value
-          };
-        }
+        "symbols": ["l01ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "result",
-        "symbols": ["result", "dotops", "operand"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dot-op',
-            lhs: data[0],
-            op: data[1],
-            rhs: data[2]
-          };
-        }
+        "name": "l01ops",
+        "symbols": ["l01ops", lexer.has("word") ? {
+          type: "word"
+        } : word, "l05ops"],
+        "postprocess": data => ({
+          type: 'fun-call',
+          fun: data[1].value,
+          args: [data[0], data[2]]
+        })
       }, {
-        "name": "mathresult",
-        "symbols": ["l2ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l01ops",
+        "symbols": ["l05ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l1ops",
-        "symbols": ["l1ops", "l8operator", "l2ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l05ops",
+        "symbols": [lexer.has("word") ? {
+          type: "word"
+        } : word, "l9operator", "l10ops"],
+        "postprocess": data => ({
+          type: 'lambda',
+          args: data[0],
+          expression: data[2]
+        })
       }, {
-        "name": "l1ops",
-        "symbols": ["l2ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l05ops",
+        "symbols": ["arglist", "l9operator", "l10ops"],
+        "postprocess": data => ({
+          type: 'lambda',
+          args: data[0].args,
+          expression: data[2]
+        })
       }, {
-        "name": "l2ops",
-        "symbols": ["l2ops", "l7operator", "l3ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l05ops",
+        "symbols": ["l10ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l2ops",
-        "symbols": ["l3ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l10ops",
+        "symbols": ["l10ops", "l8operator", "l20ops"],
+        "postprocess": data => ({
+          type: 'or',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
       }, {
-        "name": "l3ops",
-        "symbols": ["l3ops", "l6operator", "l4ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l10ops",
+        "symbols": ["l20ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l3ops",
-        "symbols": ["l4ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l20ops",
+        "symbols": ["l20ops", "l7operator", "l30ops"],
+        "postprocess": data => ({
+          type: 'and',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
       }, {
-        "name": "l4ops",
-        "symbols": ["l4ops", "l5operator", "l5ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l20ops",
+        "symbols": ["l30ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l4ops",
-        "symbols": ["l5ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l30ops",
+        "symbols": ["l30ops", "l6operator", "l40ops"],
+        "postprocess": data => ({
+          type: 'relative',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
       }, {
-        "name": "l5ops",
-        "symbols": ["l5ops", "l4operator", "l6ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l30ops",
+        "symbols": ["l40ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l5ops",
-        "symbols": ["l6ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l40ops",
+        "symbols": ["l40ops", "l5operator", "l50ops"],
+        "postprocess": data => ({
+          type: 'relative',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
       }, {
-        "name": "l6ops",
-        "symbols": ["l6ops", "l3operator", "l7ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l40ops",
+        "symbols": ["l50ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l6ops",
-        "symbols": ["l7ops"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "name": "l50ops",
+        "symbols": ["l50ops", "l4operator", "l60ops"],
+        "postprocess": data => ({
+          type: 'sum',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
       }, {
-        "name": "l7ops",
-        "symbols": ["l7ops", "l2operator", "operand"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'op',
-            value: {
-              lhs: data[0].value,
-              op: data[1].value,
-              rhs: data[2].value
-            }
-          };
-        }
+        "name": "l50ops",
+        "symbols": ["l60ops"],
+        "postprocess": data => data[0]
       }, {
-        "name": "l7ops",
+        "name": "l60ops",
+        "symbols": ["l60ops", "l3operator", "l70ops"],
+        "postprocess": data => ({
+          type: 'product',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
+      }, {
+        "name": "l60ops",
+        "symbols": ["l70ops"],
+        "postprocess": data => data[0]
+      }, {
+        "name": "l70ops",
+        "symbols": ["l70ops", "l2operator", "l80ops"],
+        "postprocess": data => ({
+          type: data[1].type,
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
+      }, {
+        "name": "l70ops",
+        "symbols": ["l80ops"],
+        "postprocess": data => data[0]
+      }, {
+        "name": "l80ops",
+        "symbols": ["l80ops", "l1operator", "operand"],
+        "postprocess": data => ({
+          type: 'dot-op',
+          lhs: newOpData(data[0]),
+          op: data[1].value,
+          rhs: newOpData(data[2])
+        })
+      }, {
+        "name": "l80ops",
         "symbols": ["operand"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operand',
-            value: data[0].value
-          };
-        }
+        "postprocess": data => data[0]
+      }, {
+        "name": "l1operator",
+        "symbols": ["dotops"],
+        "postprocess": data => ({
+          type: 'dotop',
+          value: data[0]
+        })
       }, {
         "name": "l2operator",
         "symbols": [{
           "literal": "as"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'as',
+          value: data[0]
+        })
+      }, {
+        "name": "l2operator",
+        "symbols": [{
+          "literal": "default"
+        }],
+        "postprocess": data => ({
+          type: 'default',
+          value: data[0]
+        })
       }, {
         "name": "l3operator",
         "symbols": [{
           "literal": "*"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l3operator",
         "symbols": [{
           "literal": "/"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l4operator",
         "symbols": [{
           "literal": "+"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l4operator",
         "symbols": [{
           "literal": "++"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l4operator",
         "symbols": [{
           "literal": "-"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l4operator",
         "symbols": [{
           "literal": ">>"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l4operator",
         "symbols": [{
           "literal": "<<"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": ">"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": "="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": "<"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": ">="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": "<="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l5operator",
         "symbols": [{
           "literal": "is"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l6operator",
         "symbols": [{
           "literal": "!="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l6operator",
         "symbols": [{
           "literal": "~="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l6operator",
         "symbols": [{
           "literal": "=="
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l7operator",
         "symbols": [{
           "literal": "and"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
       }, {
         "name": "l8operator",
         "symbols": [{
           "literal": "or"
         }],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'operator',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'operator',
+          value: data[0]
+        })
+      }, {
+        "name": "l9operator",
+        "symbols": [{
+          "literal": "->"
+        }],
+        "postprocess": data => ({
+          type: 'lambda',
+          value: data[0]
+        })
       }, {
         "name": "operand",
         "symbols": ["identifier"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'identifier-operand',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'identifier-operand',
+          value: data[0]
+        })
       }, {
         "name": "operand",
         "symbols": ["literal"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal-operand',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal-operand',
+          value: data[0]
+        })
       }, {
         "name": "operand",
         "symbols": [lexer.has("lparen") ? {
@@ -5596,26 +5615,36 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lparen, "expression", lexer.has("rparen") ? {
           type: "rparen"
         } : rparen],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'bracket-operand',
-            value: data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'bracket-operand',
+          value: data[1]
+        })
+      }, {
+        "name": "operand",
+        "symbols": ["object"],
+        "postprocess": data => ({
+          type: 'expression',
+          value: data[0]
+        })
+      }, {
+        "name": "operand",
+        "symbols": ["array"],
+        "postprocess": data => ({
+          type: 'expression',
+          value: data[0]
+        })
       }, {
         "name": "identifier",
         "symbols": ["identifier", lexer.has("lparen") ? {
           type: "lparen"
-        } : lparen, "arglist", lexer.has("rparen") ? {
+        } : lparen, "explist", lexer.has("rparen") ? {
           type: "rparen"
         } : rparen],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'fun-call',
-            fun: data[0],
-            args: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'fun-call',
+          fun: data[0],
+          args: data[2].args
+        })
       }, {
         "name": "identifier",
         "symbols": ["identifier", lexer.has("lsquare") ? {
@@ -5623,40 +5652,67 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         } : lsquare, "expression", lexer.has("rsquare") ? {
           type: "rsquare"
         } : rsquare],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'idx-identifier',
-            ident: data[0],
-            idx: data[2]
-          };
-        }
+        "postprocess": data => ({
+          type: 'idx-identifier',
+          ident: data[0],
+          idx: data[2]
+        })
       }, {
         "name": "identifier",
         "symbols": [lexer.has("word") ? {
           type: "word"
         } : word],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'identifier',
-            ident: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'identifier',
+          ident: data[0]
+        })
       }, {
         "name": "array",
         "symbols": [lexer.has("lsquare") ? {
           type: "lsquare"
-        } : lsquare, "arglist", lexer.has("rsquare") ? {
+        } : lsquare, "explist", lexer.has("rsquare") ? {
           type: "rsquare"
         } : rsquare],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'array',
-            members: data[1]
-          };
+        "postprocess": data => ({
+          type: 'array',
+          members: data[1]
+        })
+      }, {
+        "name": "explist$ebnf$1",
+        "symbols": ["expression"],
+        "postprocess": id
+      }, {
+        "name": "explist$ebnf$1",
+        "symbols": [],
+        "postprocess": function postprocess(d) {
+          return null;
         }
       }, {
+        "name": "explist$ebnf$2",
+        "symbols": []
+      }, {
+        "name": "explist$ebnf$2$subexpression$1",
+        "symbols": [lexer.has("comma") ? {
+          type: "comma"
+        } : comma, "expression"]
+      }, {
+        "name": "explist$ebnf$2",
+        "symbols": ["explist$ebnf$2", "explist$ebnf$2$subexpression$1"],
+        "postprocess": function arrpush(d) {
+          return d[0].concat([d[1]]);
+        }
+      }, {
+        "name": "explist",
+        "symbols": ["explist$ebnf$1", "explist$ebnf$2"],
+        "postprocess": data => ({
+          type: "arg-list",
+          args: [data[0], ...data[1].flat().filter(a => a.type !== 'comma')]
+        })
+      }, {
         "name": "arglist$ebnf$1",
-        "symbols": ["expression"],
+        "symbols": [lexer.has("word") ? {
+          type: "word"
+        } : word],
         "postprocess": id
       }, {
         "name": "arglist$ebnf$1",
@@ -5671,7 +5727,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         "name": "arglist$ebnf$2$subexpression$1",
         "symbols": [lexer.has("comma") ? {
           type: "comma"
-        } : comma, "expression"]
+        } : comma, lexer.has("word") ? {
+          type: "word"
+        } : word]
       }, {
         "name": "arglist$ebnf$2",
         "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"],
@@ -5680,138 +5738,116 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }, {
         "name": "arglist",
-        "symbols": ["arglist$ebnf$1", "arglist$ebnf$2"],
-        "postprocess": function postprocess(data) {
-          return {
-            type: "arg-list",
-            args: [data[0]].concat(_toConsumableArray(data[1].flat().filter(function (a) {
-              return a.type !== 'comma';
-            })))
-          };
-        }
+        "symbols": [lexer.has("lparen") ? {
+          type: "lparen"
+        } : lparen, "arglist$ebnf$1", "arglist$ebnf$2", lexer.has("rparen") ? {
+          type: "rparen"
+        } : rparen],
+        "postprocess": data => ({
+          type: "arg-list",
+          args: [data[1], ...data[2].flat().filter(a => a.type !== 'comma')]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("sglstring") ? {
           type: "sglstring"
         } : sglstring],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("dblstring") ? {
           type: "dblstring"
         } : dblstring],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("bool") ? {
           type: "bool"
         } : bool],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("null") ? {
           type: "null"
         } : null],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("number") ? {
           type: "number"
         } : number],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
         "symbols": [lexer.has("regex") ? {
           type: "regex"
         } : regex],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'literal',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'literal',
+          value: data[0]
+        })
       }, {
         "name": "literal",
-        "symbols": [lexer.has("number") ? {
-          type: "number"
-        } : number, lexer.has("number") ? {
+        "symbols": [{
+          "literal": "-"
+        }, lexer.has("number") ? {
           type: "number"
         } : number],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'number',
-            value: data[0] + data[1]
-          };
-        }
+        "postprocess": data => ({
+          type: 'number',
+          value: '-' + data[1]
+        })
       }, {
         "name": "dotops",
         "symbols": [lexer.has("dotbinop") ? {
           type: "dotbinop"
         } : dotbinop],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dot',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dot',
+          value: data[0]
+        })
       }, {
         "name": "dotops",
         "symbols": [lexer.has("dotstarbinop") ? {
           type: "dotstarbinop"
         } : dotstarbinop],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dotstar',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dotstar',
+          value: data[0]
+        })
       }, {
         "name": "dotops",
         "symbols": [lexer.has("dotdotstarbinop") ? {
           type: "dotdotstarbinop"
         } : dotdotstarbinop],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dotdotstar',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dotdotstar',
+          value: data[0]
+        })
       }, {
         "name": "dotops",
         "symbols": [lexer.has("dotdotbinop") ? {
           type: "dotdotbinop"
         } : dotdotbinop],
-        "postprocess": function postprocess(data) {
-          return {
-            type: 'dotdot',
-            value: data[0]
-          };
-        }
+        "postprocess": data => ({
+          type: 'dotdot',
+          value: data[0]
+        })
       }],
       ParserStart: "dweeve"
     };
@@ -5828,15 +5864,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerConditionalsJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
 
-    codeGenFor['if-conditional'] = function (context, code) {
-      var op = context.node;
+    codeGenFor['if-conditional'] = (context, code) => {
+      let op = context.node;
       code.addCode('( () =>  { if (');
       context.compiler({
         parentType: 'if-conidtion',
@@ -5859,8 +5895,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return false;
     };
 
-    codeGenFor['pattern-match'] = function (context, code) {
-      var cn = context.node;
+    codeGenFor['pattern-match'] = (context, code) => {
+      let cn = context.node;
       code.addCode('( () => { let $ = (');
       context.compiler({
         parentType: 'if-condition',
@@ -5870,7 +5906,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       code.addCode('); \n');
 
       if (Array.isArray(cn.cases)) {
-        cn.cases.forEach(function (c) {
+        cn.cases.forEach(c => {
           if (c.match.type === 'match-if-exp') emitcodeMatchIfExp(code, c, context);else if (c.match.type === 'match-regex') emitcodeMatchRegex(code, c, context);else if (c.match.type === 'match-literal') emitcodeMatchLiteral(code, c, context);else if (c.match.type === 'match-type') emitcodeMatchType(code, c, context);
         });
       }
@@ -5946,13 +5982,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
 
-      for (k in codeGenAfter) {
-        postDict[k] = codeGenAfter[k];
-      }
+      for (let k in codeGenAfter) postDict[k] = codeGenAfter[k];
     }
 
     module.exports = {
@@ -5971,28 +6003,30 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerDoScopeJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
 
-    codeGenFor['do-dweeve'] = function (context, code) {
-      var doDweeve = context.node;
-      var doCode = getSubCode(code);
-      var doId = '__do' + code.doScopes.length;
-      code.doScopes.push(_defineProperty({}, doId, doCode));
+    codeGenFor['do-dweeve'] = (context, code) => {
+      let doDweeve = context.node;
+      let doCode = getSubCode(code);
+      let doId = '__do' + code.doScopes.length;
+      code.doScopes.push({
+        [doId]: doCode
+      });
       doCode.addCode('let doScope = () => (');
       context.compiler({
         node: doDweeve.dweeve,
         compiler: context.compiler
       }, doCode);
       doCode.addCode(')\n');
-      var args = '';
+      let args = '';
 
       if (context.argList !== undefined && context.argList != null) {
-        context.argList.forEach(function (arg) {
+        context.argList.forEach(arg => {
           if (arg !== null) args += ', ' + arg.value + ': ' + arg.value;
         });
       }
@@ -6002,14 +6036,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     };
 
     function getSubCode(code) {
-      var subCode = {
+      let subCode = {
         text: '',
         decs: '',
         lines: code.lines,
         doScopes: code.doScopes
       };
 
-      subCode.addCode = function (text) {
+      subCode.addCode = text => {
         subCode.text += text;
         subCode.lines.push(text);
       };
@@ -6018,13 +6052,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
 
-      for (k in codeGenAfter) {
-        postDict[k] = codeGenAfter[k];
-      }
+      for (let k in codeGenAfter) postDict[k] = codeGenAfter[k];
     }
 
     module.exports = {
@@ -6039,31 +6069,70 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     !*** ./src/app/dweeve/src/transpiler/transpiler-expressions.js ***!
     \*****************************************************************/
 
-  /*! no static exports found */
+  /*! exports provided: addTranspilerFeatures */
 
   /***/
-  function srcAppDweeveSrcTranspilerTranspilerExpressionsJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+  function srcAppDweeveSrcTranspilerTranspilerExpressionsJs(module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+
+    __webpack_require__.r(__webpack_exports__);
+    /* harmony export (binding) */
+
+
+    __webpack_require__.d(__webpack_exports__, "addTranspilerFeatures", function () {
+      return addTranspilerFeatures;
+    });
+    /* harmony import */
+
+
+    var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+    /*! core-js/modules/es.array.find */
+    "./node_modules/core-js/modules/es.array.find.js");
+    /* harmony import */
+
+
+    var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0___default =
+    /*#__PURE__*/
+    __webpack_require__.n(core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0__);
+
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
 
-    codeGenFor['member-list'] = function (context, code) {
-      if (context.node.members.length > 1) {
-        code.addCode('{ "__extra-wrapped-list": true, \n');
-        var idx = 0;
-        context.node.members.forEach(function (m) {
-          code.addCode('"__key' + idx++ + '": {');
-          context.compiler({
-            parentType: 'obj-member',
-            node: m,
-            compiler: context.compiler
-          }, code);
-          code.addCode('},\n ');
+    codeGenFor['member-list'] = (context, code) => {
+      if (context.node.members.length > 1 || context.node.members.length == 1 && context.node.members[0].type == 'bracket-operand') {
+        code.addCode('__flattenDynamicContent({ "__ukey-obj": true, \n');
+        let idx = 0;
+        let dynamicContent = false;
+        context.node.members.forEach(m => {
+          if (m.type === 'bracket-operand') {
+            code.addCode('"__dkey' + idx++ + '": ');
+            dynamicContent = true;
+            code.addCode('__flattenDynamicContent(');
+            context.compiler({
+              parentType: 'obj-member',
+              node: m.value,
+              compiler: context.compiler
+            }, code);
+            code.addCode(')');
+          } else {
+            code.addCode('"__key' + idx++ + '": ');
+            code.addCode('{');
+            context.compiler({
+              parentType: 'obj-member',
+              node: m,
+              compiler: context.compiler
+            }, code);
+            code.addCode('} ');
+          }
+
+          if (idx < context.node.members.length) code.addCode(',\n ');
         });
-        code.addCode('}\n');
+        if (dynamicContent) code.addCode(',\n"__hasDynamicContent" : true\n');
+        code.addCode('})\n');
       } else if (context.node.members.length === 1) {
         code.addCode('{');
         context.compiler({
@@ -6072,44 +6141,47 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
           compiler: context.compiler
         }, code);
         code.addCode('}');
+      } else if (context.node.members.length === 0) {
+        code.addCode('{}');
       }
 
       return false;
     };
 
-    codeGenFor['array'] = function (context, code) {
+    codeGenFor['array'] = (context, code) => {
       code.addCode('[');
-      context.node.members.args.forEach(function (m) {
+      let idx = 1;
+      context.node.members.args.forEach(m => {
         context.compiler({
           parentType: 'array-member',
           node: m,
           compiler: context.compiler
         }, code);
-        code.addCode(', ');
+        if (idx++ < context.node.members.args.length) code.addCode(', ');
       });
       code.addCode(']');
       return false;
     };
 
-    codeGenFor['default-expression'] = function (context, code) {
+    codeGenFor['default'] = (context, code) => {
       code.addCode('( () => { let d = (');
       context.compiler({
-        parentType: 'default-expression-default',
-        node: context.node.default,
+        parentType: 'default-default',
+        node: context.node.rhs,
         compiler: context.compiler
       }, code);
       code.addCode('); try { let v = (');
       context.compiler({
-        parentType: 'default-expression-value',
-        node: context.node.value,
+        parentType: 'default-value',
+        node: context.node.lhs,
         compiler: context.compiler
       }, code);
       code.addCode('); if (v!==null && v!==undefined) {return v;} else {return d;} } catch {return d} } )()\n ');
       return false;
     };
 
-    codeGenFor['idx-identifier'] = function (context, code) {
-      var id = context.node;
+    codeGenFor['idx-identifier'] = (context, code) => {
+      let id = context.node;
       code.addCode(id.ident.ident.value + '[');
       context.compiler({
         parentType: 'indexed-identifier',
@@ -6120,16 +6192,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return false;
     };
 
-    codeGenFor['lambda'] = function (context, code) {
-      var lamda = context.node;
+    codeGenFor['lambda'] = (context, code) => {
+      let lambda = context.node;
       code.addCode('(');
 
-      if (lamda.args !== null && Array.isArray(lamda.args)) {
-        var idx = 1;
-        lamda.args.forEach(function (arg) {
+      if (lambda.args !== null && Array.isArray(lambda.args)) {
+        let idx = 1;
+        lambda.args.forEach(arg => {
           if (arg !== null) {
             code.addCode(arg.value);
-            if (idx++ < lamda.args.length) code.addCode(', ');
+            if (idx++ < lambda.args.length) code.addCode(', ');
           }
         });
       }
@@ -6137,14 +6209,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       code.addCode(') => (');
       context.compiler({
         parentType: 'lambda',
-        node: lamda.expression,
+        node: lambda.expression,
         compiler: context.compiler
       }, code);
       code.addCode(')\n');
       return false;
     };
 
-    codeGenFor['dynamic-key'] = function (context, code) {
+    codeGenFor['dynamic-key'] = (context, code) => {
       code.addCode('[');
       context.compiler({
         parentType: 'dynamic-key',
@@ -6157,53 +6229,46 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     //codeGenAfter['member-list'] = (context, code) => { code.addCode('}\n') };
 
 
-    codeGenAfter['key'] = function (context, code) {
+    codeGenAfter['key'] = (context, code) => {
       code.addCode(': ');
     }; //codeGenAfter['member'] = (context, code) => { code.addCode(',\n') };
 
 
-    codeGenFor['word'] = function (context, code) {
+    codeGenFor['word'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['number'] = function (context, code) {
+    codeGenFor['number'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['dblstring'] = function (context, code) {
+    codeGenFor['dblstring'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['sglstring'] = function (context, code) {
+    codeGenFor['sglstring'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['bool'] = function (context, code) {
+    codeGenFor['bool'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['null'] = function (context, code) {
+    codeGenFor['null'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
-    codeGenFor['regex'] = function (context, code) {
+    codeGenFor['regex'] = (context, code) => {
       code.addCode(context.node.value);
     };
 
     function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
 
-      for (k in codeGenAfter) {
-        postDict[k] = codeGenAfter[k];
-      }
+      for (let k in codeGenAfter) postDict[k] = codeGenAfter[k];
     }
-
-    module.exports = {
-      addTranspilerFeatures: addTranspilerFeatures
-    };
     /***/
+
   },
 
   /***/
@@ -6216,80 +6281,31 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerFuncsAndSelectorsJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
 
-    codeGenFor['dot-op'] = function (context, code) {
-      var op = context.node;
-
-      switch (op.op.type) {
-        case "dot":
-          code.addCode('( __doDotOp( (');
-          break;
-
-        case "dotstar":
-          code.addCode('( __doDotStarOp( (');
-          break;
-
-        case "dotdotstar":
-          code.addCode('( __doDotDotStarOp( (');
-          break;
-
-        case "dotdot":
-          code.addCode('( __doDotDotOp( (');
-          break;
-      }
-
-      context.compiler({
-        parentType: 'dot-op-lhs',
-        node: context.node.lhs,
-        compiler: context.compiler
-      }, code);
-      code.addCode('), (\'');
-      context.compiler({
-        parentType: 'dot-top-rhs',
-        node: context.node.rhs,
-        compiler: context.compiler
-      }, code);
-      code.addCode('\')) )');
-      return false;
-    };
-
-    codeGenFor['bin-op'] = function (context, code) {
-      var op = context.node;
-      context.compiler({
-        node: op.lhs,
-        compiler: context.compiler
-      }, code);
-      if (op.op.value === '++') // double plus for string concat will be single + for javascript
-        code.addCode('+');else code.addCode(op.op.value);
-      context.compiler({
-        node: op.rhs,
-        compiler: context.compiler
-      }, code);
-      return false;
-    };
-
-    codeGenFor['fun-call'] = function (context, code) {
-      var op = context.node;
-      context.compiler({
+    codeGenFor['fun-call'] = (context, code) => {
+      let op = context.node;
+      if (op.fun.type) context.compiler({
         node: op.fun,
         compiler: context.compiler
-      }, code);
+      }, code);else code.addCode(op.fun);
       code.addCode('(');
 
-      if (op.args !== null && Array.isArray(op.args.args)) {
-        var idx = 0;
-        op.args.args.forEach(function (arg) {
-          context.compiler({
+      if (op.args !== null && Array.isArray(op.args)) {
+        let idx = 0;
+        op.args.forEach(arg => {
+          if (isAnonymousLambdaExpression(arg) && idx > 0) // only for rhs lambdas, hence idx > 0!
+            // otherwise [x,y,z] filter ($ >3) map ($++'!') picks up the '$' on the filter rhs and assume map lhs needs the anonymous treatment
+            buildLamda(arg, context, code);else context.compiler({
             node: arg,
             compiler: context.compiler
           }, code);
-          if (++idx < op.args.args.length) code.addCode(', ');
+          if (++idx < op.args.length) code.addCode(', ');
         });
       }
 
@@ -6297,14 +6313,57 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return false;
     };
 
-    function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+    function buildLamda(expression, context, code) {
+      var args = getAllIdentifiersUsedInExpression(expression).filter(id => id.match(/[$]+/)).filter(onlyUnique);
+      code.addCode('(');
+      let idx = 1;
+      args.forEach(arg => {
+        code.addCode(arg);
+        if (idx++ < args.length) code.addCode(', ');
+      });
+      code.addCode(') => (');
+      context.compiler({
+        parentType: 'lambda',
+        node: expression,
+        compiler: context.compiler
+      }, code);
+      code.addCode(')\n');
+    }
 
-      for (k in codeGenAfter) {
-        postDict[k] = codeGenAfter[k];
-      }
+    function onlyUnique(value, index, self) {
+      return self.indexOf(value) === index;
+    }
+
+    function isAnonymousLambdaExpression(node) {
+      //TODO: add check that we don't already have a fully expressed lambda, just using $ notation
+      return node && node.type && getAllIdentifiersUsedInExpression(node).filter(id => id.match(/[$]+/)).length > 0;
+    }
+
+    function getAllIdentifiersUsedInExpression(expression) {
+      let identifiers = [];
+      recurseGetAllIdentifiersUsedInExpression(expression, identifiers);
+      return identifiers;
+    }
+
+    function recurseGetAllIdentifiersUsedInExpression(expPart, identifiers) {
+      if (expPart.type && expPart.type === 'identifier') {
+        identifiers.push(expPart.ident.value);
+        return;
+      } //TOOD: every possible part of a node! (or just loop and do everything!)
+
+
+      if (expPart.value) recurseGetAllIdentifiersUsedInExpression(expPart.value, identifiers);
+      if (expPart.lhs) recurseGetAllIdentifiersUsedInExpression(expPart.lhs, identifiers);
+      if (expPart.rhs) recurseGetAllIdentifiersUsedInExpression(expPart.rhs, identifiers);
+      if (expPart.key) recurseGetAllIdentifiersUsedInExpression(expPart.key, identifiers);
+      if (expPart.members) if (Array.isArray(expPart.members)) expPart.members.forEach(m => recurseGetAllIdentifiersUsedInExpression(m, identifiers));else if (Array.isArray(expPart.members.args)) expPart.members.args.forEach(m => recurseGetAllIdentifiersUsedInExpression(m, identifiers));
+      if (expPart.args) expPart.args.forEach(a => recurseGetAllIdentifiersUsedInExpression(a, identifiers));
+    }
+
+    function addTranspilerFeatures(preDict, postDict) {
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
+
+      for (let k in codeGenAfter) postDict[k] = codeGenAfter[k];
     }
 
     module.exports = {
@@ -6323,16 +6382,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerHeaderDecsJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
 
-    codeGenFor['var-dec'] = function (context, code) {
-      var op = context.node;
-      var decCode = getSubCode(code);
+    codeGenFor['var-dec'] = (context, code) => {
+      let op = context.node;
+      let decCode = getSubCode(code);
       decCode.addCode('var ' + op.varName + ' = ');
       context.compiler({
         node: op.varVal,
@@ -6343,14 +6402,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       return false;
     };
 
-    codeGenFor['fun-def'] = function (context, code) {
-      var op = context.node;
-      var decCode = getSubCode(code);
+    codeGenFor['fun-def'] = (context, code) => {
+      let op = context.node;
+      let decCode = getSubCode(code);
       decCode.addCode('\n function ' + op.func.value + '(');
 
       if (op.args !== null && Array.isArray(op.args)) {
-        var idx = 1;
-        op.args.forEach(function (arg) {
+        let idx = 1;
+        op.args.forEach(arg => {
           if (arg !== null) {
             decCode.addCode(arg.value);
             if (idx++ < op.args.length) decCode.addCode(', ');
@@ -6370,13 +6429,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     };
 
     function getSubCode(code) {
-      var subCode = {
+      let subCode = {
         text: '',
         lines: code.lines,
         doScopes: code.doScopes
       };
 
-      subCode.addCode = function (text) {
+      subCode.addCode = text => {
         subCode.text += text;
         subCode.lines.push(text);
       };
@@ -6385,13 +6444,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
 
-      for (k in codeGenAfter) {
-        postDict[k] = codeGenAfter[k];
-      }
+      for (let k in codeGenAfter) postDict[k] = codeGenAfter[k];
     }
 
     module.exports = {
@@ -6410,22 +6465,57 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerMathOpJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var opfuncs = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let opfuncs = new Dictionary.Dictionary();
     opfuncs['++'] = stringConcat;
+    opfuncs['='] = equals;
+    opfuncs['.'] = selector;
+    opfuncs['..'] = selector;
+    opfuncs['.*'] = selector;
+    opfuncs['..*'] = selector;
+    opfuncs['and'] = andLogic;
+    opfuncs['or'] = orLogic;
 
-    codeGenFor['math-result'] = function (context, code) {
-      var op = context.node;
-      if (op.value.op) opCodeGen(op.value.lhs, op.value.op, op.value.rhs, context, code);else context.compiler({
+    codeGenFor['dot-op'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['product'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['sum'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['relative'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['and'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['or'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    codeGenFor['bracket-operand'] = (context, code) => {
+      functionHandler(context, code);
+    };
+
+    function functionHandler(context, code) {
+      let op = context.node;
+      if (op.op) opCodeGen(op.lhs, op.op, op.rhs, context, code);else context.compiler({
         parentType: 'math-result',
         node: op.value,
         compiler: context.compiler
       }, code);
-    };
+    }
 
     function opCodeGen(lhs, op, rhs, context, code) {
       code.addCode('(');
@@ -6445,6 +6535,49 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       emitOperand(rhs, context, code);
     }
 
+    function equals(lhs, op, rhs, context, code) {
+      emitOperand(lhs, context, code);
+      code.addCode('===');
+      emitOperand(rhs, context, code);
+    }
+
+    function andLogic(lhs, op, rhs, context, code) {
+      emitOperand(lhs, context, code);
+      code.addCode('&&');
+      emitOperand(rhs, context, code);
+    }
+
+    function orLogic(lhs, op, rhs, context, code) {
+      emitOperand(lhs, context, code);
+      code.addCode('||');
+      emitOperand(rhs, context, code);
+    }
+
+    function selector(lhs, op, rhs, context, code) {
+      switch (op.type) {
+        case "dot":
+          code.addCode('( __doDotOp( (');
+          break;
+
+        case "dotstar":
+          code.addCode('( __doDotStarOp( (');
+          break;
+
+        case "dotdotstar":
+          code.addCode('( __doDotDotStarOp( (');
+          break;
+
+        case "dotdot":
+          code.addCode('( __doDotDotOp( (');
+          break;
+      }
+
+      emitOperand(lhs, context, code);
+      code.addCode('), (\'');
+      emitOperand(rhs, context, code);
+      code.addCode('\')) )');
+    }
+
     function emitOperand(operand, context, code) {
       if (operand.op) opCodeGen(operand.lhs, operand.op, operand.rhs, context, code);else context.compiler({
         parentType: 'math-result',
@@ -6454,12 +6587,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function addTranspilerFeatures(preDict, postDict) {
-      for (k in codeGenFor) {
-        preDict[k] = codeGenFor[k];
-      }
+      for (let k in codeGenFor) preDict[k] = codeGenFor[k];
     }
 
     module.exports = {
+      functionHandler: functionHandler,
       addTranspilerFeatures: addTranspilerFeatures
     };
     /***/
@@ -6475,36 +6607,36 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
   /***/
   function srcAppDweeveSrcTranspilerTranspilerJs(module, exports, __webpack_require__) {
-    var Dictionary = __webpack_require__(
+    const Dictionary = __webpack_require__(
     /*! dictionaryjs */
     "./node_modules/dictionaryjs/Dictionary.js");
 
-    var HeaderFeatures = __webpack_require__(
+    const HeaderFeatures = __webpack_require__(
     /*! ./transpiler-header-decs */
     "./src/app/dweeve/src/transpiler/transpiler-header-decs.js");
 
-    var ConditionalsFeatures = __webpack_require__(
+    const ConditionalsFeatures = __webpack_require__(
     /*! ./transpiler-conditionals */
     "./src/app/dweeve/src/transpiler/transpiler-conditionals.js");
 
-    var FuncAndSelectorFeatures = __webpack_require__(
+    const FuncAndSelectorFeatures = __webpack_require__(
     /*! ./transpiler-funcs-and-selectors */
     "./src/app/dweeve/src/transpiler/transpiler-funcs-and-selectors.js");
 
-    var ExpressionFeatures = __webpack_require__(
+    const ExpressionFeatures = __webpack_require__(
     /*! ./transpiler-expressions */
     "./src/app/dweeve/src/transpiler/transpiler-expressions.js");
 
-    var DoScopeFeatures = __webpack_require__(
+    const DoScopeFeatures = __webpack_require__(
     /*! ./transpiler-do-scope */
     "./src/app/dweeve/src/transpiler/transpiler-do-scope.js");
 
-    var MathOpFeatures = __webpack_require__(
+    const MathOpFeatures = __webpack_require__(
     /*! ./transpiler-math-op */
     "./src/app/dweeve/src/transpiler/transpiler-math-op.js");
 
-    var codeGenFor = new Dictionary.Dictionary();
-    var codeGenAfter = new Dictionary.Dictionary();
+    let codeGenFor = new Dictionary.Dictionary();
+    let codeGenAfter = new Dictionary.Dictionary();
     HeaderFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
     ConditionalsFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
     FuncAndSelectorFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
@@ -6513,19 +6645,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     MathOpFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 
     function transpile(dweeve) {
-      var code = {
+      let code = {
         text: "dweeve = () => ( ",
         decs: '',
         lines: [],
         doScopes: []
       };
 
-      code.addCode = function (text) {
+      code.addCode = text => {
         code.text += text;
         code.lines.push(text);
       };
 
-      var context = {
+      let context = {
         parentType: 'dweeve',
         node: dweeve,
         compiler: recursiveTranspile
@@ -6536,25 +6668,23 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }
 
     function recursiveTranspile(context, code) {
-      var n = context.node;
+      let n = context.node;
       if (n === undefined || n === null || n.type === undefined) return;
-      var goDeep = true;
-      var codeGen = codeGenFor[n.type];
+      let goDeep = true;
+      let codeGen = codeGenFor[n.type];
       if (codeGen !== undefined) goDeep = codeGen(context, code); // if we have a token leaf node, do nothing, otherwise do some compiling!
 
       if (n.hasOwnProperty('text') && n.hasOwnProperty('value')) {} else if (goDeep) {
         for (var key in n) {
           if (key !== 'type' && n.hasOwnProperty(key)) {
-            var v = n[key];
+            let v = n[key];
 
             if (Array.isArray(v)) {
-              v.forEach(function (an) {
-                return context.compiler({
-                  parentType: n.type,
-                  node: an,
-                  compiler: context.compiler
-                }, code);
-              });
+              v.forEach(an => context.compiler({
+                parentType: n.type,
+                node: an,
+                compiler: context.compiler
+              }, code));
             } else {
               context.compiler({
                 parentType: n.type,
@@ -6566,7 +6696,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }
       }
 
-      var post = codeGenAfter[n.type];
+      let post = codeGenAfter[n.type];
       if (post !== undefined) post(context, code);
     }
 
@@ -6606,7 +6736,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     // The list of file replacements can be found in `angular.json`.
 
 
-    var environment = {
+    const environment = {
       production: false
     };
     /*
@@ -6669,9 +6799,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["enableProdMode"])();
     }
 
-    Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_2__["platformBrowserDynamic"])().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_3__["AppModule"]).catch(function (err) {
-      return console.error(err);
-    });
+    Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_2__["platformBrowserDynamic"])().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_3__["AppModule"]).catch(err => console.error(err));
     /***/
   },
 

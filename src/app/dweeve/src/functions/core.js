@@ -18,6 +18,7 @@ function addFunctions(context) {
     context['startsWith'] = startsWith
     context['map'] = map
     context['mapObject'] = mapObject
+    context['readUrl'] = readUrl
 }
 
 function isOdd(number) {
@@ -67,9 +68,9 @@ function daysBetween(d1, d2){
 function distinctBy(items, criteria) {
     let out = []
     let distinctList =[]
-    let ewl = (items['__extra-wrapped-list'])
+    let ewl = (items['__ukey-obj'])
     for(let key in items) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = items
             let v = items[key]
             if (ewl) {
@@ -95,9 +96,9 @@ function endsWith(s1,s2) {
 
 function filter(arr, criteria) {
     let out = []
-    let ewl = (arr['__extra-wrapped-list'])
+    let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = arr[key]
             if (ewl) {
@@ -115,11 +116,11 @@ function filter(arr, criteria) {
 }
 
 function filterObject(source, criteria){
-    let out = {'__extra-wrapped-list': true};
-    let ewl = (source['__extra-wrapped-list'])
+    let out = {'__ukey-obj': true};
+    let ewl = (source['__ukey-obj'])
     let idx=0;
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -139,10 +140,10 @@ function filterObject(source, criteria){
 function find(arr, matcher){
     if (Array.isArray(arr)){
         let out = [];
-        let ewl = (arr['__extra-wrapped-list'])
+        let ewl = (arr['__ukey-obj'])
         let idx=0;
         for(let key in arr) {
-            if (key!=='__extra-wrapped-list') {
+            if (key!=='__ukey-obj') {
                 let k = key
                 let v = arr[key]
                 if (ewl) {
@@ -212,9 +213,9 @@ function startsWith(s1,s2) {
 
 function map(source, mapFunc){
     let out = []
-    let ewl = (source['__extra-wrapped-list'])
+    let ewl = (source['__ukey-obj'])
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -231,11 +232,11 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
-    let out = {'__extra-wrapped-list': true};
-    let ewl = (source['__extra-wrapped-list'])
+    let out = {'__ukey-obj': true};
+    let ewl = (source['__ukey-obj'])
     let idx=0;
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -251,4 +252,19 @@ function mapObject(source, mapFunc){
     return out;
 }
 
-export  { addFunctions}
+function setResourceFileContent(name, text) {
+    resourceFileContent[name]=text
+}
+
+var resourceFileContent = {}
+
+function readUrl(path, contentType){
+    const content = resourceFileContent[path]
+    if (content==null) return '';
+    if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
+        return JSON.parse(content)
+
+    return content
+}
+
+module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}

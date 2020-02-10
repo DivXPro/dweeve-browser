@@ -2,11 +2,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { MatTabsModule } from '@angular/materials/tabs'
+import { FormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
+
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import {AceEditorModule} from 'ng2-ace-editor';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {dwrun} from 'dweeve';
+
 
 @NgModule({
   declarations: [
@@ -15,10 +19,15 @@ import {dwrun} from 'dweeve';
   ],
   imports: [
     NgbModule,
+    FormsModule,
     BrowserModule,
-    AceEditorModule
+    BrowserAnimationsModule,
+    AceEditorModule,
+    MatTabsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+platformBrowserDynamic().bootstrapModule(AppModule);

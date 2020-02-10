@@ -1,5 +1,9 @@
 const vm = require('vm-browserify');
 
+function addFunctions(context) {
+    context['__execDoScope'] = __execDoScope
+}
+
 function __execDoScope(code, args) {
     const script = new vm.Script(code + '\n var result=doScope()');
     
@@ -9,4 +13,4 @@ function __execDoScope(code, args) {
     return context.result
 }
 
-module.exports = { __execDoScope: __execDoScope};
+module.exports = { __execDoScope: __execDoScope, addFunctions: addFunctions};

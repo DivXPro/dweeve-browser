@@ -48,7 +48,7 @@ module.exports = function (it) {
 
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
 var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js/internals/object-create.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
 
 var UNSCOPABLES = wellKnownSymbol('unscopables');
 var ArrayPrototype = Array.prototype;
@@ -56,7 +56,10 @@ var ArrayPrototype = Array.prototype;
 // Array.prototype[@@unscopables]
 // https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
 if (ArrayPrototype[UNSCOPABLES] == undefined) {
-  hide(ArrayPrototype, UNSCOPABLES, create(null));
+  definePropertyModule.f(ArrayPrototype, UNSCOPABLES, {
+    configurable: true,
+    value: create(null)
+  });
 }
 
 // add a key to Array.prototype[@@unscopables]
@@ -135,7 +138,7 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var bind = __webpack_require__(/*! ../internals/bind-context */ "./node_modules/core-js/internals/bind-context.js");
+var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js/internals/function-bind-context.js");
 var IndexedObject = __webpack_require__(/*! ../internals/indexed-object */ "./node_modules/core-js/internals/indexed-object.js");
 var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules/core-js/internals/to-object.js");
 var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js/internals/to-length.js");
@@ -213,17 +216,59 @@ module.exports = {
 
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
+var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "./node_modules/core-js/internals/engine-v8-version.js");
 
 var SPECIES = wellKnownSymbol('species');
 
 module.exports = function (METHOD_NAME) {
-  return !fails(function () {
+  // We can't use this feature detection in V8 since it causes
+  // deoptimization and serious performance degradation
+  // https://github.com/zloirock/core-js/issues/677
+  return V8_VERSION >= 51 || !fails(function () {
     var array = [];
     var constructor = array.constructor = {};
     constructor[SPECIES] = function () {
       return { foo: 1 };
     };
     return array[METHOD_NAME](Boolean).foo !== 1;
+  });
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/array-method-uses-to-length.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/core-js/internals/array-method-uses-to-length.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
+
+var defineProperty = Object.defineProperty;
+var cache = {};
+
+var thrower = function (it) { throw it; };
+
+module.exports = function (METHOD_NAME, options) {
+  if (has(cache, METHOD_NAME)) return cache[METHOD_NAME];
+  if (!options) options = {};
+  var method = [][METHOD_NAME];
+  var ACCESSORS = has(options, 'ACCESSORS') ? options.ACCESSORS : false;
+  var argument0 = has(options, 0) ? options[0] : thrower;
+  var argument1 = has(options, 1) ? options[1] : undefined;
+
+  return cache[METHOD_NAME] = !!method && !fails(function () {
+    if (ACCESSORS && !DESCRIPTORS) return true;
+    var O = { length: -1 };
+
+    if (ACCESSORS) defineProperty(O, 1, { enumerable: true, get: thrower });
+    else O[1] = 1;
+
+    method.call(O, argument0, argument1);
   });
 };
 
@@ -256,41 +301,6 @@ module.exports = function (originalArray, length) {
       if (C === null) C = undefined;
     }
   } return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/bind-context.js":
-/*!********************************************************!*\
-  !*** ./node_modules/core-js/internals/bind-context.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var aFunction = __webpack_require__(/*! ../internals/a-function */ "./node_modules/core-js/internals/a-function.js");
-
-// optional / simple context binding
-module.exports = function (fn, that, length) {
-  aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 0: return function () {
-      return fn.call(that);
-    };
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
-  }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
-  };
 };
 
 
@@ -337,6 +347,27 @@ module.exports = function (target, source) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/create-non-enumerable-property.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/core-js/internals/create-non-enumerable-property.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
+var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
+var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
+
+module.exports = DESCRIPTORS ? function (object, key, value) {
+  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/create-property-descriptor.js":
 /*!**********************************************************************!*\
   !*** ./node_modules/core-js/internals/create-property-descriptor.js ***!
@@ -367,7 +398,7 @@ var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-j
 
 // Thank's IE8 for his funny defineProperty
 module.exports = !fails(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
 
 
@@ -390,6 +421,51 @@ var EXISTS = isObject(document) && isObject(document.createElement);
 module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/engine-user-agent.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/core-js/internals/engine-user-agent.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js/internals/get-built-in.js");
+
+module.exports = getBuiltIn('navigator', 'userAgent') || '';
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/internals/engine-v8-version.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/core-js/internals/engine-v8-version.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "./node_modules/core-js/internals/engine-user-agent.js");
+
+var process = global.process;
+var versions = process && process.versions;
+var v8 = versions && versions.v8;
+var match, version;
+
+if (v8) {
+  match = v8.split('.');
+  version = match[0] + match[1];
+} else if (userAgent) {
+  match = userAgent.match(/Edge\/(\d+)/);
+  if (!match || match[1] >= 74) {
+    match = userAgent.match(/Chrome\/(\d+)/);
+    if (match) version = match[1];
+  }
+}
+
+module.exports = version && +version;
 
 
 /***/ }),
@@ -424,7 +500,7 @@ module.exports = [
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var getOwnPropertyDescriptor = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js").f;
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
 var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
 var copyConstructorProperties = __webpack_require__(/*! ../internals/copy-constructor-properties */ "./node_modules/core-js/internals/copy-constructor-properties.js");
@@ -470,7 +546,7 @@ module.exports = function (options, source) {
     }
     // add a flag to not completely full polyfills
     if (options.sham || (targetProperty && targetProperty.sham)) {
-      hide(sourceProperty, 'sham', true);
+      createNonEnumerableProperty(sourceProperty, 'sham', true);
     }
     // extend global
     redefine(target, key, sourceProperty, options);
@@ -498,16 +574,37 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ "./node_modules/core-js/internals/function-to-string.js":
-/*!**************************************************************!*\
-  !*** ./node_modules/core-js/internals/function-to-string.js ***!
-  \**************************************************************/
+/***/ "./node_modules/core-js/internals/function-bind-context.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/core-js/internals/function-bind-context.js ***!
+  \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
+var aFunction = __webpack_require__(/*! ../internals/a-function */ "./node_modules/core-js/internals/a-function.js");
 
-module.exports = shared('native-function-to-string', Function.toString);
+// optional / simple context binding
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 0: return function () {
+      return fn.call(that);
+    };
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
 
 
 /***/ }),
@@ -541,7 +638,6 @@ module.exports = function (namespace, method) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var O = 'object';
 var check = function (it) {
   return it && it.Math == Math && it;
 };
@@ -549,10 +645,10 @@ var check = function (it) {
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
   // eslint-disable-next-line no-undef
-  check(typeof globalThis == O && globalThis) ||
-  check(typeof window == O && window) ||
-  check(typeof self == O && self) ||
-  check(typeof global == O && global) ||
+  check(typeof globalThis == 'object' && globalThis) ||
+  check(typeof window == 'object' && window) ||
+  check(typeof self == 'object' && self) ||
+  check(typeof global == 'object' && global) ||
   // eslint-disable-next-line no-new-func
   Function('return this')();
 
@@ -583,27 +679,6 @@ module.exports = function (it, key) {
 /***/ (function(module, exports) {
 
 module.exports = {};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/internals/hide.js":
-/*!************************************************!*\
-  !*** ./node_modules/core-js/internals/hide.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js/internals/object-define-property.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js/internals/create-property-descriptor.js");
-
-module.exports = DESCRIPTORS ? function (object, key, value) {
-  return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
 
 
 /***/ }),
@@ -667,6 +742,29 @@ module.exports = fails(function () {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/inspect-source.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/core-js/internals/inspect-source.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
+
+var functionToString = Function.toString;
+
+// this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
+if (typeof store.inspectSource != 'function') {
+  store.inspectSource = function (it) {
+    return functionToString.call(it);
+  };
+}
+
+module.exports = store.inspectSource;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/internal-state.js":
 /*!**********************************************************!*\
   !*** ./node_modules/core-js/internals/internal-state.js ***!
@@ -677,7 +775,7 @@ module.exports = fails(function () {
 var NATIVE_WEAK_MAP = __webpack_require__(/*! ../internals/native-weak-map */ "./node_modules/core-js/internals/native-weak-map.js");
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js/internals/is-object.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var objectHas = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js/internals/shared-key.js");
 var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js/internals/hidden-keys.js");
@@ -717,7 +815,7 @@ if (NATIVE_WEAK_MAP) {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
-    hide(it, STATE, metadata);
+    createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
   };
   get = function (it) {
@@ -841,11 +939,11 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var nativeFunctionToString = __webpack_require__(/*! ../internals/function-to-string */ "./node_modules/core-js/internals/function-to-string.js");
+var inspectSource = __webpack_require__(/*! ../internals/inspect-source */ "./node_modules/core-js/internals/inspect-source.js");
 
 var WeakMap = global.WeakMap;
 
-module.exports = typeof WeakMap === 'function' && /native code/.test(nativeFunctionToString.call(WeakMap));
+module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
 
 
 /***/ }),
@@ -864,48 +962,77 @@ var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_mod
 var html = __webpack_require__(/*! ../internals/html */ "./node_modules/core-js/internals/html.js");
 var documentCreateElement = __webpack_require__(/*! ../internals/document-create-element */ "./node_modules/core-js/internals/document-create-element.js");
 var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js/internals/shared-key.js");
+
+var GT = '>';
+var LT = '<';
+var PROTOTYPE = 'prototype';
+var SCRIPT = 'script';
 var IE_PROTO = sharedKey('IE_PROTO');
 
-var PROTOTYPE = 'prototype';
-var Empty = function () { /* empty */ };
+var EmptyConstructor = function () { /* empty */ };
+
+var scriptTag = function (content) {
+  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+};
+
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+var NullProtoObjectViaActiveX = function (activeXDocument) {
+  activeXDocument.write(scriptTag(''));
+  activeXDocument.close();
+  var temp = activeXDocument.parentWindow.Object;
+  activeXDocument = null; // avoid memory leak
+  return temp;
+};
 
 // Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
+var NullProtoObjectViaIFrame = function () {
   // Thrash, waste and sodomy: IE GC bug
   var iframe = documentCreateElement('iframe');
-  var length = enumBugKeys.length;
-  var lt = '<';
-  var script = 'script';
-  var gt = '>';
-  var js = 'java' + script + ':';
+  var JS = 'java' + SCRIPT + ':';
   var iframeDocument;
   iframe.style.display = 'none';
   html.appendChild(iframe);
-  iframe.src = String(js);
+  // https://github.com/zloirock/core-js/issues/475
+  iframe.src = String(JS);
   iframeDocument = iframe.contentWindow.document;
   iframeDocument.open();
-  iframeDocument.write(lt + script + gt + 'document.F=Object' + lt + '/' + script + gt);
+  iframeDocument.write(scriptTag('document.F=Object'));
   iframeDocument.close();
-  createDict = iframeDocument.F;
-  while (length--) delete createDict[PROTOTYPE][enumBugKeys[length]];
-  return createDict();
+  return iframeDocument.F;
 };
+
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var activeXDocument;
+var NullProtoObject = function () {
+  try {
+    /* global ActiveXObject */
+    activeXDocument = document.domain && new ActiveXObject('htmlfile');
+  } catch (error) { /* ignore */ }
+  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
+  var length = enumBugKeys.length;
+  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+  return NullProtoObject();
+};
+
+hiddenKeys[IE_PROTO] = true;
 
 // `Object.create` method
 // https://tc39.github.io/ecma262/#sec-object.create
 module.exports = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty();
-    Empty[PROTOTYPE] = null;
+    EmptyConstructor[PROTOTYPE] = anObject(O);
+    result = new EmptyConstructor();
+    EmptyConstructor[PROTOTYPE] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO] = O;
-  } else result = createDict();
+  } else result = NullProtoObject();
   return Properties === undefined ? result : defineProperties(result, Properties);
 };
-
-hiddenKeys[IE_PROTO] = true;
 
 
 /***/ }),
@@ -1133,7 +1260,9 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+
+module.exports = global;
 
 
 /***/ }),
@@ -1146,27 +1275,22 @@ module.exports = __webpack_require__(/*! ../internals/global */ "./node_modules/
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
-var nativeFunctionToString = __webpack_require__(/*! ../internals/function-to-string */ "./node_modules/core-js/internals/function-to-string.js");
+var inspectSource = __webpack_require__(/*! ../internals/inspect-source */ "./node_modules/core-js/internals/inspect-source.js");
 var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js/internals/internal-state.js");
 
 var getInternalState = InternalStateModule.get;
 var enforceInternalState = InternalStateModule.enforce;
-var TEMPLATE = String(nativeFunctionToString).split('toString');
-
-shared('inspectSource', function (it) {
-  return nativeFunctionToString.call(it);
-});
+var TEMPLATE = String(String).split('String');
 
 (module.exports = function (O, key, value, options) {
   var unsafe = options ? !!options.unsafe : false;
   var simple = options ? !!options.enumerable : false;
   var noTargetGet = options ? !!options.noTargetGet : false;
   if (typeof value == 'function') {
-    if (typeof key == 'string' && !has(value, 'name')) hide(value, 'name', key);
+    if (typeof key == 'string' && !has(value, 'name')) createNonEnumerableProperty(value, 'name', key);
     enforceInternalState(value).source = TEMPLATE.join(typeof key == 'string' ? key : '');
   }
   if (O === global) {
@@ -1179,10 +1303,10 @@ shared('inspectSource', function (it) {
     simple = true;
   }
   if (simple) O[key] = value;
-  else hide(O, key, value);
+  else createNonEnumerableProperty(O, key, value);
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 })(Function.prototype, 'toString', function toString() {
-  return typeof this == 'function' && getInternalState(this).source || nativeFunctionToString.call(this);
+  return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
 });
 
 
@@ -1213,11 +1337,11 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var hide = __webpack_require__(/*! ../internals/hide */ "./node_modules/core-js/internals/hide.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
 
 module.exports = function (key, value) {
   try {
-    hide(global, key, value);
+    createNonEnumerableProperty(global, key, value);
   } catch (error) {
     global[key] = value;
   } return value;
@@ -1245,6 +1369,24 @@ module.exports = function (key) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/shared-store.js":
+/*!********************************************************!*\
+  !*** ./node_modules/core-js/internals/shared-store.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
+
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || setGlobal(SHARED, {});
+
+module.exports = store;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/shared.js":
 /*!**************************************************!*\
   !*** ./node_modules/core-js/internals/shared.js ***!
@@ -1252,19 +1394,15 @@ module.exports = function (key) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
-var setGlobal = __webpack_require__(/*! ../internals/set-global */ "./node_modules/core-js/internals/set-global.js");
 var IS_PURE = __webpack_require__(/*! ../internals/is-pure */ "./node_modules/core-js/internals/is-pure.js");
-
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || setGlobal(SHARED, {});
+var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js/internals/shared-store.js");
 
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.2.1',
+  version: '3.6.4',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
 });
 
 
@@ -1284,7 +1422,7 @@ var min = Math.min;
 
 // Helper for a popular repeating case of the spec:
 // Let integer be ? ToInteger(index).
-// If integer < 0, let result be max((length + integer), 0); else let result be min(length, length).
+// If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 module.exports = function (index, length) {
   var integer = toInteger(index);
   return integer < 0 ? max(integer + length, 0) : min(integer, length);
@@ -1410,6 +1548,24 @@ module.exports = function (key) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/use-symbol-as-uid.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/core-js/internals/use-symbol-as-uid.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/native-symbol */ "./node_modules/core-js/internals/native-symbol.js");
+
+module.exports = NATIVE_SYMBOL
+  // eslint-disable-next-line no-undef
+  && !Symbol.sham
+  // eslint-disable-next-line no-undef
+  && typeof Symbol.iterator == 'symbol';
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/well-known-symbol.js":
 /*!*************************************************************!*\
   !*** ./node_modules/core-js/internals/well-known-symbol.js ***!
@@ -1419,15 +1575,20 @@ module.exports = function (key) {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
 var shared = __webpack_require__(/*! ../internals/shared */ "./node_modules/core-js/internals/shared.js");
+var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js/internals/has.js");
 var uid = __webpack_require__(/*! ../internals/uid */ "./node_modules/core-js/internals/uid.js");
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/native-symbol */ "./node_modules/core-js/internals/native-symbol.js");
+var USE_SYMBOL_AS_UID = __webpack_require__(/*! ../internals/use-symbol-as-uid */ "./node_modules/core-js/internals/use-symbol-as-uid.js");
 
+var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var store = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  return store[name] || (store[name] = NATIVE_SYMBOL && Symbol[name]
-    || (NATIVE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+  if (!has(WellKnownSymbolsStore, name)) {
+    if (NATIVE_SYMBOL && has(Symbol, name)) WellKnownSymbolsStore[name] = Symbol[name];
+    else WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+  } return WellKnownSymbolsStore[name];
 };
 
 
@@ -1445,11 +1606,16 @@ module.exports = function (name) {
 var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
 var $filter = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").filter;
 var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
+// Edge 14- issue
+var USES_TO_LENGTH = arrayMethodUsesToLength('filter');
 
 // `Array.prototype.filter` method
 // https://tc39.github.io/ecma262/#sec-array.prototype.filter
 // with adding support of @@species
-$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('filter') }, {
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
   filter: function filter(callbackfn /* , thisArg */) {
     return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
@@ -1470,16 +1636,19 @@ $({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('filter'
 var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
 var $find = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").find;
 var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "./node_modules/core-js/internals/add-to-unscopables.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
 
 var FIND = 'find';
 var SKIPS_HOLES = true;
+
+var USES_TO_LENGTH = arrayMethodUsesToLength(FIND);
 
 // Shouldn't skip holes
 if (FIND in []) Array(1)[FIND](function () { SKIPS_HOLES = false; });
 
 // `Array.prototype.find` method
 // https://tc39.github.io/ecma262/#sec-array.prototype.find
-$({ target: 'Array', proto: true, forced: SKIPS_HOLES }, {
+$({ target: 'Array', proto: true, forced: SKIPS_HOLES || !USES_TO_LENGTH }, {
   find: function find(callbackfn /* , that = undefined */) {
     return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
@@ -1503,11 +1672,16 @@ addToUnscopables(FIND);
 var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
 var $map = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").map;
 var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
+// FF49- issue
+var USES_TO_LENGTH = arrayMethodUsesToLength('map');
 
 // `Array.prototype.map` method
 // https://tc39.github.io/ecma262/#sec-array.prototype.map
 // with adding support of @@species
-$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('map') }, {
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
   map: function map(callbackfn /* , thisArg */) {
     return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
   }
@@ -1525,7 +1699,7 @@ $({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('map') }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <p>payload:</p>\n                        <ace-editor #pleditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                    <div class=\"row\">\n                      <div class=\"col-lg-6\">\n                        <p>d~weeve:</p>\n                        <ace-editor #dweditor style=\"height:350px;\">\n                        </ace-editor>\n                      </div>\n                      <div class=\"col-lg-6\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Payload\">\n                            <ace-editor #pleditor style=\"height:350px;\">\n                            </ace-editor>\n                          </mat-tab>\n                          <mat-tab label=\"Resource\">\n                            <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                            <ace-editor #rseditor style=\"height:290px;\">\n                            </ace-editor>\n                          </mat-tab>\n                        \n                        </mat-tab-group>\n                        \n\n                      </div>\n                    </div>\n                    <br>\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <ace-editor #reditor style=\"height:250px;\">\n                        </ace-editor>\n                      </div>\n                    </div>\n                    <br>\n                    <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
 
 /***/ }),
 
@@ -1784,6 +1958,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dweeve/src/exe/dweeve.js */ "./src/app/dweeve/src/exe/dweeve.js");
+/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dweeve/src/functions/core.js */ "./src/app/dweeve/src/functions/core.js");
+/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -1791,73 +1968,64 @@ let AppComponent = class AppComponent {
     constructor() {
         this.title = 'dweeve-ui';
         this.exampleBar = false;
+        this.resourceNameText = '';
+        this.examples = {};
     }
     ngOnInit() {
+        this.createExamples();
     }
     toggleExampleBar() {
         this.exampleBar = !this.exampleBar;
     }
     ngAfterViewInit() {
-        this.dweditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-        });
+        this.dweditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
         this.dweditor.theme = 'clouds';
-        this.dweditor.text = `%dw 2.0
-    var a = 2 * 3 + 4
-    var b = 2 + 3 * 4
-    ---
-    {a:a, b: b}
-    `;
-        this.dweditor.registerOnChange(() => {
-            this.reDweeve();
-        });
-        this.pleditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-        });
+        this.dweditor.registerOnChange(() => { this.reDweeve(); });
+        this.pleditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
         this.pleditor.theme = 'clouds';
-        this.pleditor.text = `<?xml version='1.0' encoding='UTF-8'?>
-<prices>
-    <basic>9.99</basic>
-    <premium>53.01</premium>
-    <vip>398.99</vip>
-</prices>`;
-        this.pleditor.registerOnChange(() => {
-            this.reDweeve();
-        });
-        this.reditor.getEditor().setOptions({
-            showLineNumbers: true,
-            tabSize: 2
-        });
+        this.pleditor.registerOnChange(() => { this.reDweeve(); });
         this.reditor.theme = 'clouds';
-        this.reDweeve();
+        this.reditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
+        this.rseditor.theme = 'clouds';
+        this.rseditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
+        this.rseditor.registerOnChange(() => { this.reDweeve(); });
+        this.toggleExampleBar();
+        this.loadExample('Simple function');
     }
     reDweeve() {
+        _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
         this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
     }
-    loadExample(exName) {
-        if (exName === 'Simple function') {
-            this.dweditor.text = `%dw 2.0
+    loadExample(name) {
+        if (this.examples[name]) {
+            const example = this.examples[name];
+            this.reditor.text = '';
+            this.rseditor.text = example.resourceText !== undefined ? example.resourceText : '';
+            this.resourceNameText = example.resourceName !== undefined ? example.resourceName : '';
+            this.pleditor.text = example.payload !== undefined ? example.payload : '';
+            this.dweditor.text = example.dwl !== undefined ? example.dwl : '';
+            this.toggleExampleBar();
+        }
+    }
+    createExamples() {
+        this.examples['Simple function'] = { "dwl": `%dw 2.0
 fun toUser(obj) = {
   firstName: obj.field1,
   lastName: obj.field2
 }
-
 ---
-toUser(payload)`;
-            this.pleditor.text = `{
+toUser(payload)`,
+            "payload": `{
   "field1": "Bob",
   "field2": "Jones"
-}`;
-        }
-        if (exName === 'Get people') {
-            this.dweditor.text = `%dw 2.0
+}` };
+        this.examples['Get people'] = {
+            "dwl": `%dw 2.0
 
 output application/json
 ---
-payload.people.person.address.street`;
-            this.pleditor.text = `{
+payload.people.person.address.street`,
+            "payload": `{
 "people": [
     {
     "person": {
@@ -1890,22 +2058,22 @@ payload.people.person.address.street`;
     }
     }
 ]
-}`;
-        }
-        if (exName === 'All descendents') {
-            this.dweditor.text = `%dw 2.0
+}`
+        };
+        this.examples['All descendents'] = {
+            "dwl": `%dw 2.0
 output application/json
 ---
-payload.users..*name`;
-            this.pleditor.text = `{ "users" : {
+payload.users..*name`,
+            "payload": `{ "users" : {
   "user": {"name":"a"},
   "user": {"name":"b"},
   "user": {"name":"c", "name":"d"}
   }
-}`;
-        }
-        if (exName === 'Mixed matching') {
-            this.dweditor.text = `%dw 2.0
+}`
+        };
+        this.examples['Mixed matching'] = {
+            "dwl": `%dw 2.0
 ---
 {
   a: payload.string match {
@@ -1953,20 +2121,20 @@ payload.users..*name`;
     case "bob"  -> "is bob!"
     case word: "bang" ->  word ++ " was matched"
   }
-}`;
-            this.pleditor.text = `{ "string": "hello fred", "number": 90,
+}`,
+            "payload": `{ "string": "hello fred", "number": 90,
       "object" : {"name" : "bob"}, "bool" : true,
-      "name" : "Emiliano", "strings" : "strings", "bangtest" : "bang"}`;
-        }
-        if (exName === 'Simple Lambda') {
-            this.dweditor.text = `%dw 2.0
+      "name" : "Emiliano", "strings" : "strings", "bangtest" : "bang"}`
+        };
+        this.examples['Simple Lambda'] = {
+            "dwl": `%dw 2.0
 var myLambda = (a,b)-> { (a) : b}
 ---
-myLambda("key","value")`;
-            this.pleditor.text = ``;
-        }
-        if (exName === 'Do scope') {
-            this.dweditor.text = `%dw 2.0
+myLambda("key","value")`,
+            "payload": ``
+        };
+        this.examples['Do scope'] = {
+            "dwl": `%dw 2.0
 output application/json
 fun test(p) = do {
     var a = "Foo" ++ p
@@ -1974,25 +2142,220 @@ fun test(p) = do {
     a
 }
 ---
-{ result: test(" Bar") }`;
-            this.pleditor.text = ``;
-        }
-        if (exName === 'Xml input') {
-            this.dweditor.text = `%dw 2.0
+{ result: test(" Bar") }`,
+            "payload": ``
+        };
+        this.examples['Xml input'] = {
+            "dwl": `%dw 2.0
 output application/xml
 ---
 {
     prices: payload.prices mapObject (value, key) -> {
         (key): (value + 5)
     }
-}`;
-            this.pleditor.text = `<?xml version='1.0' encoding='UTF-8'?>
+}`,
+            "payload": `<?xml version='1.0' encoding='UTF-8'?>
 <prices>
     <basic>14.99</basic>
     <premium>53.01</premium>
     <vip>398.99</vip>
-</prices>`;
+</prices>`
+        };
+        this.examples['Recursion!'] = {
+            "payload": `{
+        "command":{
+          "version":"1.0.0",
+          "user":"ian",
+          "commandDate":"2019-10-20T11:15:30",
+          "response":[
+            {
+              "object":{
+                "type":"policyHeader",
+                "schema":"policyHeader",
+                "schemaVersion":"1.0.0",
+                "commandId":"PH001",
+                "content":{
+                  "polifcyRef":"xyz-124",
+                  "inceptionDate":"2019-11-01T00:00:00",
+                  "expiryDate":"2020-10-31T23:59:59"
+                }
+              }
+            },
+            {
+              "object":{
+                "type":"customer",
+                "schema":"customer",
+                "schemaVersion":"1.0.0",
+                "commandId":"CU001",
+                "content":{
+                  "extRef":"sf00001abc"
+                }
+              }
+            },
+            {
+              "object":{
+                "type":"broker",
+                "schema":"broker",
+                "schemaVersion":"1.0.0",
+                "commandId":"BR001",
+                "content":{
+                  "brokerRef":"br00111"
+                }
+              }
+            },
+            {
+              "object":{
+                "type":"coverage",
+                "schema":"coverage",
+                "schemaVersion":"1.0.0",
+                "commandId":"CV001",
+                "content":{
+                  "coverageRef":"covRef00111"
+                }
+              }
+            },
+            {
+              "object":{
+                "type":"insuredObject",
+                "schema":"insuredObject",
+                "schemaVersion":"1.0.0",
+                "commandId":"IO001",
+                "content":{
+                  "insuredType":"motor",
+                  "make":"Ford",
+                  "model":"Fiesta",
+                  "engine": "2.0"
+                }
+              }
+            },
+            {
+              "object":{
+                "type":"insuredObject",
+                "schema":"insuredObject",
+                "schemaVersion":"1.0.0",
+                "commandId":"IO002",
+                "content":{
+                  "insuredType":"property",
+                  "description":"office",
+                  "fire":"yes"
+                }
+              }
+            },
+            {
+              "relation":{
+                "from":"PH001",
+                "to":"CU001",
+                "rType":"belongsTo"
+              }
+            },
+            {
+              "relation":{
+                "from":"CU001",
+                "to":"PH001",
+                "rType":"hasPolicy"
+              }
+            }
+          ]
         }
+      }`,
+            "resourceText": `{
+        "view":{
+          "name":"motorPolicy-quote",
+          "version":"1.0.0",
+          "viewStyle":"hierarchy",
+          "viewElement":{
+            "object":"policyHeader",
+            "elementRef":"PH001",
+            "childObjects":[
+              {
+                "viewElement":{
+                  "object":"customer",
+                  "elementRef":"CU001",
+                  "multiplicity":"single",
+                  "relationFromParent":"belongsTo",
+                  "relationToParent":"hasPolicy"
+                }
+              },
+              {
+                "viewElement":{
+                  "object":"broker",
+                  "elementRef":"BR001",
+                  "multiplicity":"single",
+                  "relationFromParent":"managedBy",
+                  "relationToParent":"managesPolicy"
+                }
+              },
+              {
+                "viewElement":{
+                  "object":"coverage",
+                  "elementRef":"CV001",
+                  "multiplicity":"oneOrMore",
+                  "relationFromParent":"hasCover",
+                  "relationToParent":"coveredBy",
+                  "relationToOther":{
+                    "elementRef":"C001",
+                    "type":"hasCover"
+                  },
+                  "childObjects":[
+                    {
+                      "viewElement":{
+                        "object":"insuredObject",
+                        "elementRef":"IO001",
+                        "multiplicity":"oneOrMore",
+                        "relationFromParent":"covers",
+                        "relationToParent":"coveredBy"
+                      }
+                    },
+                    {
+                      "viewElement":{
+                        "object":"insuredObject",
+                        "elementRef":"IO002",
+                        "multiplicity":"oneOrMore",
+                        "relationFromParent":"covers",
+                        "relationToParent":"coveredBy"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }`,
+            "resourceName": 'classpath://dw/data/view-metadata-policyHeader.json',
+            "dwl": `%dw 2.0
+    output application/json
+    
+    var policyHeaderView = readUrl("classpath://dw/data/view-metadata-policyHeader.json")
+    
+    fun findObjectContent(objectType, commandId) = {
+         (objectType): payload.command.response filter ($.object.schema == objectType and $.object.commandId == commandId) map (object , index) ->
+            object.object.content
+    }
+    
+    fun findRelation(relation, relationFrom, relationType) = 
+      (relation filter (($.from == relationFrom) and ($.rType == relationType))).to
+    
+    fun renderChildObjects(childObjectsArray) = {
+      children: childObjectsArray map ((child, childIndex) -> {
+        (child.viewElement.object) : findObjectContent(child.viewElement.object, child.viewElement.elementRef),
+        (if (child.viewElement.childObjects != null) 
+           renderChildObjects(child.viewElement.childObjects) else {}
+        )
+      }
+      )
+    }
+    
+    var firstViewElement = policyHeaderView.view.viewElement
+    ---
+    
+    
+    {
+      (findObjectContent(firstViewElement.object, firstViewElement.elementRef)),
+      (if (firstViewElement.childObjects != null) renderChildObjects(firstViewElement.childObjects) else {})
+        //relation: findRelation(payload.command.response.relation, "PH001", policyHeaderView.view.viewElement.childObjects.viewElement[0].relationFromParent),
+    }`
+        };
     }
 };
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -2004,6 +2367,9 @@ tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('reditor', { static: false })
 ], AppComponent.prototype, "reditor", void 0);
+tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('rseditor', { static: false })
+], AppComponent.prototype, "rseditor", void 0);
 AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-root',
@@ -2030,8 +2396,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm2015/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
-/* harmony import */ var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ng2-ace-editor */ "./node_modules/ng2-ace-editor/index.js");
-/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ "./node_modules/@ng-bootstrap/ng-bootstrap/fesm2015/ng-bootstrap.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/material/tabs */ "./node_modules/@angular/material/esm2015/tabs.js");
+/* harmony import */ var _angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/platform-browser-dynamic */ "./node_modules/@angular/platform-browser-dynamic/fesm2015/platform-browser-dynamic.js");
+/* harmony import */ var _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser/animations */ "./node_modules/@angular/platform-browser/fesm2015/animations.js");
+/* harmony import */ var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ng2-ace-editor */ "./node_modules/ng2-ace-editor/index.js");
+/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ "./node_modules/@ng-bootstrap/ng-bootstrap/fesm2015/ng-bootstrap.js");
+
+
+
+
 
 
 
@@ -2046,15 +2420,19 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
             _app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]
         ],
         imports: [
-            _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbModule"],
+            _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__["NgbModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"],
             _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
-            ng2_ace_editor__WEBPACK_IMPORTED_MODULE_4__["AceEditorModule"]
+            _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
+            ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__["AceEditorModule"],
+            _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__["MatTabsModule"]
         ],
         providers: [],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
     })
 ], AppModule);
 
+Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_6__["platformBrowserDynamic"])().bootstrapModule(AppModule);
 
 
 /***/ }),
@@ -2218,7 +2596,7 @@ function str(key, holder, limit) {
 // Otherwise, iterate through all of the keys in the object.
 
 //if it is one of dweeve'sspecial extra-wrapped-list, deal with that:
-            if (value['__extra-wrapped-list']) {
+            if (value['__ukey-obj']) {
                 for (k in value) {
                     if ( k.startsWith('__key')) {
                         let v2 = value[k];
@@ -2334,7 +2712,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0__);
 const nearley = __webpack_require__(/*! ./nearley */ "./src/app/dweeve/src/exe/nearley.js");
-const dwgrammer = __webpack_require__(/*! ../parser/dweeve-grammar.js */ "./src/app/dweeve/src/parser/dweeve-grammar.js");
+const strip = __webpack_require__(/*! strip-comments */ "./node_modules/strip-comments/index.js");
+const dwgrammar = __webpack_require__(/*! ../parser/dweeve-grammar2.js */ "./src/app/dweeve/src/parser/dweeve-grammar2.js");
 const transpiler = __webpack_require__(/*! ../transpiler/transpiler.js */ "./src/app/dweeve/src/transpiler/transpiler.js");
 const beautify = __webpack_require__(/*! ./beautify.js */ "./src/app/dweeve/src/exe/beautify.js");
 const vm = __webpack_require__(/*! vm-browserify */ "./node_modules/vm-browserify/index.js");
@@ -2342,78 +2721,71 @@ const xml2js = __webpack_require__(/*! ./xmldom2jsobj */ "./src/app/dweeve/src/e
 const DOMParser = __webpack_require__(/*! xmldom */ "./node_modules/xmldom/dom-parser.js").DOMParser;
 const selectorFunctions = __webpack_require__(/*! ../functions/selectors */ "./src/app/dweeve/src/functions/selectors.js")
 const coreFunctions = __webpack_require__(/*! ../functions/core */ "./src/app/dweeve/src/functions/core.js") 
-const doScopeFunctions = __webpack_require__(/*! ../functions/doScope */ "./src/app/dweeve/src/functions/doScope.js")  
+const doScopeFunctions = __webpack_require__(/*! ../functions/doScope */ "./src/app/dweeve/src/functions/doScope.js") 
 
 
 
 function run(dwl, payload, vars, attributes) {
-    try {
-        if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
-            var xml = payload.trim();
-            var doc = new DOMParser().parseFromString(xml);
-            payload = xml2js.toJsObj(doc);
-        } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
-            payload = payload.replace(/\r\n/g, '\n');
-            payload = runDweeveScript(payload, {})
+        try {
+            if (typeof payload === 'string' && payload.trim().startsWith('<') && payload.trim().endsWith('>')) {
+                var xml = payload.trim();
+                var doc = new DOMParser().parseFromString(xml);
+                payload = xml2js.toJsObj(doc);
+            } else if (typeof payload === 'string' && payload.trim().startsWith('{') && payload.trim().endsWith('}')) {
+                payload = payload.replace(/\r\n/g, '\n');
+                payload = runDweeveScript(payload, {})
+            }
+            let t = typeof payload;
+            let result = innerRun (dwl, payload , vars, attributes);
+            
+            return result;
         }
-
-        let t = typeof payload;
-        let result = innerRun (dwl, payload , vars, attributes);
-        
+        catch (err) {
+            return "Error parsing input payload:"+err.message
+        }
+    }
+    
+    function innerRun (dwl, payload, vars, attributes) {
+        try {
+            const args = {
+                payload: payload,
+                vars: vars,
+                attributes:attributes
+            };
+    
+            let result = runDweeveScript(dwl, args)
+            return beautify(result, null,2,100);
+        }
+        catch (err) {
+            return err.message;
+        }
+    }
+    
+    function runDweeveScript(dwl, args) {
+        coreFunctions.addFunctions(args)
+        doScopeFunctions.addFunctions(args)
+        selectorFunctions.addFunctions(args)
+    
+        const parser = new nearley.Parser(nearley.Grammar.fromCompiled(dwgrammar.getGrammar()))
+        dwl = dwl.replace(/\r\n/g, '\n')
+        dwl = strip(dwl)
+        parser.feed(dwl.trim());
+    
+        if (parser.results.length === 0)
+            throw "Dweeve parser found no dweeve!"
+        if (parser.results.length > 1)
+            throw "Dweeve parser found more than one intepretation of the dweeve!"
+    
+        const code = transpiler.transpile(parser.results[0]);
+        const script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()')
+        const context = new vm.createContext(args)
+        script.runInContext(context)
+        let result = context.result
         return result;
     }
-    catch (err) {
-        return "Error parsing input payload:"+err.message
-    }
-}
-
-function innerRun (dwl, payload, vars, attributes) {
-    try {
-        
-        const args = {
-            payload: payload,
-            vars: vars,
-            attributes:attributes,
-            __doDotOp:  selectorFunctions.__doDotOp,
-            __doDotStarOp: selectorFunctions.__doDotStarOp,
-            __doDotDotStarOp: selectorFunctions.__doDotDotStarOp,
-            __doDotDotOp: selectorFunctions.__doDotDotOp,
-            __getIdentifierValue: selectorFunctions.__getIdentifierValue,
-            __execDoScope: doScopeFunctions.__execDoScope
- 
-        };
-
-        coreFunctions.addFunctions(args);
-
-        let result = runDweeveScript(dwl, args);
-
-        return beautify(result, null,2,100);
-    }
-    catch (err) {
-        return err.message;
-    }
-}
+    
 
 
-
-
-function runDweeveScript(dwl, args) {
-    const grammar = dwgrammer.getGrammar();
-    const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-    dwl = dwl.replace(/\r\n/g, '\n');
-    parser.feed(dwl.trim());
-    if (parser.results.length === 0)
-        throw "Dweeve parser found no dweeve!";
-    if (parser.results.length > 1)
-        throw "Dweeve parser found more than one intepretation of the dweeve!";
-    const code = transpiler.transpile(parser.results[0]);
-    const script = new vm.Script(code.decs + '\n' + code.text + '\n var result=dweeve()');
-    const context = new vm.createContext(args);
-    script.runInContext(context);
-    let result = context.result;
-    return result;
-}
-// module.exports = { run: run};
 
 
 /***/ }),
@@ -2939,7 +3311,7 @@ function toJsObj(node){
         return nl;
     }
     if (nodeType==='NodeList') {
-        let nl = { '__extra-wrapped-list' : true};
+        let nl = { '__ukey-obj' : true};
         for (let idx=0;idx<node.length;idx++){
             let ce = node.item(idx);
             if (getNodeType(ce)==='Element') {
@@ -2956,7 +3328,7 @@ function toJsObj(node){
         return ({ [node.nodeName]: toJsObj(node.childNodes) });
     } else {
         let inner = toJsObj(node.childNodes);
-        let ewl = { '__extra-wrapped-list' : true};
+        let ewl = { '__ukey-obj' : true};
         ewl["__key0"]= { "__text" : nodeOwnText(node) }; 
         for (let idx=1;idx<=Object.values(inner).length;idx++)
             if (Object.keys(inner)[idx-1].startsWith('__key'))
@@ -3016,12 +3388,9 @@ module.exports = {toJsObj: toJsObj}
 /*!**********************************************!*\
   !*** ./src/app/dweeve/src/functions/core.js ***!
   \**********************************************/
-/*! exports provided: addFunctions */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addFunctions", function() { return addFunctions; });
 
 function addFunctions(context) {
     context['isOdd'] = isOdd
@@ -3042,6 +3411,7 @@ function addFunctions(context) {
     context['startsWith'] = startsWith
     context['map'] = map
     context['mapObject'] = mapObject
+    context['readUrl'] = readUrl
 }
 
 function isOdd(number) {
@@ -3091,9 +3461,9 @@ function daysBetween(d1, d2){
 function distinctBy(items, criteria) {
     let out = []
     let distinctList =[]
-    let ewl = (items['__extra-wrapped-list'])
+    let ewl = (items['__ukey-obj'])
     for(let key in items) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = items
             let v = items[key]
             if (ewl) {
@@ -3119,9 +3489,9 @@ function endsWith(s1,s2) {
 
 function filter(arr, criteria) {
     let out = []
-    let ewl = (arr['__extra-wrapped-list'])
+    let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = arr[key]
             if (ewl) {
@@ -3139,11 +3509,11 @@ function filter(arr, criteria) {
 }
 
 function filterObject(source, criteria){
-    let out = {'__extra-wrapped-list': true};
-    let ewl = (source['__extra-wrapped-list'])
+    let out = {'__ukey-obj': true};
+    let ewl = (source['__ukey-obj'])
     let idx=0;
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -3163,10 +3533,10 @@ function filterObject(source, criteria){
 function find(arr, matcher){
     if (Array.isArray(arr)){
         let out = [];
-        let ewl = (arr['__extra-wrapped-list'])
+        let ewl = (arr['__ukey-obj'])
         let idx=0;
         for(let key in arr) {
-            if (key!=='__extra-wrapped-list') {
+            if (key!=='__ukey-obj') {
                 let k = key
                 let v = arr[key]
                 if (ewl) {
@@ -3236,9 +3606,9 @@ function startsWith(s1,s2) {
 
 function map(source, mapFunc){
     let out = []
-    let ewl = (source['__extra-wrapped-list'])
+    let ewl = (source['__ukey-obj'])
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -3255,11 +3625,11 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
-    let out = {'__extra-wrapped-list': true};
-    let ewl = (source['__extra-wrapped-list'])
+    let out = {'__ukey-obj': true};
+    let ewl = (source['__ukey-obj'])
     let idx=0;
     for(let key in source) {
-        if (key!=='__extra-wrapped-list') {
+        if (key!=='__ukey-obj') {
             let k = key
             let v = source[key]
             if (ewl) {
@@ -3275,7 +3645,22 @@ function mapObject(source, mapFunc){
     return out;
 }
 
+function setResourceFileContent(name, text) {
+    resourceFileContent[name]=text
+}
 
+var resourceFileContent = {}
+
+function readUrl(path, contentType){
+    const content = resourceFileContent[path]
+    if (content==null) return '';
+    if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
+        return JSON.parse(content)
+
+    return content
+}
+
+module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}
 
 /***/ }),
 
@@ -3288,6 +3673,10 @@ function mapObject(source, mapFunc){
 
 const vm = __webpack_require__(/*! vm-browserify */ "./node_modules/vm-browserify/index.js");
 
+function addFunctions(context) {
+    context['__execDoScope'] = __execDoScope
+}
+
 function __execDoScope(code, args) {
     const script = new vm.Script(code + '\n var result=doScope()');
     
@@ -3297,7 +3686,7 @@ function __execDoScope(code, args) {
     return context.result
 }
 
-module.exports = { __execDoScope: __execDoScope};
+module.exports = { __execDoScope: __execDoScope, addFunctions: addFunctions};
 
 /***/ }),
 
@@ -3305,22 +3694,27 @@ module.exports = { __execDoScope: __execDoScope};
 /*!***************************************************!*\
   !*** ./src/app/dweeve/src/functions/selectors.js ***!
   \***************************************************/
-/*! exports provided: __doDotOp, __doDotStarOp, __doDotDotStarOp, __doDotDotOp, __getIdentifierValue */
+/*! exports provided: addFunctions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__doDotOp", function() { return __doDotOp; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__doDotStarOp", function() { return __doDotStarOp; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__doDotDotStarOp", function() { return __doDotDotStarOp; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__doDotDotOp", function() { return __doDotDotOp; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__getIdentifierValue", function() { return __getIdentifierValue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addFunctions", function() { return addFunctions; });
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
 /* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.find */ "./node_modules/core-js/modules/es.array.find.js");
 /* harmony import */ var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_1__);
 
 
+
+function addFunctions(context) {
+    context['__doDotOp']= __doDotOp
+    context['__doDotStarOp']= __doDotStarOp
+    context['__doDotDotStarOp']= __doDotDotStarOp
+    context['__doDotDotOp']= __doDotDotOp
+    context['__getIdentifierValue']= __getIdentifierValue
+    context['__flattenDynamicContent']= __flattenDynamicContent
+}
 
 function __getIdentifierValue(identifier){
     return identifier;
@@ -3330,7 +3724,7 @@ function __doDotOp(lhs, rhs) {
     try {
         
         if ( !Array.isArray(lhs)) {
-            if (lhs['__extra-wrapped-list']){
+            if (lhs['__ukey-obj']){
                 let r = Object.values(lhs).filter(v=>(typeof v === 'object')).find(kvp=>kvp[rhs])[rhs]
                 return r;
             } else {
@@ -3339,9 +3733,9 @@ function __doDotOp(lhs, rhs) {
                 return r;
             }
         } else {
-            let r = lhs.filter(m=>m['__extra-wrapped-list'] || m[rhs]!==undefined)
+            let r = lhs.filter(m=>m['__ukey-obj'] || m[rhs]!==undefined)
                 .map(kvps=> {
-                    if (kvps['__extra-wrapped-list']) {
+                    if (kvps['__ukey-obj']) {
                         return Object.values(kvps).filter(v=>(typeof v === 'object')).find(kvp=>kvp[rhs])[rhs];
                     } else {
                         return kvps[rhs];
@@ -3426,10 +3820,39 @@ function dewrapKeyedObj(obj, key) {
         return {key : Object.keys(obj[key])[0], val:Object.values(obj[key])[0]}
 }
 
+function __flattenDynamicContent(obj) {
+    if (!obj['__hasDynamicContent']) return obj
+    const newObj = { "__ukey-obj" : true}
+    let idx = 0
+    Object.keys(obj).forEach(k => {
+        if (k.startsWith('__key')) {
+            newObj['__key'+idx++]=obj[k]
+        } else if (k.startsWith('__dkey')) {
+            if (Array.isArray(obj[k])) {
+                (obj[k]).forEach(m=> {
+                    newObj['__key'+idx++]=m
+                })
+            } else {
+                Object.keys(obj[k]).forEach(dk =>{
+                    if (dk.startsWith('__key')) {
+                        newObj['__key'+idx++]=obj[k][dk]
+                    } else {
+                        newObj['__key'+idx++]={ [dk]: obj[k][dk] }
+                    }
+                })
+            }
+        } else if (!k.startsWith('__')){
+            newObj['__key'+idx++] = { [k]: obj[k]}
+        }
+    })
+        
+    return newObj
+}
+
 function convertJsonObjsToArray(lhs) {
-    if (!Array.isArray(lhs) && lhs['__extra-wrapped-list'])
+    if (!Array.isArray(lhs) && lhs['__ukey-obj'])
         lhs = Object.values(lhs);
-    else if (!Array.isArray(lhs) && !lhs['__extra-wrapped-list']) {
+    else if (!Array.isArray(lhs) && !lhs['__ukey-obj']) {
         arr = [];
         for (let k in lhs)
             arr.push({ [k]: lhs[k] });
@@ -3440,19 +3863,12 @@ function convertJsonObjsToArray(lhs) {
 
 
 
-//module.exports = {
-//    __doDotOp:  __doDotOp,
-//    __doDotStarOp: __doDotStarOp,
-//    __doDotDotStarOp: __doDotDotStarOp,
-//    __doDotDotOp: __doDotDotOp,
-//    __getIdentifierValue: __getIdentifierValue}
-
 /***/ }),
 
-/***/ "./src/app/dweeve/src/parser/dweeve-grammar.js":
-/*!*****************************************************!*\
-  !*** ./src/app/dweeve/src/parser/dweeve-grammar.js ***!
-  \*****************************************************/
+/***/ "./src/app/dweeve/src/parser/dweeve-grammar2.js":
+/*!******************************************************!*\
+  !*** ./src/app/dweeve/src/parser/dweeve-grammar2.js ***!
+  \******************************************************/
 /*! exports provided: getGrammar */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3477,198 +3893,211 @@ function id(x) { return x[0]; }
 function getGrammar() { return grammar; }
 
 const lexer = moo.compile({
-            header: /^\%dw [0-9]+\.[0.9]+$/,
-            keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do'],
-            WS:      { match: /[ \t\n]+/, lineBreaks: true },
-            headerend : '---',
-            comment: /\/\/.*?$/,
-            number:  /[\-]?(?:0|[1-9][0-9]*\.?[0-9]*)/,
-            regex: /\/(?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+\//,
-            bool: /(?:true|false)/,
-            null: /null/,
-            thinarrow: /->/,
-            fatarrow: /=>/,
-            dotdotstarbinop: /\.\.\*/,
-            dotdotbinop: /\.\./,
-            dotstarbinop: /\.\*/,
-            dotbinop: /[.]/,
-            mathbinop: /==|\+\+|<=|>=|\|\||&&|!=|[><\-+/*|&\^]/,
-            assignment: /=/,
-            dblstring:  { match : /["](?:\\["\\]|[^\n"\\])*["]/,},
-            sglstring:  { match : /['](?:\\['\\]|[^\n'\\])*[']/,},
-            keyvalsep: /:/,
-            comma: /,/,
-            mimetype:  /(?:application|text)\/\w+/,
-            word:  { match : /\w[\w0-9_]*/},
-            lparen:  '(',
-            rparen:  ')',
-            lbrace:  '{',
-            rbrace:  '}',
-            lsquare:  '[',
-            rsquare:  ']',
-        
-    });
-
-    lexer.next = (next => () => {
-        let tok;
-        while ((tok = next.call(lexer)) && tok.type === "WS") {}
-        return tok;
-    })(lexer.next);
-
-
-
-    const thing = (name, data) => ( { type: name, 
-        data: Array.isArray(data) ? data.filter(e => e !== null && (!Array.isArray(e) || e.length > 0)) : data } );
-var grammar = {
-    Lexer: lexer,
-    ParserRules: [
-        {"name": "dweeve$ebnf$1", "symbols": ["d_header"], "postprocess": id},
-        {"name": "dweeve$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "dweeve", "symbols": ["dweeve$ebnf$1", "d_body"], "postprocess": (data) => ( { type:'dweeve', header: data[0], body: data[1] } )},
-        {"name": "d_header$ebnf$1", "symbols": [(lexer.has("header") ? {type: "header"} : header)], "postprocess": id},
-        {"name": "d_header$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "d_header$ebnf$2", "symbols": []},
-        {"name": "d_header$ebnf$2", "symbols": ["d_header$ebnf$2", "h_declaration"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "d_header", "symbols": ["d_header$ebnf$1", "d_header$ebnf$2", {"literal":"---"}], "postprocess": (data) => ( { type:'dweeve', header: data[0], decs: data[1] } )},
-        {"name": "d_body", "symbols": ["expression"], "postprocess": (data) => ( { type:'body', value: data[0] } )},
-        {"name": "h_declaration", "symbols": ["h_input_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-        {"name": "h_declaration", "symbols": ["h_output_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-        {"name": "h_declaration", "symbols": ["h_var_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-        {"name": "h_declaration", "symbols": ["h_fun_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
-        {"name": "h_input_dec", "symbols": [{"literal":"input"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'input-dec', mimetype: data[1]} )},
-        {"name": "h_output_dec", "symbols": [{"literal":"output"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'output-dec', mimetype: data[1]} )},
-        {"name": "h_var_dec", "symbols": [{"literal":"var"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess": (data) => ( { type: 'var-dec', varName: data[1], varVal: data[3]} )},
-        {"name": "h_fun_dec$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
-        {"name": "h_fun_dec$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "h_fun_dec$ebnf$2", "symbols": []},
-        {"name": "h_fun_dec$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
-        {"name": "h_fun_dec$ebnf$2", "symbols": ["h_fun_dec$ebnf$2", "h_fun_dec$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "h_fun_dec", "symbols": [{"literal":"fun"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("lparen") ? {type: "lparen"} : lparen), "h_fun_dec$ebnf$1", "h_fun_dec$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("assignment") ? {type: "assignment"} : assignment), "h_dec_expression"], "postprocess":  (data) => ( { 
-            type:"fun-def", func:data[1], args: [data[3], ...(data[4].flat().filter(a=>a.type!=='comma') ) ],
-            body: data[7]
-            } )},
-        {"name": "h_dec_expression", "symbols": ["expression"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "h_dec_expression", "symbols": [{"literal":"do"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "dweeve", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type: 'do-dweeve', dweeve: data[2]} )},
-        {"name": "object$ebnf$1", "symbols": []},
-        {"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "keyvaluepair"]},
-        {"name": "object$ebnf$1", "symbols": ["object$ebnf$1", "object$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "keyvaluepair", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
-            members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
-        {"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
-        {"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
-        {"name": "key", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-        {"name": "key", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-        {"name": "key", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
-        {"name": "key", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'dynamic-key', value: data[1] } )},
-        {"name": "expression", "symbols": ["result"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "expression", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "expression", "symbols": ["defaultexp"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "expression", "symbols": ["expression", (lexer.has("word") ? {type: "word"} : word), "expression"], "postprocess":  (data) => ( { type:'fun-call',  fun:data[1], 
-            args: { args: [ data[0], data[2] ] } } ) },
-        {"name": "expression$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
-        {"name": "expression$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "expression$ebnf$2", "symbols": []},
-        {"name": "expression$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
-        {"name": "expression$ebnf$2", "symbols": ["expression$ebnf$2", "expression$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "expression", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression$ebnf$1", "expression$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"], "postprocess":  (data) => ( { type:'lambda', ident: data[0],func:data[1], 
-            args: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ],
-            expression: data[5] } ) },
-        {"name": "expression", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
-        {"name": "defaultexp", "symbols": ["expression", {"literal":"default"}, "expression"], "postprocess": (data) => ( { type:'default-expression', value: data[0], default: data[2] } )},
-        {"name": "ifconditional", "symbols": [{"literal":"if"}, (lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen), "expression", {"literal":"else"}, "expression"], "postprocess":  (data) => ( { type:'if-conditional', 
-            condition: data[2], then: data[4],                        
-            else: data[6] } ) },
-        {"name": "matcher$ebnf$1$subexpression$1", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
-        {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1$subexpression$1"]},
-        {"name": "matcher$ebnf$1$subexpression$2", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
-        {"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1", "matcher$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "matcher$ebnf$2$subexpression$1", "symbols": [{"literal":"else"}, {"literal":"->"}, "expression"]},
-        {"name": "matcher$ebnf$2", "symbols": ["matcher$ebnf$2$subexpression$1"], "postprocess": id},
-        {"name": "matcher$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "matcher", "symbols": ["expression", {"literal":"match"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "matcher$ebnf$1", "matcher$ebnf$2", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:'pattern-match', 
-            input: data[0], then: data[4],                        
-            cases: data[3].map (c=>( { match: c[1], result:c[3]}) ),
-            else: (data[4])==null ? null : data[4][2] } ) },
-        {"name": "matchcond$ebnf$1$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":":"}]},
-        {"name": "matchcond$ebnf$1", "symbols": ["matchcond$ebnf$1$subexpression$1"], "postprocess": id},
-        {"name": "matchcond$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "matchcond", "symbols": ["matchcond$ebnf$1", "literal"], "postprocess":  (data) => ( { type:'match-literal', var:(data[0]==null) ? null : data[0][0],
-            litMatch:data[1] } ) },
-        {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"if"}, "expression"], "postprocess": (data) => ( { type:'match-if-exp', var:data[0], expMatch:data[2] } )},
-        {"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"matches"}, (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'match-regex', var:data[0], regex:data[2] } )},
-        {"name": "matchcond$ebnf$2$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)]},
-        {"name": "matchcond$ebnf$2", "symbols": ["matchcond$ebnf$2$subexpression$1"], "postprocess": id},
-        {"name": "matchcond$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
-            typeName:data[2] } ) },
-        {"name": "result", "symbols": ["mathresult"], "postprocess": (data) => ( { type:'math-result', value:data[0].value } )},
-        {"name": "result", "symbols": ["result", "dotops", "operand"], "postprocess": (data) => ( { type:'dot-op', lhs:data[0], op:data[1], rhs:data[2] } )},
-        {"name": "mathresult", "symbols": ["l2ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l1ops", "symbols": ["l1ops", "l8operator", "l2ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l1ops", "symbols": ["l2ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l2ops", "symbols": ["l2ops", "l7operator", "l3ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l2ops", "symbols": ["l3ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l3ops", "symbols": ["l3ops", "l6operator", "l4ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l3ops", "symbols": ["l4ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l4ops", "symbols": ["l4ops", "l5operator", "l5ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l4ops", "symbols": ["l5ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l5ops", "symbols": ["l5ops", "l4operator", "l6ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l5ops", "symbols": ["l6ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l6ops", "symbols": ["l6ops", "l3operator", "l7ops"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l6ops", "symbols": ["l7ops"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l7ops", "symbols": ["l7ops", "l2operator", "operand"], "postprocess": (data) =>( { type:'op', value: { lhs: data[0].value, op: data[1].value, rhs: data[2].value } } )},
-        {"name": "l7ops", "symbols": ["operand"], "postprocess": (data) =>( { type:'operand', value : data[0].value } )},
-        {"name": "l2operator", "symbols": [{"literal":"as"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l3operator", "symbols": [{"literal":"*"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l3operator", "symbols": [{"literal":"/"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l4operator", "symbols": [{"literal":"+"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l4operator", "symbols": [{"literal":"++"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l4operator", "symbols": [{"literal":"-"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l4operator", "symbols": [{"literal":">>"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l4operator", "symbols": [{"literal":"<<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":">"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":"="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":"<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":">="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":"<="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l5operator", "symbols": [{"literal":"is"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l6operator", "symbols": [{"literal":"!="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l6operator", "symbols": [{"literal":"~="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l6operator", "symbols": [{"literal":"=="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l7operator", "symbols": [{"literal":"and"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "l8operator", "symbols": [{"literal":"or"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
-        {"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
-        {"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
-        {"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
-        {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "arglist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2] } )},
-        {"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
-        {"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
-        {"name": "array", "symbols": [(lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "arglist", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'array',  members:data[1] } )},
-        {"name": "arglist$ebnf$1", "symbols": ["expression"], "postprocess": id},
-        {"name": "arglist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-        {"name": "arglist$ebnf$2", "symbols": []},
-        {"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "expression"]},
-        {"name": "arglist$ebnf$2", "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-        {"name": "arglist", "symbols": ["arglist$ebnf$1", "arglist$ebnf$2"], "postprocess":  (data) => ( { type:"arg-list",
-            args: [data[0], ...(data[1].flat().filter(a=>a.type!=='comma') ) ] } ) },
-        {"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("null") ? {type: "null"} : null)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
-        {"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number), (lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'number', value: data[0]+data[1] } )},
-        {"name": "dotops", "symbols": [(lexer.has("dotbinop") ? {type: "dotbinop"} : dotbinop)], "postprocess": (data) => ( { type:'dot', value: data[0] } )},
-        {"name": "dotops", "symbols": [(lexer.has("dotstarbinop") ? {type: "dotstarbinop"} : dotstarbinop)], "postprocess": (data) => ( { type:'dotstar', value: data[0] } )},
-        {"name": "dotops", "symbols": [(lexer.has("dotdotstarbinop") ? {type: "dotdotstarbinop"} : dotdotstarbinop)], "postprocess": (data) => ( { type:'dotdotstar', value: data[0] } )},
-        {"name": "dotops", "symbols": [(lexer.has("dotdotbinop") ? {type: "dotdotbinop"} : dotdotbinop)], "postprocess": (data) => ( { type:'dotdot', value: data[0] } )}
-    ]
-      , ParserStart: "dweeve"
-    }
+    header: /^\%dw [0-9]+\.[0.9]+$/,
+    keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or'],
+    WS:      { match: /[ \t\n]+/, lineBreaks: true },
+    headerend : '---',
+    comment: /\/\/.*?$/,
+    regex: /\/(?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+\//,
+    bool: /(?:true|false)/,
+    null: /null/,
+    thinarrow: /->/,
+    fatarrow: /=>/,
+    dotdotstarbinop: /\.\.\*/,
+    dotdotbinop: /\.\./,
+    dotstarbinop: /\.\*/,
+    dotbinop: /[.]/,
+    mathbinop: /==|\+\+|<=|>=|\|\||&&|!=|[=><\-+/*|&\^]/,
     
+    dblstring:  { match : /["](?:\\["\\]|[^\n"\\])*["]/,},
+    sglstring:  { match : /['](?:\\['\\]|[^\n'\\])*[']/,},
+    keyvalsep: /:/,
+    comma: /,/,
+    mimetype:  /(?:application|text)\/\w+/,
+    word:  { match : /[A-Za-z$][\w0-9_$]*/},
+    number:  /(?:0|[1-9][0-9]*\.?[0-9]*)/,
+    lparen:  '(',
+    rparen:  ')',
+    lbrace:  '{',
+    rbrace:  '}',
+    lsquare:  '[',
+    rsquare:  ']',
+
+});
+
+lexer.next = (next => () => {
+let tok;
+while ((tok = next.call(lexer)) && tok.type === "WS") {}
+return tok;
+})(lexer.next);
+
+
+
+const thing = (name, data) => ( { type: name, 
+data: Array.isArray(data) ? data.filter(e => e !== null && (!Array.isArray(e) || e.length > 0)) : data } );
+
+
+function newOpData(oldData) {
+if (oldData.value) return oldData.value
+return oldData;
+}
+
+var grammar = {
+Lexer: lexer,
+ParserRules: [
+{"name": "dweeve$ebnf$1", "symbols": ["d_header"], "postprocess": id},
+{"name": "dweeve$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "dweeve", "symbols": ["dweeve$ebnf$1", "d_body"], "postprocess": (data) => ( { type:'dweeve', header: data[0], body: data[1] } )},
+{"name": "d_header$ebnf$1", "symbols": [(lexer.has("header") ? {type: "header"} : header)], "postprocess": id},
+{"name": "d_header$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "d_header$ebnf$2", "symbols": []},
+{"name": "d_header$ebnf$2", "symbols": ["d_header$ebnf$2", "h_declaration"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "d_header", "symbols": ["d_header$ebnf$1", "d_header$ebnf$2", {"literal":"---"}], "postprocess": (data) => ( { type:'dweeve', header: data[0], decs: data[1] } )},
+{"name": "d_body", "symbols": ["expression"], "postprocess": (data) => ( { type:'body', value: data[0] } )},
+{"name": "h_declaration", "symbols": ["h_input_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+{"name": "h_declaration", "symbols": ["h_output_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+{"name": "h_declaration", "symbols": ["h_var_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+{"name": "h_declaration", "symbols": ["h_fun_dec"], "postprocess": (data) => (  { type:'head-dec', value: data[0] } )},
+{"name": "h_input_dec", "symbols": [{"literal":"input"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'input-dec', mimetype: data[1]} )},
+{"name": "h_output_dec", "symbols": [{"literal":"output"}, (lexer.has("mimetype") ? {type: "mimetype"} : mimetype)], "postprocess": (data) => ( { type: 'output-dec', mimetype: data[1]} )},
+{"name": "h_var_dec", "symbols": [{"literal":"var"}, (lexer.has("word") ? {type: "word"} : word), {"literal":"="}, "h_dec_expression"], "postprocess": (data) => ( { type: 'var-dec', varName: data[1], varVal: data[3]} )},
+{"name": "h_fun_dec$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
+{"name": "h_fun_dec$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "h_fun_dec$ebnf$2", "symbols": []},
+{"name": "h_fun_dec$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
+{"name": "h_fun_dec$ebnf$2", "symbols": ["h_fun_dec$ebnf$2", "h_fun_dec$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "h_fun_dec", "symbols": [{"literal":"fun"}, (lexer.has("word") ? {type: "word"} : word), (lexer.has("lparen") ? {type: "lparen"} : lparen), "h_fun_dec$ebnf$1", "h_fun_dec$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen), {"literal":"="}, "h_dec_expression"], "postprocess":  (data) => ( { 
+type:"fun-def", func:data[1], args: [data[3], ...(data[4].flat().filter(a=>a.type!=='comma') ) ],
+body: data[7]
+} )},
+{"name": "h_dec_expression", "symbols": ["expression"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+{"name": "h_dec_expression", "symbols": [{"literal":"do"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "dweeve", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type: 'do-dweeve', dweeve: data[2]} )},
+{"name": "object$ebnf$1", "symbols": []},
+{"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "keyvaluepair"]},
+{"name": "object$ebnf$1", "symbols": ["object$ebnf$1", "object$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "keyvaluepair", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
+members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
+{"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type:"member-list", members: [] } )},
+{"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
+{"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
+{"name": "keyvaluepair", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+{"name": "key", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+{"name": "key", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+{"name": "key", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
+{"name": "key", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'dynamic-key', value: data[1] } )},
+{"name": "comment", "symbols": [(lexer.has("comment") ? {type: "comment"} : comment)], "postprocess": (data) => ( { type:'commemt', value: data[0] } )},
+{"name": "ifconditional", "symbols": [{"literal":"if"}, (lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen), "expression", {"literal":"else"}, "expression"], "postprocess":  (data) => ( { type:'if-conditional', 
+condition: data[2], then: data[4],                        
+else: data[6] } ) },
+{"name": "matcher$ebnf$1$subexpression$1", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
+{"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1$subexpression$1"]},
+{"name": "matcher$ebnf$1$subexpression$2", "symbols": [{"literal":"case"}, "matchcond", (lexer.has("thinarrow") ? {type: "thinarrow"} : thinarrow), "expression"]},
+{"name": "matcher$ebnf$1", "symbols": ["matcher$ebnf$1", "matcher$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "matcher$ebnf$2$subexpression$1", "symbols": [{"literal":"else"}, {"literal":"->"}, "expression"]},
+{"name": "matcher$ebnf$2", "symbols": ["matcher$ebnf$2$subexpression$1"], "postprocess": id},
+{"name": "matcher$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "matcher", "symbols": ["expression", {"literal":"match"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "matcher$ebnf$1", "matcher$ebnf$2", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:'pattern-match', 
+input: data[0], then: data[4],                        
+cases: data[3].map (c=>( { match: c[1], result:c[3]}) ),
+else: (data[4])==null ? null : data[4][2] } ) },
+{"name": "matchcond$ebnf$1$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":":"}]},
+{"name": "matchcond$ebnf$1", "symbols": ["matchcond$ebnf$1$subexpression$1"], "postprocess": id},
+{"name": "matchcond$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "matchcond", "symbols": ["matchcond$ebnf$1", "literal"], "postprocess":  (data) => ( { type:'match-literal', var:(data[0]==null) ? null : data[0][0],
+litMatch:data[1] } ) },
+{"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"if"}, "expression"], "postprocess": (data) => ( { type:'match-if-exp', var:data[0], expMatch:data[2] } )},
+{"name": "matchcond", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"matches"}, (lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'match-regex', var:data[0], regex:data[2] } )},
+{"name": "matchcond$ebnf$2$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)]},
+{"name": "matchcond$ebnf$2", "symbols": ["matchcond$ebnf$2$subexpression$1"], "postprocess": id},
+{"name": "matchcond$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
+typeName:data[2] } ) },
+{"name": "expression", "symbols": ["result"], "postprocess": (data) => ( data[0] )},
+{"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( data[0] )},
+{"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( data[0] )},
+{"name": "result", "symbols": ["l01ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l01ops", "symbols": ["l01ops", (lexer.has("word") ? {type: "word"} : word), "l05ops"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
+{"name": "l01ops", "symbols": ["l05ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l05ops", "symbols": [(lexer.has("word") ? {type: "word"} : word), "l9operator", "l10ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0], expression: data[2]  } )},
+{"name": "l05ops", "symbols": ["arglist", "l9operator", "l10ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } )},
+{"name": "l05ops", "symbols": ["l10ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l10ops", "symbols": ["l10ops", "l8operator", "l20ops"], "postprocess": (data) =>( { type:'or',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l10ops", "symbols": ["l20ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l20ops", "symbols": ["l20ops", "l7operator", "l30ops"], "postprocess": (data) =>( { type:'and',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l20ops", "symbols": ["l30ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l30ops", "symbols": ["l30ops", "l6operator", "l40ops"], "postprocess": (data) =>( { type:'relative',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l30ops", "symbols": ["l40ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l40ops", "symbols": ["l40ops", "l5operator", "l50ops"], "postprocess": (data) =>( { type:'relative',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l40ops", "symbols": ["l50ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l50ops", "symbols": ["l50ops", "l4operator", "l60ops"], "postprocess": (data) =>( { type:'sum',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l50ops", "symbols": ["l60ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l60ops", "symbols": ["l60ops", "l3operator", "l70ops"], "postprocess": (data) =>( { type:'product',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l60ops", "symbols": ["l70ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l70ops", "symbols": ["l70ops", "l2operator", "l80ops"], "postprocess": (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l70ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l80ops", "symbols": ["l80ops", "l1operator", "operand"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l80ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
+{"name": "l1operator", "symbols": ["dotops"], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
+{"name": "l2operator", "symbols": [{"literal":"as"}], "postprocess": (data) =>( { type:'as', value: data[0] } )},
+{"name": "l2operator", "symbols": [{"literal":"default"}], "postprocess": (data) =>( { type:'default', value: data[0] } )},
+{"name": "l3operator", "symbols": [{"literal":"*"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l3operator", "symbols": [{"literal":"/"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l4operator", "symbols": [{"literal":"+"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l4operator", "symbols": [{"literal":"++"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l4operator", "symbols": [{"literal":"-"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l4operator", "symbols": [{"literal":">>"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l4operator", "symbols": [{"literal":"<<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":">"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":"="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":"<"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":">="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":"<="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l5operator", "symbols": [{"literal":"is"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l6operator", "symbols": [{"literal":"!="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l6operator", "symbols": [{"literal":"~="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l6operator", "symbols": [{"literal":"=="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l7operator", "symbols": [{"literal":"and"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l8operator", "symbols": [{"literal":"or"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l9operator", "symbols": [{"literal":"->"}], "postprocess": (data) =>( { type:'lambda', value: data[0] } )},
+{"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
+{"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
+{"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+{"name": "operand", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+{"name": "operand", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+{"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "explist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2].args } )},
+{"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
+{"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
+{"name": "array", "symbols": [(lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "explist", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'array',  members:data[1] } )},
+{"name": "explist$ebnf$1", "symbols": ["expression"], "postprocess": id},
+{"name": "explist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "explist$ebnf$2", "symbols": []},
+{"name": "explist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "expression"]},
+{"name": "explist$ebnf$2", "symbols": ["explist$ebnf$2", "explist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "explist", "symbols": ["explist$ebnf$1", "explist$ebnf$2"], "postprocess":  (data) => ( { type:"arg-list",
+args: [data[0], ...(data[1].flat().filter(a=>a.type!=='comma') ) ] } ) },
+{"name": "arglist$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
+{"name": "arglist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "arglist$ebnf$2", "symbols": []},
+{"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
+{"name": "arglist$ebnf$2", "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+{"name": "arglist", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "arglist$ebnf$1", "arglist$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess":  (data) => ( { type:"arg-list",
+args: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
+{"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [(lexer.has("null") ? {type: "null"} : null)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [(lexer.has("regex") ? {type: "regex"} : regex)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
+{"name": "literal", "symbols": [{"literal":"-"}, (lexer.has("number") ? {type: "number"} : number)], "postprocess": (data) => ( { type:'number', value: '-'+data[1] } )},
+{"name": "dotops", "symbols": [(lexer.has("dotbinop") ? {type: "dotbinop"} : dotbinop)], "postprocess": (data) => ( { type:'dot', value: data[0] } )},
+{"name": "dotops", "symbols": [(lexer.has("dotstarbinop") ? {type: "dotstarbinop"} : dotstarbinop)], "postprocess": (data) => ( { type:'dotstar', value: data[0] } )},
+{"name": "dotops", "symbols": [(lexer.has("dotdotstarbinop") ? {type: "dotdotstarbinop"} : dotdotstarbinop)], "postprocess": (data) => ( { type:'dotdotstar', value: data[0] } )},
+{"name": "dotops", "symbols": [(lexer.has("dotdotbinop") ? {type: "dotdotbinop"} : dotdotbinop)], "postprocess": (data) => ( { type:'dotdot', value: data[0] } )}
+]
+, ParserStart: "dweeve"
+}
+
 
 /***/ }),
 
@@ -3762,9 +4191,9 @@ function emitcodeMatchIfExp(code, c, context) {
 }
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
-    for (k in codeGenAfter)
+    for (let k in codeGenAfter)
         postDict[k]=codeGenAfter[k];    
 }
 
@@ -3821,9 +4250,9 @@ codeGenFor['do-dweeve'] = (context, code) => {
 }
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
-    for (k in codeGenAfter)
+    for (let k in codeGenAfter)
         postDict[k]=codeGenAfter[k];    
 }
 
@@ -3836,8 +4265,15 @@ module.exports = {addTranspilerFeatures : addTranspilerFeatures}
 /*!*****************************************************************!*\
   !*** ./src/app/dweeve/src/transpiler/transpiler-expressions.js ***!
   \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: addTranspilerFeatures */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTranspilerFeatures", function() { return addTranspilerFeatures; });
+/* harmony import */ var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.find */ "./node_modules/core-js/modules/es.array.find.js");
+/* harmony import */ var core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_find__WEBPACK_IMPORTED_MODULE_0__);
+
 
 const Dictionary = __webpack_require__(/*! dictionaryjs */ "./node_modules/dictionaryjs/Dictionary.js");
 
@@ -3845,38 +4281,58 @@ let codeGenFor = new Dictionary.Dictionary();
 let codeGenAfter = new Dictionary.Dictionary();
 
 codeGenFor['member-list'] = (context, code) => { 
-    if (context.node.members.length > 1) {
-        code.addCode('{ "__extra-wrapped-list": true, \n') ; 
+    if (context.node.members.length > 1 || 
+        (context.node.members.length==1 && context.node.members[0].type=='bracket-operand')) {
+        code.addCode('__flattenDynamicContent({ "__ukey-obj": true, \n') ; 
         let idx=0;
+        let dynamicContent = false
         context.node.members.forEach(m => {
-            code.addCode('"__key' + idx++ + '": {') ; 
-            context.compiler({parentType: 'obj-member', node: m, compiler:context.compiler}, code);
-            code.addCode('},\n ') ; 
+            
+            if (m.type==='bracket-operand') {
+                code.addCode('"__dkey' + idx++ + '": ')
+                dynamicContent = true
+                code.addCode('__flattenDynamicContent(')
+                context.compiler({parentType: 'obj-member', node: m.value, compiler:context.compiler}, code);
+                code.addCode(')')
+            } else {
+                code.addCode('"__key' + idx++ + '": ')
+                code.addCode('{') ; 
+                context.compiler({parentType: 'obj-member', node: m, compiler:context.compiler}, code);
+                code.addCode('} ') ; 
+            }
+            if (idx<context.node.members.length)
+                    code.addCode(',\n ') ; 
         });
-        code.addCode('}\n')
+        if (dynamicContent)
+            code.addCode( ',\n"__hasDynamicContent" : true\n')
+        code.addCode('})\n')
     } else if (context.node.members.length === 1) {
         code.addCode('{')
         context.compiler({parentType: 'obj-member', node: context.node.members[0], compiler:context.compiler}, code);
         code.addCode('}')
+    } else if (context.node.members.length === 0) {
+        code.addCode('{}')
     }
     return false; 
 };
 
 codeGenFor['array'] = (context, code) => { 
     code.addCode('[') ; 
+    let idx=1;
     context.node.members.args.forEach(m => {
         context.compiler({parentType: 'array-member', node: m, compiler:context.compiler}, code);
-        code.addCode(', ') ; 
+        if (idx++<context.node.members.args.length)
+            code.addCode(', ') ; 
     });
     code.addCode(']') ; 
     return false; 
 };
 
-codeGenFor['default-expression'] = (context, code) => { 
+codeGenFor['default'] = (context, code) => { 
     code.addCode('( () => { let d = (');
-    context.compiler({parentType: 'default-expression-default', node: context.node.default, compiler:context.compiler}, code);
+    context.compiler({parentType: 'default-default', node: context.node.rhs, compiler:context.compiler}, code);
     code.addCode('); try { let v = (') ; 
-    context.compiler({parentType: 'default-expression-value', node: context.node.value, compiler:context.compiler}, code);
+    context.compiler({parentType: 'default-value', node: context.node.lhs, compiler:context.compiler}, code);
     code.addCode('); if (v!==null && v!==undefined) {return v;} else {return d;} } catch {return d} } )()\n ') 
     return false; 
 };
@@ -3892,21 +4348,21 @@ codeGenFor['idx-identifier'] = (context, code) => {
 };
 
 codeGenFor['lambda'] = (context, code) => { 
-    let lamda = context.node;
+    let lambda = context.node;
    
     code.addCode('(');
-    if (lamda.args!==null && Array.isArray(lamda.args)) {
+    if (lambda.args!==null && Array.isArray(lambda.args)) {
         let idx=1;
-        lamda.args.forEach(arg => {
+        lambda.args.forEach(arg => {
             if (arg!==null) {
                 code.addCode(arg.value);
-                if (idx++<lamda.args.length)
+                if (idx++<lambda.args.length)
                     code.addCode(', ');
             }
         });
     }
     code.addCode(') => (');
-    context.compiler({parentType: 'lambda', node: lamda.expression, compiler:context.compiler}, code);
+    context.compiler({parentType: 'lambda', node: lambda.expression, compiler:context.compiler}, code);
     code.addCode(')\n');
     return false; 
 };
@@ -3937,13 +4393,13 @@ codeGenFor['regex'] = (context, code) => { code.addCode(context.node.value) };
 
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
-    for (k in codeGenAfter)
+    for (let k in codeGenAfter)
         postDict[k]=codeGenAfter[k];    
 }
 
-module.exports = {addTranspilerFeatures : addTranspilerFeatures}
+
 
 
 /***/ }),
@@ -3960,50 +4416,25 @@ const Dictionary = __webpack_require__(/*! dictionaryjs */ "./node_modules/dicti
 let codeGenFor = new Dictionary.Dictionary();
 let codeGenAfter = new Dictionary.Dictionary();
 
-codeGenFor['dot-op'] = (context, code) => { 
-    let op = context.node;
-    switch (op.op.type) {
-        case "dot":
-            code.addCode('( __doDotOp( (');
-            break;
-        case "dotstar":
-            code.addCode('( __doDotStarOp( (');
-            break;
-        case "dotdotstar":
-            code.addCode('( __doDotDotStarOp( (');
-            break;
-        case "dotdot":
-            code.addCode('( __doDotDotOp( (');
-            break;
-    }
-    context.compiler({parentType: 'dot-op-lhs', node: context.node.lhs, compiler:context.compiler}, code);
-    code.addCode('), (\'');
-    context.compiler({parentType: 'dot-top-rhs', node: context.node.rhs, compiler:context.compiler}, code);
-    code.addCode('\')) )');
-    
-    return false;
- };
 
- codeGenFor['bin-op'] = (context, code) => { 
-    let op = context.node;
-    context.compiler({node: op.lhs, compiler:context.compiler}, code);
-    if (op.op.value==='++') // double plus for string concat will be single + for javascript
-        code.addCode('+');
-    else
-        code.addCode(op.op.value);
-    context.compiler({node: op.rhs, compiler:context.compiler}, code);
-    return false;
- };
 
  codeGenFor['fun-call'] = (context, code) => { 
     let op = context.node;
-    context.compiler({node: op.fun, compiler:context.compiler}, code);
+    if (op.fun.type)
+        context.compiler({node: op.fun, compiler:context.compiler}, code)
+    else
+        code.addCode(op.fun)
+
     code.addCode('(');
-    if (op.args!==null && Array.isArray(op.args.args)) {
+    if (op.args!==null && Array.isArray(op.args)) {
         let idx=0;
-        op.args.args.forEach(arg => {
-            context.compiler({node: arg, compiler:context.compiler}, code);
-            if (++idx<op.args.args.length)
+        op.args.forEach(arg => {
+            if (isAnonymousLambdaExpression(arg) && idx > 0) // only for rhs lambdas, hence idx > 0!
+            // otherwise [x,y,z] filter ($ >3) map ($++'!') picks up the '$' on the filter rhs and assume map lhs needs the anonymous treatment
+                buildLamda(arg, context, code);
+            else 
+                context.compiler({node: arg, compiler:context.compiler}, code);
+            if (++idx<op.args.length)
                 code.addCode(', ');
         });
     }
@@ -4011,11 +4442,65 @@ codeGenFor['dot-op'] = (context, code) => {
     return false;
  };
 
+ function buildLamda(expression, context, code){
+    var args = getAllIdentifiersUsedInExpression(expression).filter(id=>id.match(/[$]+/)).filter(onlyUnique);
+    code.addCode('(');
+    let idx=1;
+    args.forEach(arg => {
+        code.addCode(arg);
+        if (idx++<args.length)
+           code.addCode(', ');
+    });
+    code.addCode(') => (');
+    context.compiler({parentType: 'lambda', node: expression, compiler:context.compiler}, code);
+    code.addCode(')\n');
+ }
+
+ function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+
+ function isAnonymousLambdaExpression(node) {
+     //TODO: add check that we don't already have a fully expressed lambda, just using $ notation
+     return (node && node.type &&
+     getAllIdentifiersUsedInExpression(node).filter(id=>(id.match(/[$]+/))).length>0)
+ }
+
+ function getAllIdentifiersUsedInExpression(expression){
+    let identifiers = [];
+    recurseGetAllIdentifiersUsedInExpression(expression, identifiers)
+    return identifiers;
+ }
+
+ function recurseGetAllIdentifiersUsedInExpression(expPart, identifiers){
+    if (expPart.type && expPart.type==='identifier') {
+        identifiers.push(expPart.ident.value)
+        return
+    }
+    //TOOD: every possible part of a node! (or just loop and do everything!)
+    if (expPart.value)
+        recurseGetAllIdentifiersUsedInExpression(expPart.value, identifiers)
+    if (expPart.lhs)
+        recurseGetAllIdentifiersUsedInExpression(expPart.lhs, identifiers)
+    if (expPart.rhs)
+        recurseGetAllIdentifiersUsedInExpression(expPart.rhs, identifiers)
+    if (expPart.key)
+        recurseGetAllIdentifiersUsedInExpression(expPart.key, identifiers)
+    if (expPart.members)
+        if (Array.isArray(expPart.members))
+            expPart.members.forEach(m=>recurseGetAllIdentifiersUsedInExpression(m, identifiers))
+        else if (Array.isArray(expPart.members.args))
+            expPart.members.args.forEach(m=>recurseGetAllIdentifiersUsedInExpression(m, identifiers))
+    if (expPart.args)
+        expPart.args.forEach(a=>recurseGetAllIdentifiersUsedInExpression(a, identifiers))
+
+ }
+
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
-    for (k in codeGenAfter)
+    for (let k in codeGenAfter)
         postDict[k]=codeGenAfter[k];    
 }
 
@@ -4080,9 +4565,9 @@ codeGenFor['var-dec'] = (context, code) => {
 }
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
-    for (k in codeGenAfter)
+    for (let k in codeGenAfter)
         postDict[k]=codeGenAfter[k];    
 }
 
@@ -4104,23 +4589,39 @@ let codeGenFor = new Dictionary.Dictionary();
 let opfuncs = new Dictionary.Dictionary();
 
 opfuncs['++'] = stringConcat
+opfuncs['='] = equals
+opfuncs['.'] = selector
+opfuncs['..'] = selector
+opfuncs['.*'] = selector
+opfuncs['..*'] = selector
+opfuncs['and'] = andLogic
+opfuncs['or'] = orLogic
 
-codeGenFor['math-result'] = (context, code) => { 
+codeGenFor['dot-op'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['product'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['sum'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['relative'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['and'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['or'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['bracket-operand'] = (context, code) => { functionHandler(context, code) }
+
+function functionHandler (context, code)  { 
     let op = context.node;
-    if (op.value.op)
-        opCodeGen(op.value.lhs, op.value.op, op.value.rhs, context, code)
+    if (op.op)
+        opCodeGen(op.lhs, op.op, op.rhs, context, code)
     else
         context.compiler({parentType: 'math-result', node: op.value, compiler:context.compiler}, code);
-};
+}
 
 function opCodeGen(lhs, op, rhs, context,code) {
     code.addCode('(');
     if (opfuncs[op.value]!=undefined)
         opfuncs[op.value](lhs, op, rhs, context, code)
     else
-         jsopCodeGen(lhs, op, rhs, context, code)
+        jsopCodeGen(lhs, op, rhs, context, code)
     code.addCode(')');
 }
+
 function jsopCodeGen(lhs, op, rhs, context,code) {
     emitOperand(lhs, context, code)
     code.addCode(op.value);
@@ -4133,6 +4634,46 @@ function stringConcat(lhs, op, rhs, context,code) {
     emitOperand(rhs, context, code)
 }
 
+function equals(lhs, op, rhs, context,code) {
+    emitOperand(lhs, context, code)
+    code.addCode('===');
+    emitOperand(rhs, context, code)
+}
+
+function andLogic(lhs, op, rhs, context,code) {
+    emitOperand(lhs, context, code)
+    code.addCode('&&');
+    emitOperand(rhs, context, code)
+}
+
+function orLogic(lhs, op, rhs, context,code) {
+    emitOperand(lhs, context, code)
+    code.addCode('||');
+    emitOperand(rhs, context, code)
+}
+
+function selector(lhs, op, rhs, context,code) {
+    switch (op.type) {
+        case "dot":
+            code.addCode('( __doDotOp( (');
+            break;
+        case "dotstar":
+            code.addCode('( __doDotStarOp( (');
+            break;
+        case "dotdotstar":
+            code.addCode('( __doDotDotStarOp( (');
+            break;
+        case "dotdot":
+            code.addCode('( __doDotDotOp( (');
+            break;
+    }
+    emitOperand(lhs, context, code)
+    code.addCode('), (\'');
+    emitOperand(rhs, context, code)
+    code.addCode('\')) )');
+    
+}
+
 function emitOperand(operand, context, code) {
     if (operand.op)
         opCodeGen(operand.lhs, operand.op, operand.rhs, context, code)
@@ -4141,13 +4682,13 @@ function emitOperand(operand, context, code) {
 }
 
 function addTranspilerFeatures(preDict, postDict) {
-    for (k in codeGenFor)
+    for (let k in codeGenFor)
         preDict[k]=codeGenFor[k];
     
         
 }
 
-module.exports = {addTranspilerFeatures : addTranspilerFeatures}
+module.exports = {functionHandler: functionHandler, addTranspilerFeatures : addTranspilerFeatures}
 
 /***/ }),
 
@@ -4175,6 +4716,7 @@ FuncAndSelectorFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 ExpressionFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 DoScopeFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
 MathOpFeatures.addTranspilerFeatures(codeGenFor, codeGenAfter);
+
 
 function transpile(dweeve){
 

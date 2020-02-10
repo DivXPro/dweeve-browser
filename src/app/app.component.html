@@ -11,6 +11,7 @@
             <li><a (click)="loadExample('Simple Lambda')"href="#">Simple Lambda</a></li>
             <li><a (click)="loadExample('Do scope')"href="#">Do scope</a></li>
             <li><a (click)="loadExample('Xml input')"href="#">Xml input</a></li>
+            <li><a (click)="loadExample('Recursion!')"href="#">Recurse with resource</a></li>
         </ul>
     </div>
     <div id="page-content-wrapper">
@@ -33,9 +34,20 @@
                         </ace-editor>
                       </div>
                       <div class="col-lg-6">
-                        <p>payload:</p>
-                        <ace-editor #pleditor style="height:350px;">
-                        </ace-editor>
+                        <mat-tab-group disableRipple="true">
+                          <mat-tab label="Payload">
+                            <ace-editor #pleditor style="height:350px;">
+                            </ace-editor>
+                          </mat-tab>
+                          <mat-tab label="Resource">
+                            <div>Resource name :<input [(ngModel)]="resourceNameText" #resourceName type="text" placeholder="classpath://myfolder/myFile.txt" style="width: 100%;"></div>
+                            <ace-editor #rseditor style="height:290px;">
+                            </ace-editor>
+                          </mat-tab>
+                        
+                        </mat-tab-group>
+                        
+
                       </div>
                     </div>
                     <br>
