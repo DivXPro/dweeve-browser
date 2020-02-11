@@ -3412,6 +3412,7 @@ function addFunctions(context) {
     context['map'] = map
     context['mapObject'] = mapObject
     context['readUrl'] = readUrl
+    context['__add'] = __add
 }
 
 function isOdd(number) {
@@ -3653,11 +3654,38 @@ var resourceFileContent = {}
 
 function readUrl(path, contentType){
     const content = resourceFileContent[path]
-    if (content==null) return '';
     if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
         return JSON.parse(content)
 
     return content
+}
+
+function __add(lhs, rhs) {
+    if (Array.isArray(lhs) && Array.isArray(rhs)) {
+        return lhs.concat(rhs)
+    } else if (typeof lhs === "object" && typeof rhs === "object") {
+        let newObj = {'__ukey-obj' : true}
+        let idx=0;
+        Object.keys(lhs).forEach(k=>{
+            if (k.startsWith('__key'))
+                newObj['__key'+idx++] = lhs[k]
+            else if (k.startsWith('__dkey'))
+                newObj['__dkey'+idx++] = lhs[k]
+            else if (!k.startsWith('__'))
+                newObj['__key'+idx++] = { [k]: lhs[k]}
+        })
+        Object.keys(rhs).forEach(k=>{
+            if (k.startsWith('__key'))
+                newObj['__key'+idx++] = rhs[k]
+            else if (k.startsWith('__dkey'))
+                newObj['__dkey'+idx++] = rhs[k]
+            else if (!k.startsWith('__'))
+                newObj['__key'+idx++] = { [k]: rhs[k]}
+        })
+        return newObj
+    } else {
+        return lhs + rhs
+    }
 }
 
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}
@@ -3672,12 +3700,18 @@ module.exports = { addFunctions: addFunctions, setResourceFileContent: setResour
 /***/ (function(module, exports, __webpack_require__) {
 
 const vm = __webpack_require__(/*! vm-browserify */ "./node_modules/vm-browserify/index.js");
+const selectorFunctions = __webpack_require__(/*! ../functions/selectors */ "./src/app/dweeve/src/functions/selectors.js")
+const coreFunctions = __webpack_require__(/*! ../functions/core */ "./src/app/dweeve/src/functions/core.js") 
+ 
 
 function addFunctions(context) {
     context['__execDoScope'] = __execDoScope
 }
 
 function __execDoScope(code, args) {
+    coreFunctions.addFunctions(args)
+    addFunctions(args)
+    selectorFunctions.addFunctions(args)
     const script = new vm.Script(code + '\n var result=doScope()');
     
     const context = new vm.createContext(args);
@@ -3973,15 +4007,16 @@ body: data[7]
 {"name": "h_dec_expression", "symbols": ["expression"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
 {"name": "h_dec_expression", "symbols": [{"literal":"do"}, (lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "dweeve", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type: 'do-dweeve', dweeve: data[2]} )},
 {"name": "object$ebnf$1", "symbols": []},
-{"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "keyvaluepair"]},
+{"name": "object$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "objectmember"]},
 {"name": "object$ebnf$1", "symbols": ["object$ebnf$1", "object$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-{"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "keyvaluepair", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
+{"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), "objectmember", "object$ebnf$1", (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess":  (data) => ( { type:"member-list",
 members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
 {"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type:"member-list", members: [] } )},
+{"name": "objectmember", "symbols": ["keyvaluepair"], "postprocess": (data) => ( { type: 'member', key: data[0].key, value: data[0].value} )},
+{"name": "objectmember", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
 {"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
 {"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
 {"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
-{"name": "keyvaluepair", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
 {"name": "key", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
 {"name": "key", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
 {"name": "key", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'key', value: data[0] } )},
@@ -4064,6 +4099,7 @@ typeName:data[2] } ) },
 {"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
 {"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
 {"name": "operand", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+{"name": "operand", "symbols": ["keyvaluepair"], "postprocess": (data) => ( { type:'kvp', value: data[0] } )},
 {"name": "operand", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
 {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "explist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2].args } )},
 {"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
@@ -4390,7 +4426,11 @@ codeGenFor['sglstring'] = (context, code) => { code.addCode(context.node.value) 
 codeGenFor['bool'] = (context, code) => { code.addCode(context.node.value) };
 codeGenFor['null'] = (context, code) => { code.addCode(context.node.value) };
 codeGenFor['regex'] = (context, code) => { code.addCode(context.node.value) };
-
+codeGenFor['kvp'] = (context, code) => { 
+    code.addCode('{') 
+    context.compiler({parentType: 'kvp-inner', node: context.node.value, compiler:context.compiler}, code);
+    code.addCode('}') 
+};
 
 function addTranspilerFeatures(preDict, postDict) {
     for (let k in codeGenFor)
@@ -4629,9 +4669,11 @@ function jsopCodeGen(lhs, op, rhs, context,code) {
 }
 
 function stringConcat(lhs, op, rhs, context,code) {
+    code.addCode('__add(');
     emitOperand(lhs, context, code)
-    code.addCode('+');
+    code.addCode(',');
     emitOperand(rhs, context, code)
+    code.addCode(')');
 }
 
 function equals(lhs, op, rhs, context,code) {

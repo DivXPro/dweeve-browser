@@ -19,6 +19,7 @@ function addFunctions(context) {
     context['map'] = map
     context['mapObject'] = mapObject
     context['readUrl'] = readUrl
+    context['__add'] = __add
 }
 
 function isOdd(number) {
@@ -260,11 +261,38 @@ var resourceFileContent = {}
 
 function readUrl(path, contentType){
     const content = resourceFileContent[path]
-    if (content==null) return '';
     if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
         return JSON.parse(content)
 
     return content
+}
+
+function __add(lhs, rhs) {
+    if (Array.isArray(lhs) && Array.isArray(rhs)) {
+        return lhs.concat(rhs)
+    } else if (typeof lhs === "object" && typeof rhs === "object") {
+        let newObj = {'__ukey-obj' : true}
+        let idx=0;
+        Object.keys(lhs).forEach(k=>{
+            if (k.startsWith('__key'))
+                newObj['__key'+idx++] = lhs[k]
+            else if (k.startsWith('__dkey'))
+                newObj['__dkey'+idx++] = lhs[k]
+            else if (!k.startsWith('__'))
+                newObj['__key'+idx++] = { [k]: lhs[k]}
+        })
+        Object.keys(rhs).forEach(k=>{
+            if (k.startsWith('__key'))
+                newObj['__key'+idx++] = rhs[k]
+            else if (k.startsWith('__dkey'))
+                newObj['__dkey'+idx++] = rhs[k]
+            else if (!k.startsWith('__'))
+                newObj['__key'+idx++] = { [k]: rhs[k]}
+        })
+        return newObj
+    } else {
+        return lhs + rhs
+    }
 }
 
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}

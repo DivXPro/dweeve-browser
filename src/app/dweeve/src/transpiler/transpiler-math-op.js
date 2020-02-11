@@ -44,9 +44,11 @@ function jsopCodeGen(lhs, op, rhs, context,code) {
 }
 
 function stringConcat(lhs, op, rhs, context,code) {
+    code.addCode('__add(');
     emitOperand(lhs, context, code)
-    code.addCode('+');
+    code.addCode(',');
     emitOperand(rhs, context, code)
+    code.addCode(')');
 }
 
 function equals(lhs, op, rhs, context,code) {

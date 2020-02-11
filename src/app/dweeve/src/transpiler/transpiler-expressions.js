@@ -115,7 +115,11 @@ codeGenFor['sglstring'] = (context, code) => { code.addCode(context.node.value) 
 codeGenFor['bool'] = (context, code) => { code.addCode(context.node.value) };
 codeGenFor['null'] = (context, code) => { code.addCode(context.node.value) };
 codeGenFor['regex'] = (context, code) => { code.addCode(context.node.value) };
-
+codeGenFor['kvp'] = (context, code) => { 
+    code.addCode('{') 
+    context.compiler({parentType: 'kvp-inner', node: context.node.value, compiler:context.compiler}, code);
+    code.addCode('}') 
+};
 
 function addTranspilerFeatures(preDict, postDict) {
     for (let k in codeGenFor)
