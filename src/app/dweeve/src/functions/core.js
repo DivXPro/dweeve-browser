@@ -44,7 +44,9 @@ function avg(list) {
         });
         return agg/list.length;
     }
-    catch {}
+    catch (err) {
+        return 0;
+    }
     return 0;
 }
 

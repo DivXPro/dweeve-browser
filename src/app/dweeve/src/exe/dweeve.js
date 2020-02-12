@@ -1,5 +1,5 @@
 const nearley = require("./nearley");
-const strip = require('strip-comments');
+const strip = require('../../../strip-comments/index.js');
 const dwgrammar = require("../parser/dweeve-grammar2.js");
 const transpiler = require("../transpiler/transpiler.js");
 const beautify = require('./beautify.js');
@@ -70,6 +70,7 @@ function run(dwl, payload, vars, attributes) {
         let result = context.result
         return result;
     }
-    
+
+        
 
 export {run}
