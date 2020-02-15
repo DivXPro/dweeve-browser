@@ -44,7 +44,7 @@ function run(dwl, payload, vars, attributes) {
             return beautify(result, null,2,100);
         }
         catch (err) {
-            return err.message;
+            return err.message ? err.message : err;
         }
     }
     

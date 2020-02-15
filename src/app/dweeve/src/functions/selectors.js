@@ -14,7 +14,9 @@ function __getIdentifierValue(identifier){
     return identifier;
 }
 
-function __doDotOp(lhs, rhs) {
+function __doDotOp(lhs, rhs, lhsName, rhsName) {
+    if (lhs==undefined)
+        throw 'Can not reference member: "' + rhsName + '" as "' + lhsName + '" is not defined / present.'
     try {
         
         if ( !Array.isArray(lhs)) {
@@ -23,7 +25,8 @@ function __doDotOp(lhs, rhs) {
                 return r;
             } else {
                 let r = lhs[rhs]; 
-                console.log(r);
+                if (r==undefined)
+                    throw 'undefined'
                 return r;
             }
         } else {
@@ -38,11 +41,11 @@ function __doDotOp(lhs, rhs) {
             return r;
         }
      } catch (ex) {
-         return null; 
+        throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
      } 
 }
 
-function __doDotStarOp(lhs, rhs) {
+function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
     lhs = convertJsonObjsToArray(lhs);
     try {
         let r = lhs.filter(m=>m[rhs]!==undefined)
@@ -53,7 +56,7 @@ function __doDotStarOp(lhs, rhs) {
      } 
 }
 
-function __doDotDotStarOp(lhs,rhs) {
+function __doDotDotStarOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
         let r = getDescendentValues(lhs, rhs)
@@ -79,7 +82,7 @@ function getDescendentValues(obj, key){
     return vs
 }
 
-function __doDotDotOp(lhs,rhs) {
+function __doDotDotOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
         let r = getFirstDescendentValue(lhs, rhs)

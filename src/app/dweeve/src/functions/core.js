@@ -69,6 +69,8 @@ function daysBetween(d1, d2){
 }
 
 function distinctBy(items, criteria) {
+    if (items==null || items==undefined)
+        throw 'Error: trying to distinctBy on a null/undefined object/array'
     let out = []
     let distinctList =[]
     let ewl = (items['__ukey-obj'])
@@ -99,6 +101,8 @@ function endsWith(s1,s2) {
 
 function filter(arr, criteria) {
     let out = []
+    if (arr==null || arr==undefined)
+        throw 'Error: trying to filter on a null/undefined object/array'
     let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
         if (key!=='__ukey-obj') {
@@ -119,6 +123,8 @@ function filter(arr, criteria) {
 }
 
 function filterObject(source, criteria){
+    if (source==null || source==undefined)
+        throw 'Error: trying to filterObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;
@@ -141,6 +147,8 @@ function filterObject(source, criteria){
 }
 
 function find(arr, matcher){
+    if (arr==null || arr==undefined)
+        throw 'Error: trying to find on a null/undefined object/array'
     if (Array.isArray(arr)){
         let out = [];
         let ewl = (arr['__ukey-obj'])
@@ -194,6 +202,8 @@ function flatMap(source, mapFunc){
 }
 
 function flatten(source){
+    if (source==null || source==undefined)
+        throw 'Error: trying to flatten on a null/undefined object/array'
     if (source==null || !Array.isArray(source)) return source
     let out = []
     source.forEach(m=> {
@@ -215,6 +225,8 @@ function startsWith(s1,s2) {
 }
 
 function map(source, mapFunc){
+    if (source==null || source==undefined)
+        throw 'Error: trying to map on a null/undefined object/array'
     let out = []
     let ewl = (source['__ukey-obj'])
     for(let key in source) {
@@ -235,6 +247,8 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
+    if (source==null || source==undefined)
+        throw 'Error: trying to mapObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;

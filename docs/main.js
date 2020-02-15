@@ -2492,7 +2492,7 @@ function run(dwl, payload, vars, attributes) {
             return beautify(result, null,2,100);
         }
         catch (err) {
-            return err.message;
+            return err.message ? err.message : err;
         }
     }
     
@@ -3198,6 +3198,8 @@ function daysBetween(d1, d2){
 }
 
 function distinctBy(items, criteria) {
+    if (items==null || items==undefined)
+        throw 'Error: trying to distinctBy on a null/undefined object/array'
     let out = []
     let distinctList =[]
     let ewl = (items['__ukey-obj'])
@@ -3228,6 +3230,8 @@ function endsWith(s1,s2) {
 
 function filter(arr, criteria) {
     let out = []
+    if (arr==null || arr==undefined)
+        throw 'Error: trying to filter on a null/undefined object/array'
     let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
         if (key!=='__ukey-obj') {
@@ -3248,6 +3252,8 @@ function filter(arr, criteria) {
 }
 
 function filterObject(source, criteria){
+    if (source==null || source==undefined)
+        throw 'Error: trying to filterObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;
@@ -3270,6 +3276,8 @@ function filterObject(source, criteria){
 }
 
 function find(arr, matcher){
+    if (arr==null || arr==undefined)
+        throw 'Error: trying to find on a null/undefined object/array'
     if (Array.isArray(arr)){
         let out = [];
         let ewl = (arr['__ukey-obj'])
@@ -3323,6 +3331,8 @@ function flatMap(source, mapFunc){
 }
 
 function flatten(source){
+    if (source==null || source==undefined)
+        throw 'Error: trying to flatten on a null/undefined object/array'
     if (source==null || !Array.isArray(source)) return source
     let out = []
     source.forEach(m=> {
@@ -3344,6 +3354,8 @@ function startsWith(s1,s2) {
 }
 
 function map(source, mapFunc){
+    if (source==null || source==undefined)
+        throw 'Error: trying to map on a null/undefined object/array'
     let out = []
     let ewl = (source['__ukey-obj'])
     for(let key in source) {
@@ -3364,6 +3376,8 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
+    if (source==null || source==undefined)
+        throw 'Error: trying to mapObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;
@@ -3492,7 +3506,9 @@ function __getIdentifierValue(identifier){
     return identifier;
 }
 
-function __doDotOp(lhs, rhs) {
+function __doDotOp(lhs, rhs, lhsName, rhsName) {
+    if (lhs==undefined)
+        throw 'Can not reference member: "' + rhsName + '" as "' + lhsName + '" is not defined / present.'
     try {
         
         if ( !Array.isArray(lhs)) {
@@ -3501,7 +3517,8 @@ function __doDotOp(lhs, rhs) {
                 return r;
             } else {
                 let r = lhs[rhs]; 
-                console.log(r);
+                if (r==undefined)
+                    throw 'undefined'
                 return r;
             }
         } else {
@@ -3516,11 +3533,11 @@ function __doDotOp(lhs, rhs) {
             return r;
         }
      } catch (ex) {
-         return null; 
+        throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
      } 
 }
 
-function __doDotStarOp(lhs, rhs) {
+function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
     lhs = convertJsonObjsToArray(lhs);
     try {
         let r = lhs.filter(m=>m[rhs]!==undefined)
@@ -3531,7 +3548,7 @@ function __doDotStarOp(lhs, rhs) {
      } 
 }
 
-function __doDotDotStarOp(lhs,rhs) {
+function __doDotDotStarOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
         let r = getDescendentValues(lhs, rhs)
@@ -3557,7 +3574,7 @@ function getDescendentValues(obj, key){
     return vs
 }
 
-function __doDotDotOp(lhs,rhs) {
+function __doDotDotOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
         let r = getFirstDescendentValue(lhs, rhs)
@@ -4447,18 +4464,22 @@ function selector(lhs, op, rhs, context,code) {
             code.addCode('( __doDotDotOp( (');
             break;
     }
-    emitOperand(lhs, context, code)
+    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"')
     code.addCode('), (\'');
-    emitOperand(rhs, context, code)
-    code.addCode('\')) )');
+    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"')
+    code.addCode('\'), \''+ lhsExp + '\', \'' + rhsExp + '\' ))');
     
 }
 
 function emitOperand(operand, context, code) {
+    const opCode = getSubCode(code)
     if (operand.op)
-        opCodeGen(operand.lhs, operand.op, operand.rhs, context, code)
+        opCodeGen(operand.lhs, operand.op, operand.rhs, context, opCode)
     else
-        context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, code);
+        context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, opCode);
+
+    code.addCode(opCode.text);
+    return opCode.text;
 }
 
 function addTranspilerFeatures(preDict, postDict) {
@@ -4466,6 +4487,16 @@ function addTranspilerFeatures(preDict, postDict) {
         preDict[k]=codeGenFor[k];
     
         
+}
+
+function getSubCode(code)
+{
+    let subCode = {text: '', lines: code.lines, doScopes: code.doScopes}
+    subCode.addCode = (text) => {
+        subCode.text += text;
+        subCode.lines.push(text);
+    };
+    return subCode;
 }
 
 module.exports = {functionHandler: functionHandler, addTranspilerFeatures : addTranspilerFeatures}

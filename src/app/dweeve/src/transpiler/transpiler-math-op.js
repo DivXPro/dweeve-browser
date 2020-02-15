@@ -84,18 +84,22 @@ function selector(lhs, op, rhs, context,code) {
             code.addCode('( __doDotDotOp( (');
             break;
     }
-    emitOperand(lhs, context, code)
+    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"')
     code.addCode('), (\'');
-    emitOperand(rhs, context, code)
-    code.addCode('\')) )');
+    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"')
+    code.addCode('\'), \''+ lhsExp + '\', \'' + rhsExp + '\' ))');
     
 }
 
 function emitOperand(operand, context, code) {
+    const opCode = getSubCode(code)
     if (operand.op)
-        opCodeGen(operand.lhs, operand.op, operand.rhs, context, code)
+        opCodeGen(operand.lhs, operand.op, operand.rhs, context, opCode)
     else
-        context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, code);
+        context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, opCode);
+
+    code.addCode(opCode.text);
+    return opCode.text;
 }
 
 function addTranspilerFeatures(preDict, postDict) {
@@ -103,6 +107,16 @@ function addTranspilerFeatures(preDict, postDict) {
         preDict[k]=codeGenFor[k];
     
         
+}
+
+function getSubCode(code)
+{
+    let subCode = {text: '', lines: code.lines, doScopes: code.doScopes}
+    subCode.addCode = (text) => {
+        subCode.text += text;
+        subCode.lines.push(text);
+    };
+    return subCode;
 }
 
 module.exports = {functionHandler: functionHandler, addTranspilerFeatures : addTranspilerFeatures}
