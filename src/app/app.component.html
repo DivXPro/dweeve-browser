@@ -27,39 +27,63 @@
                     <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>
                     <button (click)="toggleExampleBar()"  >--&gt;Examples Bar</button>
                   </div>
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <p>d~weeve:</p>
-                        <ace-editor #dweditor style="height:350px;">
-                        </ace-editor>
-                      </div>
-                      <div class="col-lg-6">
-                        <mat-tab-group disableRipple="true">
-                          <mat-tab label="Payload">
-                            <ace-editor #pleditor style="height:350px;">
-                            </ace-editor>
-                          </mat-tab>
-                          <mat-tab label="Resource">
-                            <div>Resource name :<input [(ngModel)]="resourceNameText" #resourceName type="text" placeholder="classpath://myfolder/myFile.txt" style="width: 100%;"></div>
-                            <ace-editor #rseditor style="height:290px;">
-                            </ace-editor>
-                          </mat-tab>
-                        
-                        </mat-tab-group>
-                        
+                  <as-split #vsplit unit="pixel" direction="vertical" >
+                    <as-split-area size="390">
+                    <div class="row" style="margin-bottom: 10px;">
+                      <div class="col-lg-12">
+                        <as-split unit="percent" direction="horizontal" >
+                          <as-split-area size="50">
+                            <div  style="margin-right: 10px; ">
+                              <p>d~weeve:</p>
+                              <div #dweditorDiv style="height:340px">
+                                <ace-editor #dweditor style="height:100%;">
+                                </ace-editor>
+                              </div>
+                            </div>
+                          </as-split-area>
+                          <as-split-area size="50">
+                            <div style="margin-left: 10px;">
+                              <mat-tab-group disableRipple="true">
+                                <mat-tab label="Payload">
+                                  <div #pleditorDiv style="height:330px">
+                                    <ace-editor #pleditor style="height:100%;">
+                                    </ace-editor>
+                                  </div>
+                                </mat-tab>
+                                <mat-tab label="Resource">
+                                  <div>Resource name :<input [(ngModel)]="resourceNameText" #resourceName type="text" placeholder="classpath://myfolder/myFile.txt" style="width: 100%;"></div>
+                                  
+                                  <div #rseditorDiv style="height:277px">
+                                    <ace-editor #rseditor style="height:100%;">
+                                    </ace-editor>
+                                  </div>
+                                </mat-tab>
+                              
+                              </mat-tab-group>
+                              
 
-                      </div>
+                            </div>
+                          </as-split-area>
+                        
+                      </as-split>
                     </div>
-                    <br>
+                    </div>
+                    </as-split-area>
+                    <as-split-area size="*">
                     <div class="row">
                       <div class="col-md-12">
                         <p>Result:</p>
-                        <ace-editor #reditor style="height:250px;">
-                        </ace-editor>
+                        <div #reditorDiv style="height:180px">
+                          <ace-editor #reditor style="height:100%;">
+                          </ace-editor>
+                        </div>
                       </div>
                     </div>
-                    <br>
-                    <br>
+                    </as-split-area>
+
+                  </as-split>
+                  <br>
+                  <br>
                 </div>
               
             </div>  

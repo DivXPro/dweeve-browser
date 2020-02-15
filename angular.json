@@ -21,7 +21,12 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              { "glob": "mode-dweeve.js", "input": "./src/app/dweeve/src/ace-mode/", "output": "/" },
+              { "glob": "worker-javascript.js", "input": "./node_modules/ace-builds/src-min/", "output": "/" },
+              { "glob": "worker-json.js", "input": "./node_modules/ace-builds/src-min/", "output": "/" },
+              { "glob": "worker-xml.js", "input": "./node_modules/ace-builds/src-min/", "output": "/" },
+              { "glob": "worker-html.js", "input": "./node_modules/ace-builds/src-min/", "output": "/" }
             ],
             "styles": [
               "src/styles.css",
@@ -33,7 +38,13 @@
             "scripts": [
               "node_modules/ace-builds/src-min/ace.js",
               "node_modules/ace-builds/src-min/ext-language_tools.js",
-              "node_modules/ace-builds/src-min/theme-clouds.js"
+              "node_modules/ace-builds/src-min/theme-xcode.js",
+              "node_modules/ace-builds/src-min/theme-sqlserver.js",
+              "node_modules/ace-builds/src-min/theme-textmate.js",
+              "node_modules/ace-builds/src-min/mode-json.js",
+              "node_modules/ace-builds/src-min/mode-xml.js",
+              "node_modules/ace-builds/src-min/mode-html.js",
+              "src/app/dweeve/src/ace-mode/mode-dweeve.js"
             ]
           },
           "configurations": {

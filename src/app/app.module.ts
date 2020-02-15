@@ -11,6 +11,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AceEditorModule} from 'ng2-ace-editor';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
+import { AngularSplitModule } from 'angular-split';
+
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     BrowserModule,
     BrowserAnimationsModule,
+    AngularSplitModule.forRoot(),
     AceEditorModule,
     MatTabsModule
   ],

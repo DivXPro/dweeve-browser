@@ -1,4 +1,6 @@
-import { Component, AfterViewInit, ViewChild, OnInit } from '@angular/core';
+import { AngularSplitModule } from 'angular-split';
+import { SplitComponent } from 'angular-split';
+import { Component, AfterViewInit, ViewChild, OnInit, HostListener, NgZone, ElementRef } from '@angular/core';
 import { AceEditorComponent } from 'ng2-ace-editor';
 import * as dwrun from './dweeve/src/exe/dweeve.js';
 import * as core from './dweeve/src/functions/core.js';
@@ -13,12 +15,30 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('pleditor', {static: false}) pleditor: AceEditorComponent;
   @ViewChild('reditor', {static: false}) reditor: AceEditorComponent;
   @ViewChild('rseditor', {static: false}) rseditor: AceEditorComponent;
+  @ViewChild('dweditorDiv', {static: false}) dweditorDiv: ElementRef;
+  @ViewChild('pleditorDiv', {static: false}) pleditorDiv: ElementRef;
+  @ViewChild('reditorDiv', {static: false}) reditorDiv: ElementRef;
+  @ViewChild('rseditorDiv', {static: false}) rseditorDiv: ElementRef;
+  @ViewChild('vsplit', {static: false}) vsplit: SplitComponent;
+  
+
+  constructor(private zone: NgZone) {}
 
   title = 'dweeve-ui';
 
   public exampleBar = false;
   public resourceNameText = '';
   private examples = {};
+
+  private winH = 500;
+  private splitResizeProgress;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.winH = event.target.innerHeight;
+    this.resizeEditors();
+  }
+
 
   ngOnInit(): void {
     this.createExamples();
@@ -28,20 +48,42 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.exampleBar = !this.exampleBar;
   }
 
+  
+
+  resizeEditors() {
+    let th = 350;
+    if (this.splitResizeProgress.sizes) {
+        th = this.splitResizeProgress.sizes[0];
+    }
+
+    this.dweditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 50) + 'px');
+    this.pleditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 60) + 'px');
+    this.rseditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 123) + 'px');
+    this.reditorDiv.nativeElement.setAttribute('style', 'height:' +  (this.winH - th - 150 ) + 'px');
+
+    }
+
   ngAfterViewInit() {
+    const that = this;
+    this.vsplit.dragProgress$.subscribe(x => this.zone.run(() =>
+     { that.splitResizeProgress = x; window.dispatchEvent(new Event('resize')); } ) );
 
     this.dweditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
-    this.dweditor.theme = 'clouds';
+    this.dweditor.theme = 'textmate';
+    this.dweditor.mode = 'dweeve';
     this.dweditor.registerOnChange(() => {this.reDweeve();});
 
     this.pleditor.getEditor().setOptions({showLineNumbers: true, tabSize: 2 });
-    this.pleditor.theme = 'clouds';
+    this.pleditor.theme = 'textmate';
+    this.pleditor.mode = 'json';
     this.pleditor.registerOnChange(() => { this.reDweeve(); });
 
-    this.reditor.theme = 'clouds';
+    this.reditor.theme = 'sqlserver';
+    this.reditor.mode = 'json';
     this.reditor.getEditor().setOptions({showLineNumbers: true, tabSize: 2 });
 
-    this.rseditor.theme = 'clouds';
+    this.rseditor.theme = 'textmate';
+    this.rseditor.mode = 'json';
     this.rseditor.getEditor().setOptions({showLineNumbers: true, tabSize: 2 });
     this.rseditor.registerOnChange(() => { this.reDweeve(); });
     this.toggleExampleBar();
