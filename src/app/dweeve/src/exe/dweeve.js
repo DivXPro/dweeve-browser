@@ -8,6 +8,7 @@ const xml2js = require('./xmldom2jsobj')
 const DOMParser = require('xmldom').DOMParser;
 const selectorFunctions = require('../functions/selectors')
 const coreFunctions = require('../functions/core') 
+const coreFunctions2 = require('../functions/core2') 
 const doScopeFunctions = require('../functions/doScope') 
 
 import 'core-js/modules/es.array.map';
@@ -50,6 +51,7 @@ function run(dwl, payload, vars, attributes) {
     
     function runDweeveScript(dwl, args) {
         coreFunctions.addFunctions(args)
+        coreFunctions2.addFunctions(args)
         doScopeFunctions.addFunctions(args)
         selectorFunctions.addFunctions(args)
     

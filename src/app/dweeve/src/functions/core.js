@@ -8,6 +8,7 @@ function addFunctions(context) {
     context['contains'] = contains
     context['daysBetween'] = daysBetween
     context['distinctBy'] = distinctBy
+    context['distinctByKeys'] = distinctByKeys
     context['endsWith'] = endsWith
     context['filter'] = filter
     context['filterObject'] = filterObject
@@ -76,7 +77,7 @@ function distinctBy(items, criteria) {
     let ewl = (items['__ukey-obj'])
     for(let key in items) {
         if (key!=='__ukey-obj') {
-            let k = items
+            let k = key
             let v = items[key]
             if (ewl) {
                 k = Object.keys(v)[0]
@@ -88,6 +89,33 @@ function distinctBy(items, criteria) {
             if (!distinctList.includes(candidate)) {
                 distinctList.push(candidate)
                 out.push(v);
+            }
+        }
+    }
+
+    return out;
+}
+
+function distinctByKeys(items, criteria) {
+    if (items==null || items==undefined)
+        throw 'Error: trying to distinctBy on a null/undefined object/array'
+    let out = []
+    let distinctList =[]
+    let ewl = (items['__ukey-obj'])
+    for(let key in items) {
+        if (key!=='__ukey-obj') {
+            let k = key
+            let v = items[key]
+            if (ewl) {
+                k = Object.keys(v)[0]
+                v = Object.values(v)[0]
+            }
+
+            k = isNaN(parseInt(k)) ? k : parseInt(k)
+            let candidate = JSON.stringify(criteria(v,k))
+            if (!distinctList.includes(candidate)) {
+                distinctList.push(candidate)
+                out.push(criteria(v,k));
             }
         }
     }

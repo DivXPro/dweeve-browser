@@ -49,9 +49,12 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
 function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
     lhs = convertJsonObjsToArray(lhs);
     try {
-        let r = lhs.filter(m=>m[rhs]!==undefined)
-            .map(kvps=> kvps[rhs]);
-        return r;
+        let ms = lhs.filter(m=>m[rhs]!==undefined 
+               || (m['__ukey-obj'] && Object.values(m).find(o=>Object.keys(o)[0]===rhs)!=undefined))
+
+        let r = ms.map(kvps=> kvps[rhs] ? kvps[rhs] : Object.values(kvps).find(o=>Object.keys(o)[0]===rhs)[rhs]);
+
+            return r;
      } catch (ex) {
          return null; 
      } 

@@ -2456,6 +2456,7 @@ const xml2js = __webpack_require__(/*! ./xmldom2jsobj */ "./src/app/dweeve/src/e
 const DOMParser = __webpack_require__(/*! xmldom */ "./node_modules/xmldom/dom-parser.js").DOMParser;
 const selectorFunctions = __webpack_require__(/*! ../functions/selectors */ "./src/app/dweeve/src/functions/selectors.js")
 const coreFunctions = __webpack_require__(/*! ../functions/core */ "./src/app/dweeve/src/functions/core.js") 
+const coreFunctions2 = __webpack_require__(/*! ../functions/core2 */ "./src/app/dweeve/src/functions/core2.js") 
 const doScopeFunctions = __webpack_require__(/*! ../functions/doScope */ "./src/app/dweeve/src/functions/doScope.js") 
 
 
@@ -2498,6 +2499,7 @@ function run(dwl, payload, vars, attributes) {
     
     function runDweeveScript(dwl, args) {
         coreFunctions.addFunctions(args)
+        coreFunctions2.addFunctions(args)
         doScopeFunctions.addFunctions(args)
         selectorFunctions.addFunctions(args)
     
@@ -3137,6 +3139,7 @@ function addFunctions(context) {
     context['contains'] = contains
     context['daysBetween'] = daysBetween
     context['distinctBy'] = distinctBy
+    context['distinctByKeys'] = distinctByKeys
     context['endsWith'] = endsWith
     context['filter'] = filter
     context['filterObject'] = filterObject
@@ -3205,7 +3208,7 @@ function distinctBy(items, criteria) {
     let ewl = (items['__ukey-obj'])
     for(let key in items) {
         if (key!=='__ukey-obj') {
-            let k = items
+            let k = key
             let v = items[key]
             if (ewl) {
                 k = Object.keys(v)[0]
@@ -3217,6 +3220,33 @@ function distinctBy(items, criteria) {
             if (!distinctList.includes(candidate)) {
                 distinctList.push(candidate)
                 out.push(v);
+            }
+        }
+    }
+
+    return out;
+}
+
+function distinctByKeys(items, criteria) {
+    if (items==null || items==undefined)
+        throw 'Error: trying to distinctBy on a null/undefined object/array'
+    let out = []
+    let distinctList =[]
+    let ewl = (items['__ukey-obj'])
+    for(let key in items) {
+        if (key!=='__ukey-obj') {
+            let k = key
+            let v = items[key]
+            if (ewl) {
+                k = Object.keys(v)[0]
+                v = Object.values(v)[0]
+            }
+
+            k = isNaN(parseInt(k)) ? k : parseInt(k)
+            let candidate = JSON.stringify(criteria(v,k))
+            if (!distinctList.includes(candidate)) {
+                distinctList.push(candidate)
+                out.push(criteria(v,k));
             }
         }
     }
@@ -3448,6 +3478,184 @@ module.exports = { addFunctions: addFunctions, setResourceFileContent: setResour
 
 /***/ }),
 
+/***/ "./src/app/dweeve/src/functions/core2.js":
+/*!***********************************************!*\
+  !*** ./src/app/dweeve/src/functions/core2.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const core = {}
+__webpack_require__(/*! ./core */ "./src/app/dweeve/src/functions/core.js").addFunctions(core)
+
+function addFunctions(context) {
+    context['isEven'] = isEven
+    context['lower'] = lower
+    context['upper'] = upper
+    context['isBlank'] = isBlank
+    context['isDate'] = isDate
+    context['isDecimal'] = isDecimal
+    context['isEmpty'] = isEmpty
+    context['isLeapYear'] = isLeapYear
+    context['log'] = log
+    context['min'] = min
+    context['max'] = max
+    context['mod'] = mod
+    context['now'] = now
+    context['groupBy'] = groupBy
+    context['joinBy'] = joinBy
+    context['trim'] = trim
+    context['to'] = to
+}
+
+function isEven(number) {
+    return number % 2 ? false: true;
+}
+
+function lower(s) {
+    return String(s).toLowerCase();
+}
+
+function upper(s) {
+    return String(s).toUpperCase();
+}
+
+function isBlank(s) {
+    return String(s).trim===''
+}
+
+function isDate(value) {
+    switch (typeof value) {
+        case 'number':
+            return true;
+        case 'string':
+            return !isNaN(Date.parse(value));
+        case 'object':
+            if (value instanceof Date) {
+                return !isNaN(value.getTime());
+            }
+        default:
+            return false;
+    }
+}
+
+function isEmpty(v) {
+    if (Array.isArray(v) && v.length==0) return true
+    if (typeof v === 'object' && Object.keys(v).filter(k=>(!k.startsWith('__')  ))) return true
+    if (String(s).trim==='') return true
+
+    return false
+}
+
+function isDecimal(num) {
+    try {
+        const v = parseFloat(num)
+        return true
+    } catch {
+        return false
+    }
+}
+
+function isInteger(num) {
+    try {
+        const v = parseInt(num)
+        return true
+    } catch {
+        return false
+    }
+}
+
+var isLeapYear = __webpack_require__(/*! date-fns/isLeapYear */ "./node_modules/date-fns/esm/isLeapYear/index.js")
+
+function log(message) {
+    console.log(message)
+}
+
+function min(list) {
+    if (!Array.isArray(list))
+        return 0
+    try{
+        let agg;
+        list.forEach(m => {
+            if (agg==undefined || m < agg)
+                agg = m
+        });
+        return agg
+    }
+    catch {}
+    return 0
+}
+
+function max(list) {
+    if (!Array.isArray(list))
+        return 0
+    try{
+        let agg;
+        list.forEach(m => {
+            if (agg==undefined || m > agg)
+                agg = m
+        });
+        return agg
+    }
+    catch {}
+    return 0
+}
+
+function mod(dividend, divisor) {
+    return dividend % divisor
+}
+
+function now() {
+    return Date.now()
+}
+
+function joinBy(arr,s) {
+    return Array.join(arr, s)
+}
+
+function groupBy(list, criteria) {
+    if (typeof criteria === 'function') {
+          const groups = core.distinctByKeys(list, criteria)
+        const outObj = {}
+        groups.forEach(g=>{
+            
+            let gItems = []
+            if (Array.isArray(list))
+                gItems =core.filter(list, (v,k)=> (criteria(v,k)===g))
+            else
+                gItems =core.filterObject(list, (v,k)=> (criteria(v,k)===g))
+
+            if (Array.isArray(gItems)) {
+                let newArr = []
+                gItems.forEach(gi=> newArr.push(gi))
+                outObj[g] = newArr
+            } else
+                outObj[g] = gItems
+        })
+        return outObj
+    }
+    else {
+        return { [criteria] : list }
+    }
+}
+
+function trim(s) {
+    return String(s).trim()
+}
+
+function to(start, end) {
+    let arr = []
+    for (let idx=start; idx <= end; idx++)
+        arr.push(idx)
+
+    return arr
+}
+
+
+module.exports = { addFunctions: addFunctions}
+
+/***/ }),
+
 /***/ "./src/app/dweeve/src/functions/doScope.js":
 /*!*************************************************!*\
   !*** ./src/app/dweeve/src/functions/doScope.js ***!
@@ -3545,9 +3753,12 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
 function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
     lhs = convertJsonObjsToArray(lhs);
     try {
-        let r = lhs.filter(m=>m[rhs]!==undefined)
-            .map(kvps=> kvps[rhs]);
-        return r;
+        let ms = lhs.filter(m=>m[rhs]!==undefined 
+               || (m['__ukey-obj'] && Object.values(m).find(o=>Object.keys(o)[0]===rhs)!=undefined))
+
+        let r = ms.map(kvps=> kvps[rhs] ? kvps[rhs] : Object.values(kvps).find(o=>Object.keys(o)[0]===rhs)[rhs]);
+
+            return r;
      } catch (ex) {
          return null; 
      } 
