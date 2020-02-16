@@ -3243,8 +3243,12 @@ function filter(arr, criteria) {
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            if (criteria(v,k))
-                out.push(v);
+            try {
+                if (criteria(v,k))
+                    out.push(v);
+            } catch (err) {
+                // errors in filter evaluation will be treated as filter fails, rather than errors
+            }
         }
     }
 
@@ -3533,7 +3537,8 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
             return r;
         }
      } catch (ex) {
-        throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
+          return null;
+        //  throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
      } 
 }
 
@@ -4464,9 +4469,9 @@ function selector(lhs, op, rhs, context,code) {
             code.addCode('( __doDotDotOp( (');
             break;
     }
-    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"')
+    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"').replace(/\n/g, '')
     code.addCode('), (\'');
-    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"')
+    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"').replace(/\n/g, '')
     code.addCode('\'), \''+ lhsExp + '\', \'' + rhsExp + '\' ))');
     
 }
@@ -4498,6 +4503,7 @@ function getSubCode(code)
     };
     return subCode;
 }
+
 
 module.exports = {functionHandler: functionHandler, addTranspilerFeatures : addTranspilerFeatures}
 

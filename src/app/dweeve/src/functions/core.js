@@ -114,8 +114,12 @@ function filter(arr, criteria) {
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            if (criteria(v,k))
-                out.push(v);
+            try {
+                if (criteria(v,k))
+                    out.push(v);
+            } catch (err) {
+                // errors in filter evaluation will be treated as filter fails, rather than errors
+            }
         }
     }
 

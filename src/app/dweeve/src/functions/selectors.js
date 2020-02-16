@@ -41,7 +41,8 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
             return r;
         }
      } catch (ex) {
-        throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
+          return null;
+        //  throw 'Can not reference member: "' + rhsName + '" of "' + lhsName + '", it is not defined / present.'; 
      } 
 }
 

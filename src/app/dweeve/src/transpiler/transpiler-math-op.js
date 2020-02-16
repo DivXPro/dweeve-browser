@@ -84,9 +84,9 @@ function selector(lhs, op, rhs, context,code) {
             code.addCode('( __doDotDotOp( (');
             break;
     }
-    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"')
+    const lhsExp = emitOperand(lhs, context, code).replace(/'/g, '"').replace(/\n/g, '')
     code.addCode('), (\'');
-    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"')
+    const rhsExp = emitOperand(rhs, context, code).replace(/'/g, '"').replace(/\n/g, '')
     code.addCode('\'), \''+ lhsExp + '\', \'' + rhsExp + '\' ))');
     
 }
@@ -118,5 +118,6 @@ function getSubCode(code)
     };
     return subCode;
 }
+
 
 module.exports = {functionHandler: functionHandler, addTranspilerFeatures : addTranspilerFeatures}
