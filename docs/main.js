@@ -3365,8 +3365,8 @@ function flatMap(source, mapFunc){
 }
 
 function flatten(source){
-    if (source==null || source==undefined)
-        throw 'Error: trying to flatten on a null/undefined object/array'
+ //   if (source==null || source==undefined)
+ //       throw 'Error: trying to flatten on a null/undefined object/array'
     if (source==null || !Array.isArray(source)) return source
     let out = []
     source.forEach(m=> {
@@ -3831,7 +3831,7 @@ function dewrapKeyedObj(obj, key) {
 }
 
 function __flattenDynamicContent(obj) {
-    if (!obj['__hasDynamicContent']) return obj
+    if (obj==null || obj==undefined || !obj['__hasDynamicContent']) return obj
     const newObj = { "__ukey-obj" : true}
     let idx = 0
     Object.keys(obj).forEach(k => {
@@ -3840,16 +3840,24 @@ function __flattenDynamicContent(obj) {
         } else if (k.startsWith('__dkey')) {
             if (Array.isArray(obj[k])) {
                 (obj[k]).forEach(m=> {
-                    newObj['__key'+idx++]=m
+                    if (m!=null && m['__ukey-obj']){
+                        // when flattening recursive dynamic content unbundle the ukey-objs 
+                        // before re-bundling
+                        Object.keys(m).filter(fk=>fk.startsWith('__key'))
+                            .forEach(ik=> newObj['__key'+idx++]=m[ik] )
+                    } else
+                        newObj['__key'+idx++]=m
                 })
             } else {
-                Object.keys(obj[k]).forEach(dk =>{
-                    if (dk.startsWith('__key')) {
-                        newObj['__key'+idx++]=obj[k][dk]
-                    } else {
-                        newObj['__key'+idx++]={ [dk]: obj[k][dk] }
-                    }
-                })
+                if (obj[k]!=null && obj[k]!=undefined) {
+                    Object.keys(obj[k]).forEach(dk =>{
+                        if (dk.startsWith('__key')) {
+                            newObj['__key'+idx++]=obj[k][dk]
+                        } else {
+                            newObj['__key'+idx++]={ [dk]: obj[k][dk] }
+                        }
+                    })
+                }
             }
         } else if (!k.startsWith('__')){
             newObj['__key'+idx++] = { [k]: obj[k]}
