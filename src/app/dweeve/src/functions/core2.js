@@ -65,7 +65,7 @@ function isDecimal(num) {
     try {
         const v = parseFloat(num)
         return String(v)==num
-    } catch {
+    } catch (err) {
         return false
     }
 }
@@ -74,7 +74,7 @@ function isInteger(num) {
     try {
         const v = parseInt(num)
         return String(v)==num
-    } catch {
+    } catch (err) {
         return false
     }
 }
@@ -100,7 +100,7 @@ function min(list) {
         });
         return agg
     }
-    catch {}
+    catch (err) {}
     return 0
 }
 
@@ -115,7 +115,7 @@ function max(list) {
         });
         return agg
     }
-    catch {}
+    catch (err) {}
     return 0
 }
 
