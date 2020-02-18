@@ -54,8 +54,9 @@ function isDate(value) {
 }
 
 function isEmpty(v) {
+    if (v==null || v==undefined) return true
     if (Array.isArray(v) && v.length==0) return true
-    if (typeof v === 'object' && Object.keys(v).filter(k=>(!k.startsWith('__')  ))) return true
+    if (typeof v === 'object' && Object.keys(v).filter(k=>(k!=='__ukey-obj' && k!=='__hasDynamicContent')  ).length==0) return true
     if (String(v).trim()==='') return true
 
     return false

@@ -3541,8 +3541,9 @@ function isDate(value) {
 }
 
 function isEmpty(v) {
+    if (v==null || v==undefined) return true
     if (Array.isArray(v) && v.length==0) return true
-    if (typeof v === 'object' && Object.keys(v).filter(k=>(!k.startsWith('__')  ))) return true
+    if (typeof v === 'object' && Object.keys(v).filter(k=>(k!=='__ukey-obj' && k!=='__hasDynamicContent')  ).length==0) return true
     if (String(v).trim()==='') return true
 
     return false
@@ -3912,7 +3913,7 @@ function getGrammar() { return grammar; }
 
 const lexer = moo.compile({
     header: /^\%dw [0-9]+\.[0.9]+$/,
-    keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or'],
+    keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not'],
     WS:      { match: /[ \t\n]+/, lineBreaks: true },
     headerend : '---',
     comment: /\/\/.*?$/,
@@ -3931,6 +3932,7 @@ const lexer = moo.compile({
     sglstring:  { match : /['](?:\\['\\]|[^\n'\\])*[']/,},
     keyvalsep: /:/,
     comma: /,/,
+    bang: /!/,
     mimetype:  /(?:application|text)\/\w+/,
     word:  { match : /[A-Za-z$][\w0-9_$]*/},
     number:  /(?:0|[1-9][0-9]*\.?[0-9]*)/,
@@ -4055,8 +4057,12 @@ typeName:data[2] } ) },
 {"name": "l60ops", "symbols": ["l70ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l70ops", "symbols": ["l70ops", "l2operator", "l80ops"], "postprocess": (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
 {"name": "l70ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l80ops", "symbols": ["l80ops", "l1operator", "operand"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
-{"name": "l80ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
+{"name": "l80ops", "symbols": ["l80ops", "l1operator", "l90ops"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l80ops", "symbols": ["l90ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l90ops", "symbols": ["l0operator", "operand"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
+{"name": "l90ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
+{"name": "l0operator", "symbols": [{"literal":"not"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
+{"name": "l0operator", "symbols": [{"literal":"!"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l1operator", "symbols": ["dotops"], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l2operator", "symbols": [{"literal":"as"}], "postprocess": (data) =>( { type:'as', value: data[0] } )},
 {"name": "l2operator", "symbols": [{"literal":"default"}], "postprocess": (data) =>( { type:'default', value: data[0] } )},
@@ -4621,6 +4627,8 @@ opfuncs['.*'] = selector
 opfuncs['..*'] = selector
 opfuncs['and'] = andLogic
 opfuncs['or'] = orLogic
+opfuncs['!'] = notLogic
+opfuncs['not'] = notLogic
 
 codeGenFor['dot-op'] = (context, code) => { functionHandler(context, code) }
 codeGenFor['product'] = (context, code) => { functionHandler(context, code) }
@@ -4629,6 +4637,7 @@ codeGenFor['relative'] = (context, code) => { functionHandler(context, code) }
 codeGenFor['and'] = (context, code) => { functionHandler(context, code) }
 codeGenFor['or'] = (context, code) => { functionHandler(context, code) }
 codeGenFor['bracket-operand'] = (context, code) => { functionHandler(context, code) }
+codeGenFor['un-op'] = (context, code) => { functionHandler(context, code) }
 
 function functionHandler (context, code)  { 
     let op = context.node;
@@ -4676,6 +4685,11 @@ function andLogic(lhs, op, rhs, context,code) {
 function orLogic(lhs, op, rhs, context,code) {
     emitOperand(lhs, context, code)
     code.addCode('||');
+    emitOperand(rhs, context, code)
+}
+
+function notLogic(lhs, op, rhs, context,code) {
+    code.addCode('!');
     emitOperand(rhs, context, code)
 }
 
