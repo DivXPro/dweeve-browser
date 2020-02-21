@@ -13,7 +13,7 @@ function getGrammar() { return grammar; }
 
 const lexer = moo.compile({
     header: /^\%dw [0-9]+\.[0.9]+$/,
-    keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not'],
+    
     WS:      { match: /[ \t\n]+/, lineBreaks: true },
     headerend : '---',
     comment: /\/\/.*?$/,
@@ -34,7 +34,9 @@ const lexer = moo.compile({
     comma: /,/,
     bang: /!/,
     mimetype:  /(?:application|text)\/\w+/,
-    word:  { match : /[A-Za-z$][\w0-9_$]*/},
+    word:  { match : /[A-Za-z$][\w0-9_$]*/, type:moo.keywords({
+        keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not']
+    })},
     number:  /(?:0|[1-9][0-9]*\.?[0-9]*)/,
     lparen:  '(',
     rparen:  ')',

@@ -18,6 +18,8 @@ function addFunctions(context) {
     context['now'] = now
     context['groupBy'] = groupBy
     context['joinBy'] = joinBy
+    context['reduce'] = reduce
+    context['pluralize'] = pluralize
     context['trim'] = trim
     context['to'] = to
 }
@@ -168,6 +170,23 @@ function to(start, end) {
         arr.push(idx)
 
     return arr
+}
+
+function reduce(arr, reduceFunc, init)
+{
+    let acc = init;
+    if (acc==undefined && arr.length>0){
+        if (isDecimal(arr[0])) acc = 0; else acc = ''
+    }
+    arr.forEach(m=>
+      acc=reduceFunc(m, acc)  
+        )
+    return acc
+}
+
+function pluralize(s)
+{
+    return s+'s';
 }
 
 

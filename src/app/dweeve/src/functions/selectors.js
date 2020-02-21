@@ -18,7 +18,9 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
     if (lhs==undefined)
         throw 'Can not reference member: "' + rhsName + '" as "' + lhsName + '" is not defined / present.'
     try {
-        
+        if ( (rhs.startsWith('"') && rhs.endsWith('"'))
+            || (rhs.startsWith('\'') && rhs.endsWith('\'')))
+            rhs = rhs.substring(1,rhs.length-1)
         if ( !Array.isArray(lhs)) {
             if (lhs['__ukey-obj']){
                 let r = Object.values(lhs).filter(v=>(typeof v === 'object')).find(kvp=>kvp[rhs])[rhs]
@@ -49,6 +51,9 @@ function __doDotOp(lhs, rhs, lhsName, rhsName) {
 function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
     lhs = convertJsonObjsToArray(lhs);
     try {
+        if ( (rhs.startsWith('"') && rhs.endsWith('"'))
+            || (rhs.startsWith('\'') && rhs.endsWith('\'')))
+            rhs = rhs.substring(1,rhs.length-1)
         let ms = lhs.filter(m=>m[rhs]!==undefined 
                || (m['__ukey-obj'] && Object.values(m).find(o=>Object.keys(o)[0]===rhs)!=undefined))
 
@@ -63,6 +68,9 @@ function __doDotStarOp(lhs, rhs, lhsName, rhsName) {
 function __doDotDotStarOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
+        if ( (rhs.startsWith('"') && rhs.endsWith('"'))
+            || (rhs.startsWith('\'') && rhs.endsWith('\'')))
+            rhs = rhs.substring(1,rhs.length-1)
         let r = getDescendentValues(lhs, rhs)
         return r;
     } catch (ex) {
@@ -89,6 +97,9 @@ function getDescendentValues(obj, key){
 function __doDotDotOp(lhs,rhs, lhsName, rhsName) {
 //    lhs = convertJsonObjsToArray(lhs);
     try {
+        if ( (rhs.startsWith('"') && rhs.endsWith('"'))
+            || (rhs.startsWith('\'') && rhs.endsWith('\'')))
+            rhs = rhs.substring(1,rhs.length-1)
         let r = getFirstDescendentValue(lhs, rhs)
         return r;
     } catch (ex) {

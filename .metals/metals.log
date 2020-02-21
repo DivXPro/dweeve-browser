@@ -9,3 +9,7 @@ INFO  time: initialize in 2.1s
 WARN  no build tool detected in workspace 'C:\Users\ian\source\repos\dweeve-ui'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
 Feb 15, 2020 1:55:42 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTraceNotification
+Feb 19, 2020 1:13:44 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
+Feb 19, 2020 1:13:45 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTraceNotification
