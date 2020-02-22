@@ -155,7 +155,7 @@ function __flattenDynamicContent(obj) {
                     Object.keys(obj[k]).forEach(dk =>{
                         if (dk.startsWith('__key')) {
                             newObj['__key'+idx++]=obj[k][dk]
-                        } else {
+                        } else if (dk!=='__ukey-obj') {
                             newObj['__key'+idx++]={ [dk]: obj[k][dk] }
                         }
                     })

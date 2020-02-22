@@ -133,7 +133,8 @@ result          -> l01ops                           {% (data) =>( data[0] ) %}
 l01ops           -> l01ops %word l05ops             {% (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } ) %}
                  | l05ops                           {% (data) =>( data[0] ) %}
 l05ops           -> %word l9operator l10ops         {% (data) =>( { type:'lambda',  args: data[0], expression: data[2]  } ) %}
-                 | arglist l9operator l10ops        {% (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } ) %}
+                 | argli
+                 st l9operator l10ops        {% (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } ) %}
                  | l10ops                           {% (data) =>( data[0] ) %}
 l10ops           -> l10ops l8operator l20ops        {% (data) =>( { type:'or',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } ) %}
                  | l20ops                           {% (data) =>( data[0] ) %}

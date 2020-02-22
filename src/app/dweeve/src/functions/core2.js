@@ -1,5 +1,6 @@
 const core = {}
 require('./core').addFunctions(core)
+const pluralizer = require('pluralize')
 
 function addFunctions(context) {
     context['isEven'] = isEven
@@ -186,7 +187,7 @@ function reduce(arr, reduceFunc, init)
 
 function pluralize(s)
 {
-    return s+'s';
+    return pluralizer(s);
 }
 
 

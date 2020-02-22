@@ -3425,7 +3425,8 @@ function mapObject(source, mapFunc){
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            out['__key'+idx++]=(mapFunc(v, k));
+            out['__key'+idx]=(mapFunc(v, k, idx));
+            idx++
         }
     }
 
@@ -3487,6 +3488,7 @@ module.exports = { addFunctions: addFunctions, setResourceFileContent: setResour
 
 const core = {}
 __webpack_require__(/*! ./core */ "./src/app/dweeve/src/functions/core.js").addFunctions(core)
+const pluralizer = __webpack_require__(/*! pluralize */ "./node_modules/pluralize/pluralize.js")
 
 function addFunctions(context) {
     context['isEven'] = isEven
@@ -3673,7 +3675,7 @@ function reduce(arr, reduceFunc, init)
 
 function pluralize(s)
 {
-    return s+'s';
+    return pluralizer(s);
 }
 
 
@@ -3884,7 +3886,7 @@ function __flattenDynamicContent(obj) {
                     Object.keys(obj[k]).forEach(dk =>{
                         if (dk.startsWith('__key')) {
                             newObj['__key'+idx++]=obj[k][dk]
-                        } else {
+                        } else if (dk!=='__ukey-obj') {
                             newObj['__key'+idx++]={ [dk]: obj[k][dk] }
                         }
                     })
@@ -3989,6 +3991,20 @@ const thing = (name, data) => ( { type: name,
 data: Array.isArray(data) ? data.filter(e => e !== null && (!Array.isArray(e) || e.length > 0)) : data } );
 
 
+if (!Array.prototype.flat)  {
+Object.defineProperty(Array.prototype, 'flat', {
+    value: function(depth = 1, stack = []) {
+        for (let item of this)
+            if (item instanceof Array && depth > 0)
+                item.flat(depth - 1, stack);
+            else 
+                stack.push(item);
+        return stack;
+    }
+});
+}
+
+
 function newOpData(oldData) {
 if (oldData.value) return oldData.value
 return oldData;
@@ -4072,9 +4088,11 @@ typeName:data[2] } ) },
 {"name": "result", "symbols": ["l01ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l01ops", "symbols": ["l01ops", (lexer.has("word") ? {type: "word"} : word), "l05ops"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
 {"name": "l01ops", "symbols": ["l05ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l05ops", "symbols": [(lexer.has("word") ? {type: "word"} : word), "l9operator", "l10ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0], expression: data[2]  } )},
-{"name": "l05ops", "symbols": ["arglist", "l9operator", "l10ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } )},
-{"name": "l05ops", "symbols": ["l10ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l05ops", "symbols": [(lexer.has("word") ? {type: "word"} : word), "l9operator", "l07ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0], expression: data[2]  } )},
+{"name": "l05ops", "symbols": ["arglist", "l9operator", "l07ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } )},
+{"name": "l05ops", "symbols": ["l07ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l07ops", "symbols": ["l85operator", "l10ops"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
+{"name": "l07ops", "symbols": ["l10ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l10ops", "symbols": ["l10ops", "l8operator", "l20ops"], "postprocess": (data) =>( { type:'or',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
 {"name": "l10ops", "symbols": ["l20ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l20ops", "symbols": ["l20ops", "l7operator", "l30ops"], "postprocess": (data) =>( { type:'and',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
@@ -4087,13 +4105,12 @@ typeName:data[2] } ) },
 {"name": "l50ops", "symbols": ["l60ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l60ops", "symbols": ["l60ops", "l3operator", "l70ops"], "postprocess": (data) =>( { type:'product',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
 {"name": "l60ops", "symbols": ["l70ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l70ops", "symbols": ["l70ops", "l2operator", "l80ops"], "postprocess": (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
-{"name": "l70ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l80ops", "symbols": ["l80ops", "l1operator", "l90ops"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
-{"name": "l80ops", "symbols": ["l90ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l90ops", "symbols": ["l0operator", "operand"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
-{"name": "l90ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
-{"name": "l0operator", "symbols": [{"literal":"not"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
+{"name": "l70ops", "symbols": ["l70ops", "l2operator", "l75ops"], "postprocess": (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l70ops", "symbols": ["l75ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l75ops", "symbols": ["l0operator", "l80ops"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
+{"name": "l75ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
+{"name": "l80ops", "symbols": ["l80ops", "l1operator", "operand"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l80ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
 {"name": "l0operator", "symbols": [{"literal":"!"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l1operator", "symbols": ["dotops"], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l2operator", "symbols": [{"literal":"as"}], "postprocess": (data) =>( { type:'as', value: data[0] } )},
@@ -4116,6 +4133,7 @@ typeName:data[2] } ) },
 {"name": "l6operator", "symbols": [{"literal":"=="}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
 {"name": "l7operator", "symbols": [{"literal":"and"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
 {"name": "l8operator", "symbols": [{"literal":"or"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
+{"name": "l85operator", "symbols": [{"literal":"not"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l9operator", "symbols": [{"literal":"->"}], "postprocess": (data) =>( { type:'lambda', value: data[0] } )},
 {"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
 {"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},

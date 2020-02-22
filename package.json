@@ -29,6 +29,7 @@
     "moo": "^0.5.1",
     "nearley": "^2.19.1",
     "ng2-ace-editor": "^0.3.9",
+    "pluralize": "^8.0.0",
     "rxjs": "~6.4.0",
     "startbootstrap-sb-admin-2": "^4.0.7",
     "strip-comments": "^2.0.1",

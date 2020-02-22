@@ -294,7 +294,8 @@ function mapObject(source, mapFunc){
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            out['__key'+idx++]=(mapFunc(v, k));
+            out['__key'+idx]=(mapFunc(v, k, idx));
+            idx++
         }
     }
 
