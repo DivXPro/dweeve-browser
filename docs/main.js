@@ -3371,9 +3371,10 @@ function flatten(source){
     let out = []
     source.forEach(m=> {
         if (Array.isArray(m))
-            m.forEach(im=>
-                    out.push(im))
-        else
+            m.forEach(im=> {
+                if (im!=null)
+                    out.push(im) } ) 
+        else if (m!=null)
             out.push(m)
     })
     return out;
@@ -3507,10 +3508,15 @@ function addFunctions(context) {
     context['isLeapYear'] = isLeapYear
     context['log'] = log
     context['min'] = min
+    context['minBy'] = minBy
+    context['match'] = match
+    context['matches'] = matches
     context['max'] = max
+    context['maxBy'] = maxBy
     context['mod'] = mod
     context['now'] = now
     context['groupBy'] = groupBy
+    context['orderBy'] = orderBy
     context['joinBy'] = joinBy
     context['reduce'] = reduce
     context['pluralize'] = pluralize
@@ -3601,6 +3607,33 @@ function min(list) {
     return 0
 }
 
+function minBy(list, itemFunc) {
+    if (!Array.isArray(list))
+        return 0
+    try{
+        let agg;
+        let out = null;
+        list.forEach(m => {
+            var v = itemFunc(m)
+            if (agg==undefined || v < agg) {
+                agg = v
+                out = m
+            }
+        });
+        return out
+    }
+    catch (err) {}
+    return 0
+}
+
+function match(text, matcher) {
+    return text.match(matcher)
+}
+
+function matches(text, matcher) {
+    return text.match(matcher)!=null;
+}
+
 function max(list) {
     if (!Array.isArray(list))
         return 0
@@ -3611,6 +3644,25 @@ function max(list) {
                 agg = m
         });
         return agg
+    }
+    catch (err) {}
+    return 0
+}
+
+function maxBy(list, itemFunc) {
+    if (!Array.isArray(list))
+        return 0
+    try{
+        let agg;
+        let out = null;
+        list.forEach(m => {
+            var v = itemFunc(m)
+            if (agg==undefined || v > agg) {
+                agg = v
+                out = m
+            }
+        });
+        return out
     }
     catch (err) {}
     return 0
@@ -3669,13 +3721,30 @@ function to(start, end) {
 function reduce(arr, reduceFunc, init)
 {
     let acc = init;
-    if (acc==undefined && arr.length>0){
-        if (isDecimal(arr[0])) acc = 0; else acc = ''
-    }
-    arr.forEach(m=>
-      acc=reduceFunc(m, acc)  
-        )
+    // was there an initialiser for the accumaltor ?
+    if (reduceFunc.toString().match(/\([\w]+,\s*[\w]+\s*=/)==null) {
+        if (acc==undefined && arr.length>0){
+            if (isDecimal(arr[0])) acc = 0; else acc = ''
+        }
+    } else acc = undefined
+    arr.forEach(m=> {
+      if (acc==undefined)
+        acc=reduceFunc(m)
+      else
+        acc=reduceFunc(m, acc)
+     } )
     return acc
+}
+
+function orderBy(arr, orderFunc) {
+    compare = (x,y) => {
+        if (typeof x == 'object' && Object.keys(x)[0].startsWith('__key')) x=Object.values(x)[0]
+        if (typeof y == 'object' && Object.keys(y)[0].startsWith('__key')) x=Object.values(y)[0]
+        if (orderFunc(x) > orderFunc(y)) return 1;
+        if (orderFunc(y) > orderFunc(x)) return -1;
+        return 0;
+      }
+      return arr.slice().sort(compare)
 }
 
 function pluralize(s)
@@ -4092,6 +4161,8 @@ typeName:data[2] } ) },
 {"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( data[0] )},
 {"name": "result", "symbols": ["l01ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l01ops", "symbols": ["l01ops", (lexer.has("word") ? {type: "word"} : word), "l05ops"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
+{"name": "l01ops", "symbols": ["l01ops", {"literal":"match"}, "nonObjectOperand"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
+{"name": "l01ops", "symbols": ["l01ops", {"literal":"matches"}, "nonObjectOperand"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
 {"name": "l01ops", "symbols": ["l05ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l05ops", "symbols": [(lexer.has("word") ? {type: "word"} : word), "l9operator", "l07ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0], expression: data[2]  } )},
 {"name": "l05ops", "symbols": ["arglist", "l9operator", "l07ops"], "postprocess": (data) =>( { type:'lambda',  args: data[0].args,  expression: data[2]  } )},
@@ -4140,12 +4211,13 @@ typeName:data[2] } ) },
 {"name": "l8operator", "symbols": [{"literal":"or"}], "postprocess": (data) =>( { type:'operator', value: data[0] } )},
 {"name": "l85operator", "symbols": [{"literal":"not"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l9operator", "symbols": [{"literal":"->"}], "postprocess": (data) =>( { type:'lambda', value: data[0] } )},
-{"name": "operand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
-{"name": "operand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
-{"name": "operand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+{"name": "operand", "symbols": ["nonObjectOperand"], "postprocess": (data) => ( { type:'non-object-operand', value: data[0] } )},
 {"name": "operand", "symbols": ["object"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
 {"name": "operand", "symbols": ["keyvaluepair"], "postprocess": (data) => ( { type:'kvp', value: data[0] } )},
-{"name": "operand", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
+{"name": "nonObjectOperand", "symbols": ["identifier"], "postprocess": (data) => ( { type:'identifier-operand', value: data[0] } )},
+{"name": "nonObjectOperand", "symbols": ["literal"], "postprocess": (data) => ( { type:'literal-operand', value: data[0] } )},
+{"name": "nonObjectOperand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+{"name": "nonObjectOperand", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
 {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "explist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2].args } )},
 {"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
 {"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
@@ -4157,13 +4229,15 @@ typeName:data[2] } ) },
 {"name": "explist$ebnf$2", "symbols": ["explist$ebnf$2", "explist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
 {"name": "explist", "symbols": ["explist$ebnf$1", "explist$ebnf$2"], "postprocess":  (data) => ( { type:"arg-list",
 args: [data[0], ...(data[1].flat().filter(a=>a.type!=='comma') ) ] } ) },
-{"name": "arglist$ebnf$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": id},
+{"name": "arglist$ebnf$1", "symbols": ["arg"], "postprocess": id},
 {"name": "arglist$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
 {"name": "arglist$ebnf$2", "symbols": []},
-{"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), (lexer.has("word") ? {type: "word"} : word)]},
+{"name": "arglist$ebnf$2$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "arg"]},
 {"name": "arglist$ebnf$2", "symbols": ["arglist$ebnf$2", "arglist$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
 {"name": "arglist", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "arglist$ebnf$1", "arglist$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess":  (data) => ( { type:"arg-list",
 args: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
+{"name": "arg", "symbols": [(lexer.has("word") ? {type: "word"} : word), {"literal":"="}, "literal"], "postprocess": (data) => ( { type:'arg', value: `${data[0]} = ${data[2].value}` } )},
+{"name": "arg", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'arg', value: data[0] } )},
 {"name": "literal", "symbols": [(lexer.has("sglstring") ? {type: "sglstring"} : sglstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
 {"name": "literal", "symbols": [(lexer.has("dblstring") ? {type: "dblstring"} : dblstring)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},
 {"name": "literal", "symbols": [(lexer.has("bool") ? {type: "bool"} : bool)], "postprocess": (data) => ( { type:'literal', value: data[0] } )},

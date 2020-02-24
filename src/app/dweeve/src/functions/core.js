@@ -240,9 +240,10 @@ function flatten(source){
     let out = []
     source.forEach(m=> {
         if (Array.isArray(m))
-            m.forEach(im=>
-                    out.push(im))
-        else
+            m.forEach(im=> {
+                if (im!=null)
+                    out.push(im) } ) 
+        else if (m!=null)
             out.push(m)
     })
     return out;
