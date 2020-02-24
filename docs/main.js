@@ -3440,11 +3440,16 @@ function setResourceFileContent(name, text) {
 var resourceFileContent = {}
 
 function readUrl(path, contentType){
-    const content = resourceFileContent[path]
-    if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
-        return JSON.parse(content)
+    try {
+        const content = resourceFileContent[path]
+        if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
+            return JSON.parse(content)
 
-    return content
+        return content
+    } catch (err) {
+        err.message="Could not read url: "+ path
+        throw err
+    }
 }
 
 function __add(lhs, rhs) {
