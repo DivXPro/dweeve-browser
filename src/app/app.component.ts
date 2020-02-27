@@ -51,6 +51,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   private winH = 500;
   private splitResizeProgress;
 
+  private currentCommmad='';
+  private posInCommand =0;
+
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.winH = event.target.innerHeight;
@@ -114,13 +117,19 @@ export class AppComponent implements OnInit, AfterViewInit {
       const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
  
       if (ev.keyCode === 13) {
+        alert(this.currentCommmad);
+        this.currentCommmad='';
         this.child.write('\r\n$ ');
       } else if (ev.keyCode === 8) {
         // Do not delete the prompt
         if (this.child.underlying.buffer.cursorX > 2) {
           this.child.write('\b \b');
+          this.posInCommand--;
+          this.currentCommmad=this.currentCommmad.substring(0,this.posInCommand)
+            + this.currentCommmad.substring(this.posInCommand+1, this.currentCommmad.length);
         }
       } else if (printable) {
+        this.posInCommand++;
         this.child.write(e.key);
       }
     });

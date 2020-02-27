@@ -170,10 +170,11 @@ function __flattenDynamicContent(obj) {
 }
 
 function convertJsonObjsToArray(lhs) {
+    if (lhs==null) return lhs
     if (!Array.isArray(lhs) && lhs['__ukey-obj'])
         lhs = Object.values(lhs);
     else if (!Array.isArray(lhs) && !lhs['__ukey-obj']) {
-        arr = [];
+        let arr = [];
         for (let k in lhs)
             arr.push({ [k]: lhs[k] });
         lhs = arr;
