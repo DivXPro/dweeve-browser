@@ -1699,7 +1699,7 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGT
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\n                    <as-split-area size=\"390\">\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\n                      <div class=\"col-lg-12\">\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\n                          <as-split-area size=\"50\">\n                            <div  style=\"margin-right: 10px; \">\n                              <p>d~weeve:</p>\n                              <div #dweditorDiv style=\"height:340px\">\n                                <ace-editor #dweditor style=\"height:100%;\">\n                                </ace-editor>\n                              </div>\n                            </div>\n                          </as-split-area>\n                          <as-split-area size=\"50\">\n                            <div style=\"margin-left: 10px;\">\n                              <mat-tab-group disableRipple=\"true\">\n                                <mat-tab label=\"Payload\">\n                                  <div #pleditorDiv style=\"height:330px\">\n                                    <ace-editor #pleditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                <mat-tab label=\"Resource\">\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                                  \n                                  <div #rseditorDiv style=\"height:277px\">\n                                    <ace-editor #rseditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                              \n                              </mat-tab-group>\n                              \n\n                            </div>\n                          </as-split-area>\n                        \n                      </as-split>\n                    </div>\n                    </div>\n                    </as-split-area>\n                    <as-split-area size=\"*\">\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <p>Result:</p>\n                        <div #reditorDiv style=\"height:180px\">\n                          <ace-editor #reditor style=\"height:100%;\">\n                          </ace-editor>\n                        </div>\n                      </div>\n                    </div>\n                    </as-split-area>\n\n                  </as-split>\n                  <br>\n                  <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<!DOCTYPE>\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\n                    <as-split-area size=\"390\">\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\n                      <div class=\"col-lg-12\">\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\n                          <as-split-area size=\"50\">\n                            <div  style=\"margin-right: 10px; \">\n                              <p>d~weeve:</p>\n                              <div #dweditorDiv style=\"height:340px\">\n                                <ace-editor #dweditor style=\"height:100%;\">\n                                </ace-editor>\n                              </div>\n                            </div>\n                          </as-split-area>\n                          <as-split-area size=\"50\">\n                            <div style=\"margin-left: 10px;\">\n                              <mat-tab-group disableRipple=\"true\">\n                                <mat-tab label=\"Payload\">\n                                  <div #pleditorDiv style=\"height:330px\">\n                                    <ace-editor #pleditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                <mat-tab label=\"Resource\">\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                                  \n                                  <div #rseditorDiv style=\"height:277px\">\n                                    <ace-editor #rseditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                              \n                              </mat-tab-group>\n                              \n\n                            </div>\n                          </as-split-area>\n                        \n                      </as-split>\n                    </div>\n                    </div>\n                    </as-split-area>\n                    <as-split-area size=\"*\">\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Result:\">\n                        \n                            <div #reditorDiv style=\"height:180px\">\n                              <ace-editor #reditor style=\"height:100%;\">\n                              </ace-editor>\n                            </div>\n                          </mat-tab>\n                          <mat-tab label=\"REPL:\">\n                            <div #termDiv style=\"height:180px\" class=\"ui-terminal\">\n                              <!--p-terminal  #termnial welcomeMessage=\"d~weeve REPL:\" prompt=\"d~weeve->\"></p-terminal -->\n                              <ng-terminal #term></ng-terminal>\n                              <!--div class=\"ui-terminal\" #terminalBottom>^</div-->\n                            </div>\n                          </mat-tab>\n                        </mat-tab-group>\n                      </div>\n                    </div>\n                    </as-split-area>\n\n                  </as-split>\n                  <br>\n                  <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
 
 /***/ }),
 
@@ -1941,7 +1941,7 @@ function __importDefault(mod) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("#wrapper {\r\n    padding-left: 70px;\r\n    padding-right: 70px;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    -o-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #sidebar-wrapper {\r\n    margin-left: 0px;\r\n    left:70px;\r\n    width: 250px;\r\n    background: #CCC;\r\n    position: fixed;\r\n    height: 100%;\r\n    overflow-y: visible;\r\n    z-index: 1000;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    -o-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #page-content-wrapper {\r\n    width: 100%;\r\n  }\r\n  \r\n  .sidebar-nav {\r\n    position: absolute;\r\n    background: #CCC;\r\n    color: #333;\r\n    top: 0;\r\n    width: 250px;\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n  }\r\n  \r\n  @media (max-width:767px) {\r\n  \r\n      #wrapper {\r\n        padding-left: 0;\r\n      }\r\n  \r\n      #sidebar-wrapper {\r\n        left: 0;\r\n      }\r\n  \r\n      #wrapper.active {\r\n        position: relative;\r\n        left: 250px;\r\n      }\r\n  \r\n      #wrapper.active #sidebar-wrapper {\r\n        left: 250px;\r\n        width: 250px;\r\n        -webkit-transition: all 0.4s ease 0s;\r\n        -o-transition: all 0.4s ease 0s;\r\n        transition: all 0.4s ease 0s;\r\n      }\r\n  \r\n  }\r\n  \r\n  #sidebar-wrapper li{\r\n    margin: 10px 10px;\r\n \r\n  }\r\n  \r\n  #sidebar-wrapper li a {\r\n    color: #333;\r\n \r\n  }  \r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxrQkFBa0I7SUFDbEIsbUJBQW1CO0lBQ25CLG9DQUE0QjtJQUE1QiwrQkFBNEI7SUFBNUIsNEJBQTRCO0VBQzlCOztFQUVBO0lBQ0UsZ0JBQWdCO0lBQ2hCLFNBQVM7SUFDVCxZQUFZO0lBQ1osZ0JBQWdCO0lBQ2hCLGVBQWU7SUFDZixZQUFZO0lBQ1osbUJBQW1CO0lBQ25CLGFBQWE7SUFDYixvQ0FBNEI7SUFBNUIsK0JBQTRCO0lBQTVCLDRCQUE0QjtFQUM5Qjs7RUFFQTtJQUNFLFdBQVc7RUFDYjs7RUFFQTtJQUNFLGtCQUFrQjtJQUNsQixnQkFBZ0I7SUFDaEIsV0FBVztJQUNYLE1BQU07SUFDTixZQUFZO0lBQ1osZ0JBQWdCO0lBQ2hCLFNBQVM7SUFDVCxVQUFVO0VBQ1o7O0VBRUE7O01BRUk7UUFDRSxlQUFlO01BQ2pCOztNQUVBO1FBQ0UsT0FBTztNQUNUOztNQUVBO1FBQ0Usa0JBQWtCO1FBQ2xCLFdBQVc7TUFDYjs7TUFFQTtRQUNFLFdBQVc7UUFDWCxZQUFZO1FBQ1osb0NBQTRCO1FBQTVCLCtCQUE0QjtRQUE1Qiw0QkFBNEI7TUFDOUI7O0VBRUo7O0VBRUE7SUFDRSxpQkFBaUI7O0VBRW5COztFQUVBO0lBQ0UsV0FBVzs7RUFFYiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI3dyYXBwZXIge1xyXG4gICAgcGFkZGluZy1sZWZ0OiA3MHB4O1xyXG4gICAgcGFkZGluZy1yaWdodDogNzBweDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgbWFyZ2luLWxlZnQ6IDBweDtcclxuICAgIGxlZnQ6NzBweDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBwb3NpdGlvbjogZml4ZWQ7XHJcbiAgICBoZWlnaHQ6IDEwMCU7XHJcbiAgICBvdmVyZmxvdy15OiB2aXNpYmxlO1xyXG4gICAgei1pbmRleDogMTAwMDtcclxuICAgIHRyYW5zaXRpb246IGFsbCAwLjRzIGVhc2UgMHM7XHJcbiAgfVxyXG4gIFxyXG4gICNwYWdlLWNvbnRlbnQtd3JhcHBlciB7XHJcbiAgICB3aWR0aDogMTAwJTtcclxuICB9XHJcbiAgXHJcbiAgLnNpZGViYXItbmF2IHtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIGJhY2tncm91bmQ6ICNDQ0M7XHJcbiAgICBjb2xvcjogIzMzMztcclxuICAgIHRvcDogMDtcclxuICAgIHdpZHRoOiAyNTBweDtcclxuICAgIGxpc3Qtc3R5bGU6IG5vbmU7XHJcbiAgICBtYXJnaW46IDA7XHJcbiAgICBwYWRkaW5nOiAwO1xyXG4gIH1cclxuICBcclxuICBAbWVkaWEgKG1heC13aWR0aDo3NjdweCkge1xyXG4gIFxyXG4gICAgICAjd3JhcHBlciB7XHJcbiAgICAgICAgcGFkZGluZy1sZWZ0OiAwO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgICAgICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDA7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlIHtcclxuICAgICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICAgICAgbGVmdDogMjUwcHg7XHJcbiAgICAgIH1cclxuICBcclxuICAgICAgI3dyYXBwZXIuYWN0aXZlICNzaWRlYmFyLXdyYXBwZXIge1xyXG4gICAgICAgIGxlZnQ6IDI1MHB4O1xyXG4gICAgICAgIHdpZHRoOiAyNTBweDtcclxuICAgICAgICB0cmFuc2l0aW9uOiBhbGwgMC40cyBlYXNlIDBzO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgfVxyXG5cclxuICAjc2lkZWJhci13cmFwcGVyIGxpe1xyXG4gICAgbWFyZ2luOiAxMHB4IDEwcHg7XHJcbiBcclxuICB9ICBcclxuXHJcbiAgI3NpZGViYXItd3JhcHBlciBsaSBhIHtcclxuICAgIGNvbG9yOiAjMzMzO1xyXG4gXHJcbiAgfSAgIl19 */");
+/* harmony default export */ __webpack_exports__["default"] = ("#wrapper {\r\n    padding-left: 70px;\r\n    padding-right: 70px;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    -o-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #sidebar-wrapper {\r\n    margin-left: 0px;\r\n    left:70px;\r\n    width: 250px;\r\n    background: #CCC;\r\n    position: fixed;\r\n    height: 100%;\r\n    overflow-y: visible;\r\n    z-index: 1000;\r\n    -webkit-transition: all 0.4s ease 0s;\r\n    -o-transition: all 0.4s ease 0s;\r\n    transition: all 0.4s ease 0s;\r\n  }\r\n  \r\n  #page-content-wrapper {\r\n    width: 100%;\r\n  }\r\n  \r\n  .sidebar-nav {\r\n    position: absolute;\r\n    background: #CCC;\r\n    color: #333;\r\n    top: 0;\r\n    width: 250px;\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n  }\r\n  \r\n  @media (max-width:767px) {\r\n  \r\n      #wrapper {\r\n        padding-left: 0;\r\n      }\r\n  \r\n      #sidebar-wrapper {\r\n        left: 0;\r\n      }\r\n  \r\n      #wrapper.active {\r\n        position: relative;\r\n        left: 250px;\r\n      }\r\n  \r\n      #wrapper.active #sidebar-wrapper {\r\n        left: 250px;\r\n        width: 250px;\r\n        -webkit-transition: all 0.4s ease 0s;\r\n        -o-transition: all 0.4s ease 0s;\r\n        transition: all 0.4s ease 0s;\r\n      }\r\n  \r\n  }\r\n  \r\n  #sidebar-wrapper li{\r\n    margin: 10px 10px;\r\n \r\n  }\r\n  \r\n  #sidebar-wrapper li a {\r\n    color: #333;\r\n \r\n  }\r\n  \r\n  ::slotted(input) {\r\n    background-color: darkslategray;\r\n    color: whitesmoke;\r\n    font-size: medium;\r\n    width:100%\r\n  }\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSxrQkFBa0I7SUFDbEIsbUJBQW1CO0lBQ25CLG9DQUE0QjtJQUE1QiwrQkFBNEI7SUFBNUIsNEJBQTRCO0VBQzlCOztFQUVBO0lBQ0UsZ0JBQWdCO0lBQ2hCLFNBQVM7SUFDVCxZQUFZO0lBQ1osZ0JBQWdCO0lBQ2hCLGVBQWU7SUFDZixZQUFZO0lBQ1osbUJBQW1CO0lBQ25CLGFBQWE7SUFDYixvQ0FBNEI7SUFBNUIsK0JBQTRCO0lBQTVCLDRCQUE0QjtFQUM5Qjs7RUFFQTtJQUNFLFdBQVc7RUFDYjs7RUFFQTtJQUNFLGtCQUFrQjtJQUNsQixnQkFBZ0I7SUFDaEIsV0FBVztJQUNYLE1BQU07SUFDTixZQUFZO0lBQ1osZ0JBQWdCO0lBQ2hCLFNBQVM7SUFDVCxVQUFVO0VBQ1o7O0VBRUE7O01BRUk7UUFDRSxlQUFlO01BQ2pCOztNQUVBO1FBQ0UsT0FBTztNQUNUOztNQUVBO1FBQ0Usa0JBQWtCO1FBQ2xCLFdBQVc7TUFDYjs7TUFFQTtRQUNFLFdBQVc7UUFDWCxZQUFZO1FBQ1osb0NBQTRCO1FBQTVCLCtCQUE0QjtRQUE1Qiw0QkFBNEI7TUFDOUI7O0VBRUo7O0VBRUE7SUFDRSxpQkFBaUI7O0VBRW5COztFQUVBO0lBQ0UsV0FBVzs7RUFFYjs7RUFFQTtJQUNFLCtCQUErQjtJQUMvQixpQkFBaUI7SUFDakIsaUJBQWlCO0lBQ2pCO0VBQ0YiLCJmaWxlIjoic3JjL2FwcC9hcHAuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIiN3cmFwcGVyIHtcclxuICAgIHBhZGRpbmctbGVmdDogNzBweDtcclxuICAgIHBhZGRpbmctcmlnaHQ6IDcwcHg7XHJcbiAgICB0cmFuc2l0aW9uOiBhbGwgMC40cyBlYXNlIDBzO1xyXG4gIH1cclxuICBcclxuICAjc2lkZWJhci13cmFwcGVyIHtcclxuICAgIG1hcmdpbi1sZWZ0OiAwcHg7XHJcbiAgICBsZWZ0OjcwcHg7XHJcbiAgICB3aWR0aDogMjUwcHg7XHJcbiAgICBiYWNrZ3JvdW5kOiAjQ0NDO1xyXG4gICAgcG9zaXRpb246IGZpeGVkO1xyXG4gICAgaGVpZ2h0OiAxMDAlO1xyXG4gICAgb3ZlcmZsb3cteTogdmlzaWJsZTtcclxuICAgIHotaW5kZXg6IDEwMDA7XHJcbiAgICB0cmFuc2l0aW9uOiBhbGwgMC40cyBlYXNlIDBzO1xyXG4gIH1cclxuICBcclxuICAjcGFnZS1jb250ZW50LXdyYXBwZXIge1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgfVxyXG4gIFxyXG4gIC5zaWRlYmFyLW5hdiB7XHJcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XHJcbiAgICBiYWNrZ3JvdW5kOiAjQ0NDO1xyXG4gICAgY29sb3I6ICMzMzM7XHJcbiAgICB0b3A6IDA7XHJcbiAgICB3aWR0aDogMjUwcHg7XHJcbiAgICBsaXN0LXN0eWxlOiBub25lO1xyXG4gICAgbWFyZ2luOiAwO1xyXG4gICAgcGFkZGluZzogMDtcclxuICB9XHJcbiAgXHJcbiAgQG1lZGlhIChtYXgtd2lkdGg6NzY3cHgpIHtcclxuICBcclxuICAgICAgI3dyYXBwZXIge1xyXG4gICAgICAgIHBhZGRpbmctbGVmdDogMDtcclxuICAgICAgfVxyXG4gIFxyXG4gICAgICAjc2lkZWJhci13cmFwcGVyIHtcclxuICAgICAgICBsZWZ0OiAwO1xyXG4gICAgICB9XHJcbiAgXHJcbiAgICAgICN3cmFwcGVyLmFjdGl2ZSB7XHJcbiAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgICAgIGxlZnQ6IDI1MHB4O1xyXG4gICAgICB9XHJcbiAgXHJcbiAgICAgICN3cmFwcGVyLmFjdGl2ZSAjc2lkZWJhci13cmFwcGVyIHtcclxuICAgICAgICBsZWZ0OiAyNTBweDtcclxuICAgICAgICB3aWR0aDogMjUwcHg7XHJcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuNHMgZWFzZSAwcztcclxuICAgICAgfVxyXG4gIFxyXG4gIH1cclxuXHJcbiAgI3NpZGViYXItd3JhcHBlciBsaXtcclxuICAgIG1hcmdpbjogMTBweCAxMHB4O1xyXG4gXHJcbiAgfSAgXHJcblxyXG4gICNzaWRlYmFyLXdyYXBwZXIgbGkgYSB7XHJcbiAgICBjb2xvcjogIzMzMztcclxuIFxyXG4gIH0gIFxyXG5cclxuICA6OnNsb3R0ZWQoaW5wdXQpIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IGRhcmtzbGF0ZWdyYXk7XHJcbiAgICBjb2xvcjogd2hpdGVzbW9rZTtcclxuICAgIGZvbnQtc2l6ZTogbWVkaXVtO1xyXG4gICAgd2lkdGg6MTAwJVxyXG4gIH0iXX0= */");
 
 /***/ }),
 
@@ -1960,18 +1960,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dweeve/src/exe/dweeve.js */ "./src/app/dweeve/src/exe/dweeve.js");
 /* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dweeve/src/functions/core.js */ "./src/app/dweeve/src/functions/core.js");
 /* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var primeng_terminal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! primeng/terminal */ "./node_modules/primeng/fesm5/primeng-terminal.js");
+
 
 
 
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent(zone) {
+    function AppComponent(zone, terminalService) {
+        var _this = this;
         this.zone = zone;
+        this.terminalService = terminalService;
         this.title = 'dweeve-ui';
         this.exampleBar = false;
         this.resourceNameText = '';
         this.examples = {};
         this.winH = 500;
+        this.terminalService.commandHandler.subscribe(function (command) {
+            var dwScript = command;
+            var dwSplit = _this.dweditor.text.split('\n---\n');
+            if (dwSplit.length === 2) {
+                dwScript = dwSplit[0] + '\n---\n' + dwScript;
+            }
+            var response = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](dwScript, _this.pleditor.text, '', '');
+            _this.terminalService.sendResponse(response);
+            //    this.terminalBottom.nativeElement.scrollIntoView();
+        });
     }
     AppComponent.prototype.onResize = function (event) {
         this.winH = event.target.innerHeight;
@@ -2014,6 +2028,23 @@ var AppComponent = /** @class */ (function () {
         this.rseditor.registerOnChange(function () { _this.reDweeve(); });
         this.toggleExampleBar();
         this.loadExample('Simple function');
+        this.child.keyEventInput.subscribe(function (e) {
+            console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
+            var ev = e.domEvent;
+            var printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+            if (ev.keyCode === 13) {
+                _this.child.write('\r\n$ ');
+            }
+            else if (ev.keyCode === 8) {
+                // Do not delete the prompt
+                if (_this.child.underlying.buffer.cursorX > 2) {
+                    _this.child.write('\b \b');
+                }
+            }
+            else if (printable) {
+                _this.child.write(e.key);
+            }
+        });
     };
     AppComponent.prototype.reDweeve = function () {
         _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
@@ -2065,7 +2096,8 @@ var AppComponent = /** @class */ (function () {
         };
     };
     AppComponent.ctorParameters = function () { return [
-        { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }
+        { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] },
+        { type: primeng_terminal__WEBPACK_IMPORTED_MODULE_4__["TerminalService"] }
     ]; };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('dweditor', { static: false })
@@ -2095,12 +2127,16 @@ var AppComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('vsplit', { static: false })
     ], AppComponent.prototype, "vsplit", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('term', { static: true })
+    ], AppComponent.prototype, "child", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["HostListener"])('window:resize', ['$event'])
     ], AppComponent.prototype, "onResize", null);
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
             template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./app.component.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/app.component.html")).default,
+            providers: [primeng_terminal__WEBPACK_IMPORTED_MODULE_4__["TerminalService"]],
             styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./app.component.css */ "./src/app/app.component.css")).default]
         })
     ], AppComponent);
@@ -2132,6 +2168,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ng2-ace-editor */ "./node_modules/ng2-ace-editor/index.js");
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ "./node_modules/@ng-bootstrap/ng-bootstrap/fesm5/ng-bootstrap.js");
 /* harmony import */ var angular_split__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! angular-split */ "./node_modules/angular-split/fesm5/angular-split.js");
+/* harmony import */ var primeng_terminal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! primeng/terminal */ "./node_modules/primeng/fesm5/primeng-terminal.js");
+/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
+
+
 
 
 
@@ -2158,7 +2198,9 @@ var AppModule = /** @class */ (function () {
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
                 angular_split__WEBPACK_IMPORTED_MODULE_10__["AngularSplitModule"].forRoot(),
                 ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__["AceEditorModule"],
-                _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__["MatTabsModule"]
+                _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__["MatTabsModule"],
+                primeng_terminal__WEBPACK_IMPORTED_MODULE_11__["TerminalModule"],
+                ng_terminal__WEBPACK_IMPORTED_MODULE_12__["NgTerminalModule"]
             ],
             providers: [],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
@@ -3152,6 +3194,7 @@ function addFunctions(context) {
     context['mapObject'] = mapObject
     context['readUrl'] = readUrl
     context['__add'] = __add
+    context['__indexed'] = __indexed
 }
 
 function isOdd(number) {
@@ -3262,6 +3305,11 @@ function filter(arr, criteria) {
     let out = []
     if (arr==null || arr==undefined)
         throw 'Error: trying to filter on a null/undefined object/array'
+
+    if(!Array.isArray(arr))
+        throw new Error(`map can only be used on arrays, type here is '${typeof arr}', try filterObject instead`)
+
+
     let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
         if (key!=='__ukey-obj') {
@@ -3288,6 +3336,11 @@ function filter(arr, criteria) {
 function filterObject(source, criteria){
     if (source==null || source==undefined)
         throw 'Error: trying to filterObject on a null/undefined object/array'
+
+        let typename = (Array.isArray(source)) ? "array" : (typeof source)
+        if(typename != 'object' && source!=null)
+            throw new Error(`filterObject can only be used on objects, type here is '${typename}', try filter instead`)
+    
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;
@@ -3367,6 +3420,9 @@ function flatMap(source, mapFunc){
 function flatten(source){
  //   if (source==null || source==undefined)
  //       throw 'Error: trying to flatten on a null/undefined object/array'
+    if(!Array.isArray(source) && source!=null)
+        throw new Error(`flatten can only be used on arrays, type here is '${typeof arr}'`)
+
     if (source==null || !Array.isArray(source)) return source
     let out = []
     source.forEach(m=> {
@@ -3391,6 +3447,10 @@ function startsWith(s1,s2) {
 function map(source, mapFunc){
     if (source==null || source==undefined)
         throw 'Error: trying to map on a null/undefined object/array'
+
+    if(!Array.isArray(source) && source!=null)
+        throw new Error(`map can only be used on arrays, type here is '${typeof arr}', try mapObject instead`)
+    
     let out = []
     let ewl = (source['__ukey-obj'])
     for(let key in source) {
@@ -3411,6 +3471,10 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
+    let typename = (Array.isArray(source)) ? "array" : (typeof source)
+    if(typename != 'object' && source!=null)
+        throw new Error(`mapObject can only be used on objects, type here is '${typename}', try map instead`)
+
     if (source==null || source==undefined)
         throw 'Error: trying to mapObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
@@ -3426,7 +3490,11 @@ function mapObject(source, mapFunc){
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            out['__key'+idx]=(mapFunc(v, k, idx));
+            let mr = (mapFunc(v, k, idx))
+            if (mr['__ukey-obj'])
+                out['__key'+idx]=mr['__key0']
+            else
+                out['__key'+idx]=mr;
             idx++
         }
     }
@@ -3479,6 +3547,24 @@ function __add(lhs, rhs) {
     } else {
         return lhs + rhs
     }
+}
+
+function __indexed(obj, indexer){
+    try {
+        if (Array.isArray(obj) || obj['__ukey-obj']==undefined)
+            return obj[indexer];
+        else if (obj['__ukey-obj']) {
+            let outval;
+            Object.values(obj).forEach(v=>{
+                if (Object.keys(v)[0]===indexer) {
+                    outval = Object.values(v)[0]
+                }
+            })
+            if (outval!=undefined) return outval
+        }
+    }
+    catch (err) {}
+    throw new Error ('Indexer out of bounds or not found')
 }
 
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}
@@ -3720,6 +3806,11 @@ function to(start, end) {
 
 function reduce(arr, reduceFunc, init)
 {
+    if(!Array.isArray(arr) && !arr==null)
+        throw new Error(`reduce can only be used on arrays, type here is '${typeof arr}'`)
+
+    if (arr==null) return null
+
     let acc = init;
     // was there an initialiser for the accumaltor ?
     if (reduceFunc.toString().match(/\([\w]+,\s*[\w]+\s*=/)==null) {
@@ -3736,15 +3827,19 @@ function reduce(arr, reduceFunc, init)
     return acc
 }
 
-function orderBy(arr, orderFunc) {
+function orderBy(arr, orderFunc, isReversed) {
     compare = (x,y) => {
         if (typeof x == 'object' && Object.keys(x)[0].startsWith('__key')) x=Object.values(x)[0]
         if (typeof y == 'object' && Object.keys(y)[0].startsWith('__key')) x=Object.values(y)[0]
         if (orderFunc(x) > orderFunc(y)) return 1;
         if (orderFunc(y) > orderFunc(x)) return -1;
         return 0;
-      }
-      return arr.slice().sort(compare)
+    }
+    let ordered = arr.slice().sort(compare)
+    if (isReversed)
+        ordered.reverse()
+
+    return ordered
 }
 
 function pluralize(s)
@@ -4031,9 +4126,7 @@ const lexer = moo.compile({
     dotdotstarbinop: /\.\.\*/,
     dotdotbinop: /\.\./,
     dotstarbinop: /\.\*/,
-    dotbinop: /[.]/,
     mathbinop: /==|\+\+|<=|>=|\|\||&&|!=|[=><\-+/*|&\^]/,
-    
     dblstring:  { match : /["](?:\\["\\]|[^\n"\\])*["]/,},
     sglstring:  { match : /['](?:\\['\\]|[^\n'\\])*[']/,},
     keyvalsep: /:/,
@@ -4043,7 +4136,8 @@ const lexer = moo.compile({
     word:  { match : /[A-Za-z$][\w0-9_$]*/, type:moo.keywords({
         keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not']
     })},
-    number:  /(?:0|[1-9][0-9]*\.?[0-9]*)/,
+    number:  /(?:(?:0|[1-9][0-9]*)\.?[0-9]*)/,
+    dotbinop: /[.]/,
     lparen:  '(',
     rparen:  ')',
     lbrace:  '{',
@@ -4121,7 +4215,11 @@ body: data[7]
 members: [data[1], ...(data[2].flat().filter(a=>a.type!=='comma') ) ] } ) },
 {"name": "object", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)], "postprocess": (data) => ( { type:"member-list", members: [] } )},
 {"name": "objectmember", "symbols": ["keyvaluepair"], "postprocess": (data) => ( { type: 'member', key: data[0].key, value: data[0].value} )},
-{"name": "objectmember", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
+{"name": "objectmember$ebnf$1$subexpression$1", "symbols": [{"literal":"if"}, (lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)]},
+{"name": "objectmember$ebnf$1", "symbols": ["objectmember$ebnf$1$subexpression$1"], "postprocess": id},
+{"name": "objectmember$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "objectmember", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen), "objectmember$ebnf$1"], "postprocess":  (data) => ( { type:'bracket-operand', value: data[1], 
+cond: data[3]==null ? undefined : data[3][2] } ) },
 {"name": "keyvaluepair$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
 {"name": "keyvaluepair$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
 {"name": "keyvaluepair", "symbols": ["key", (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), "expression", "keyvaluepair$ebnf$1"], "postprocess": (data) => ( { type: 'member', key: data[0], value: data[2]} )},
@@ -4160,7 +4258,10 @@ typeName:data[2] } ) },
 {"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( data[0] )},
 {"name": "expression", "symbols": ["matcher"], "postprocess": (data) => ( data[0] )},
 {"name": "result", "symbols": ["l01ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l01ops", "symbols": ["l01ops", (lexer.has("word") ? {type: "word"} : word), "l05ops"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
+{"name": "l01ops$ebnf$1$subexpression$1", "symbols": [{"literal":"-"}]},
+{"name": "l01ops$ebnf$1", "symbols": ["l01ops$ebnf$1$subexpression$1"], "postprocess": id},
+{"name": "l01ops$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "l01ops", "symbols": ["l01ops", (lexer.has("word") ? {type: "word"} : word), "l01ops$ebnf$1", "l05ops"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[3], data[2]!=null]  } )},
 {"name": "l01ops", "symbols": ["l01ops", {"literal":"match"}, "nonObjectOperand"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
 {"name": "l01ops", "symbols": ["l01ops", {"literal":"matches"}, "nonObjectOperand"], "postprocess": (data) =>( { type:'fun-call',  fun: data[1].value, args: [data[0], data[2]]  } )},
 {"name": "l01ops", "symbols": ["l05ops"], "postprocess": (data) =>( data[0] )},
@@ -4186,6 +4287,7 @@ typeName:data[2] } ) },
 {"name": "l75ops", "symbols": ["l0operator", "l80ops"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
 {"name": "l75ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l80ops", "symbols": ["l80ops", "l1operator", "operand"], "postprocess": (data) =>( { type:'dot-op',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l80ops", "symbols": ["l80ops", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) =>( { type:'fun-call', fun: '__indexed',  args: [ data[0], data[2]]  } )},
 {"name": "l80ops", "symbols": ["operand"], "postprocess": (data) =>( data[0] )},
 {"name": "l0operator", "symbols": [{"literal":"!"}], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
 {"name": "l1operator", "symbols": ["dotops"], "postprocess": (data) =>( { type:'dotop', value: data[0] } )},
@@ -4219,7 +4321,6 @@ typeName:data[2] } ) },
 {"name": "nonObjectOperand", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "expression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'bracket-operand', value: data[1] } )},
 {"name": "nonObjectOperand", "symbols": ["array"], "postprocess": (data) => ( { type:'expression', value: data[0] } )},
 {"name": "identifier", "symbols": ["identifier", (lexer.has("lparen") ? {type: "lparen"} : lparen), "explist", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": (data) => ( { type:'fun-call',  fun:data[0], args:data[2].args } )},
-{"name": "identifier", "symbols": ["identifier", (lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "expression", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'idx-identifier', ident: data[0], idx: data[2] } )},
 {"name": "identifier", "symbols": [(lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) => ( { type:'identifier', ident: data[0] } )},
 {"name": "array", "symbols": [(lexer.has("lsquare") ? {type: "lsquare"} : lsquare), "explist", (lexer.has("rsquare") ? {type: "rsquare"} : rsquare)], "postprocess": (data) => ( { type:'array',  members:data[1] } )},
 {"name": "explist$ebnf$1", "symbols": ["expression"], "postprocess": id},
@@ -4445,9 +4546,15 @@ codeGenFor['member-list'] = (context, code) => {
             if (m.type==='bracket-operand') {
                 code.addCode('"__dkey' + idx++ + '": ')
                 dynamicContent = true
-                code.addCode('__flattenDynamicContent(')
+                if (m.cond!=undefined) {
+                    code.addCode('(')
+                    context.compiler({parentType: 'obj-member-cond', node: m.cond, compiler:context.compiler}, code);
+                    code.addCode(') ?')
+                }
                 context.compiler({parentType: 'obj-member', node: m.value, compiler:context.compiler}, code);
-                code.addCode(')')
+                if (m.cond!=undefined) {
+                    code.addCode(': null')
+                }
             } else {
                 code.addCode('"__key' + idx++ + '": ')
                 code.addCode('{') ; 
@@ -4590,6 +4697,8 @@ let codeGenAfter = new Dictionary.Dictionary();
             if (isAnonymousLambdaExpression(arg) && idx > 0) // only for rhs lambdas, hence idx > 0!
             // otherwise [x,y,z] filter ($ >3) map ($++'!') picks up the '$' on the filter rhs and assume map lhs needs the anonymous treatment
                 buildLamda(arg, context, code);
+            else if (typeof arg === 'boolean')
+                code.addCode(arg.toString())
             else 
                 context.compiler({node: arg, compiler:context.compiler}, code);
             if (++idx<op.args.length)
@@ -4601,15 +4710,7 @@ let codeGenAfter = new Dictionary.Dictionary();
  };
 
  function buildLamda(expression, context, code){
-    var args = getAllIdentifiersUsedInExpression(expression).filter(id=>id.match(/[$]+/)).filter(onlyUnique);
-    code.addCode('(');
-    let idx=1;
-    args.forEach(arg => {
-        code.addCode(arg);
-        if (idx++<args.length)
-           code.addCode(', ');
-    });
-    code.addCode(') => (');
+    code.addCode('($,$$,$$$) => (');
     context.compiler({parentType: 'lambda', node: expression, compiler:context.compiler}, code);
     code.addCode(')\n');
  }
