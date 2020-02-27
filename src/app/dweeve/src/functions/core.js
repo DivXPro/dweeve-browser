@@ -21,6 +21,7 @@ function addFunctions(context) {
     context['mapObject'] = mapObject
     context['readUrl'] = readUrl
     context['__add'] = __add
+    context['__indexed'] = __indexed
 }
 
 function isOdd(number) {
@@ -131,6 +132,11 @@ function filter(arr, criteria) {
     let out = []
     if (arr==null || arr==undefined)
         throw 'Error: trying to filter on a null/undefined object/array'
+
+    if(!Array.isArray(arr))
+        throw new Error(`map can only be used on arrays, type here is '${typeof arr}', try filterObject instead`)
+
+
     let ewl = (arr['__ukey-obj'])
     for(let key in arr) {
         if (key!=='__ukey-obj') {
@@ -157,6 +163,11 @@ function filter(arr, criteria) {
 function filterObject(source, criteria){
     if (source==null || source==undefined)
         throw 'Error: trying to filterObject on a null/undefined object/array'
+
+        let typename = (Array.isArray(source)) ? "array" : (typeof source)
+        if(typename != 'object' && source!=null)
+            throw new Error(`filterObject can only be used on objects, type here is '${typename}', try filter instead`)
+    
     let out = {'__ukey-obj': true};
     let ewl = (source['__ukey-obj'])
     let idx=0;
@@ -236,6 +247,9 @@ function flatMap(source, mapFunc){
 function flatten(source){
  //   if (source==null || source==undefined)
  //       throw 'Error: trying to flatten on a null/undefined object/array'
+    if(!Array.isArray(source) && source!=null)
+        throw new Error(`flatten can only be used on arrays, type here is '${typeof arr}'`)
+
     if (source==null || !Array.isArray(source)) return source
     let out = []
     source.forEach(m=> {
@@ -260,6 +274,10 @@ function startsWith(s1,s2) {
 function map(source, mapFunc){
     if (source==null || source==undefined)
         throw 'Error: trying to map on a null/undefined object/array'
+
+    if(!Array.isArray(source) && source!=null)
+        throw new Error(`map can only be used on arrays, type here is '${typeof arr}', try mapObject instead`)
+    
     let out = []
     let ewl = (source['__ukey-obj'])
     for(let key in source) {
@@ -280,6 +298,10 @@ function map(source, mapFunc){
 }
 
 function mapObject(source, mapFunc){
+    let typename = (Array.isArray(source)) ? "array" : (typeof source)
+    if(typename != 'object' && source!=null)
+        throw new Error(`mapObject can only be used on objects, type here is '${typename}', try map instead`)
+
     if (source==null || source==undefined)
         throw 'Error: trying to mapObject on a null/undefined object/array'
     let out = {'__ukey-obj': true};
@@ -295,7 +317,11 @@ function mapObject(source, mapFunc){
             }
 
             k = isNaN(parseInt(k)) ? k : parseInt(k)
-            out['__key'+idx]=(mapFunc(v, k, idx));
+            let mr = (mapFunc(v, k, idx))
+            if (mr['__ukey-obj'])
+                out['__key'+idx]=mr['__key0']
+            else
+                out['__key'+idx]=mr;
             idx++
         }
     }
@@ -348,6 +374,24 @@ function __add(lhs, rhs) {
     } else {
         return lhs + rhs
     }
+}
+
+function __indexed(obj, indexer){
+    try {
+        if (Array.isArray(obj) || obj['__ukey-obj']==undefined)
+            return obj[indexer];
+        else if (obj['__ukey-obj']) {
+            let outval;
+            Object.values(obj).forEach(v=>{
+                if (Object.keys(v)[0]===indexer) {
+                    outval = Object.values(v)[0]
+                }
+            })
+            if (outval!=undefined) return outval
+        }
+    }
+    catch (err) {}
+    throw new Error ('Indexer out of bounds or not found')
 }
 
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}

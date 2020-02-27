@@ -16,9 +16,15 @@ codeGenFor['member-list'] = (context, code) => {
             if (m.type==='bracket-operand') {
                 code.addCode('"__dkey' + idx++ + '": ')
                 dynamicContent = true
-                code.addCode('__flattenDynamicContent(')
+                if (m.cond!=undefined) {
+                    code.addCode('(')
+                    context.compiler({parentType: 'obj-member-cond', node: m.cond, compiler:context.compiler}, code);
+                    code.addCode(') ?')
+                }
                 context.compiler({parentType: 'obj-member', node: m.value, compiler:context.compiler}, code);
-                code.addCode(')')
+                if (m.cond!=undefined) {
+                    code.addCode(': null')
+                }
             } else {
                 code.addCode('"__key' + idx++ + '": ')
                 code.addCode('{') ; 

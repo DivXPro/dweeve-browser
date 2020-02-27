@@ -63,3 +63,10 @@
     color: #333;
  
   }  
+
+  ::slotted(input) {
+    background-color: darkslategray;
+    color: whitesmoke;
+    font-size: medium;
+    width:100%
+  }

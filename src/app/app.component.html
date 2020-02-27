@@ -1,4 +1,4 @@
-
+<!DOCTYPE>
 <div id="wrapper">
     <div *ngIf="exampleBar" id="sidebar-wrapper">
         <ul class="sidebar-nav">
@@ -72,11 +72,22 @@
                     <as-split-area size="*">
                     <div class="row">
                       <div class="col-md-12">
-                        <p>Result:</p>
-                        <div #reditorDiv style="height:180px">
-                          <ace-editor #reditor style="height:100%;">
-                          </ace-editor>
-                        </div>
+                        <mat-tab-group disableRipple="true">
+                          <mat-tab label="Result:">
+                        
+                            <div #reditorDiv style="height:180px">
+                              <ace-editor #reditor style="height:100%;">
+                              </ace-editor>
+                            </div>
+                          </mat-tab>
+                          <mat-tab label="REPL:">
+                            <div #termDiv style="height:180px" class="ui-terminal">
+                              <!--p-terminal  #termnial welcomeMessage="d~weeve REPL:" prompt="d~weeve->"></p-terminal -->
+                              <ng-terminal #term></ng-terminal>
+                              <!--div class="ui-terminal" #terminalBottom>^</div-->
+                            </div>
+                          </mat-tab>
+                        </mat-tab-group>
                       </div>
                     </div>
                     </as-split-area>

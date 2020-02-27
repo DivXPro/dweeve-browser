@@ -5,10 +5,15 @@ import { AceEditorComponent } from 'ng2-ace-editor';
 import * as dwrun from './dweeve/src/exe/dweeve.js';
 import * as core from './dweeve/src/functions/core.js';
 
+import {TerminalService} from 'primeng/terminal';
+import { NgTerminal } from 'ng-terminal';
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [TerminalService]
 })
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('dweditor', {static: false}) dweditor: AceEditorComponent;
@@ -20,9 +25,22 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('reditorDiv', {static: false}) reditorDiv: ElementRef;
   @ViewChild('rseditorDiv', {static: false}) rseditorDiv: ElementRef;
   @ViewChild('vsplit', {static: false}) vsplit: SplitComponent;
-  
+  //@ViewChild('terminalBottom', {static: false}) terminalBottom: ElementRef;
+  @ViewChild('term', { static: true }) child: NgTerminal;
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone, private terminalService: TerminalService) {
+    this.terminalService.commandHandler.subscribe(command => {
+      let dwScript = command;
+      const dwSplit = this.dweditor.text.split('\n---\n');
+      if (dwSplit.length === 2) {
+        dwScript = dwSplit[0] + '\n---\n' + dwScript;
+      }
+      const response =  dwrun.run(dwScript, this.pleditor.text, '', '');
+
+      this.terminalService.sendResponse(response);
+  //    this.terminalBottom.nativeElement.scrollIntoView();
+  });
+  }
 
   title = 'dweeve-ui';
 
@@ -66,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     const that = this;
     this.vsplit.dragProgress$.subscribe(x => this.zone.run(() =>
-     { that.splitResizeProgress = x; window.dispatchEvent(new Event('resize')); } ) );
+    { that.splitResizeProgress = x; window.dispatchEvent(new Event('resize')); } ) );
 
     this.dweditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
     this.dweditor.theme = 'textmate';
@@ -88,6 +106,24 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.rseditor.registerOnChange(() => { this.reDweeve(); });
     this.toggleExampleBar();
     this.loadExample('Simple function');
+
+    this.child.keyEventInput.subscribe(e => {
+      console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
+ 
+      const ev = e.domEvent;
+      const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+ 
+      if (ev.keyCode === 13) {
+        this.child.write('\r\n$ ');
+      } else if (ev.keyCode === 8) {
+        // Do not delete the prompt
+        if (this.child.underlying.buffer.cursorX > 2) {
+          this.child.write('\b \b');
+        }
+      } else if (printable) {
+        this.child.write(e.key);
+      }
+    });
 
   }
 

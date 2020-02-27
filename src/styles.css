@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+
+.ui-terminal, .ui-terminal-content, .ui-terminal-content-prompt, .ui-terminal-input {
+    background-color: darkslategray;
+    color: antiquewhite;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+  }
+
+  .ui-terminal-input {
+    width: 100%;
+    background-color: darkslateblue;
+    border: none;
+  }

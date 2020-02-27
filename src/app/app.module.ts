@@ -13,6 +13,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { AngularSplitModule } from 'angular-split';
 
+import {TerminalModule} from 'primeng/terminal';
+import { NgTerminalModule } from 'ng-terminal';
+
 
 @NgModule({
   declarations: [
@@ -26,7 +29,9 @@ import { AngularSplitModule } from 'angular-split';
     BrowserAnimationsModule,
     AngularSplitModule.forRoot(),
     AceEditorModule,
-    MatTabsModule
+    MatTabsModule,
+    TerminalModule,
+    NgTerminalModule
   ],
   providers: [],
   bootstrap: [AppComponent]
