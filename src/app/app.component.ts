@@ -5,15 +5,13 @@ import { AceEditorComponent } from 'ng2-ace-editor';
 import * as dwrun from './dweeve/src/exe/dweeve.js';
 import * as core from './dweeve/src/functions/core.js';
 
-import {TerminalService} from 'primeng/terminal';
 import { NgTerminal } from 'ng-terminal';
-
+import { FunctionsUsingCSI } from 'ng-terminal';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  providers: [TerminalService]
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('dweditor', {static: false}) dweditor: AceEditorComponent;
@@ -25,22 +23,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('reditorDiv', {static: false}) reditorDiv: ElementRef;
   @ViewChild('rseditorDiv', {static: false}) rseditorDiv: ElementRef;
   @ViewChild('vsplit', {static: false}) vsplit: SplitComponent;
-  //@ViewChild('terminalBottom', {static: false}) terminalBottom: ElementRef;
-  @ViewChild('term', { static: true }) child: NgTerminal;
-
-  constructor(private zone: NgZone, private terminalService: TerminalService) {
-    this.terminalService.commandHandler.subscribe(command => {
-      let dwScript = command;
-      const dwSplit = this.dweditor.text.split('\n---\n');
-      if (dwSplit.length === 2) {
-        dwScript = dwSplit[0] + '\n---\n' + dwScript;
-      }
-      const response =  dwrun.run(dwScript, this.pleditor.text, '', '');
-
-      this.terminalService.sendResponse(response);
-  //    this.terminalBottom.nativeElement.scrollIntoView();
-  });
-  }
+  @ViewChild('term', { static: true }) replTerm: NgTerminal;
+  @ViewChild('termDiv', {static: false}) termDiv: ElementRef;
+ 
+  constructor(private zone: NgZone) {}
 
   title = 'dweeve-ui';
 
@@ -51,8 +37,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   private winH = 500;
   private splitResizeProgress;
 
-  private currentCommmad='';
-  private posInCommand =0;
+  private currentCommand = '';
+  private posInCommand = 0;
+  private termPrompt = '$ ';
+  private commandBuffer = [];
+  private commandBufferPos = 0;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -81,6 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.pleditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 60) + 'px');
     this.rseditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 123) + 'px');
     this.reditorDiv.nativeElement.setAttribute('style', 'height:' +  (this.winH - th - 150 ) + 'px');
+    this.termDiv.nativeElement.setAttribute('style', 'height:' +  (this.winH - th - 150 ) + 'px');
 
     }
 
@@ -110,30 +100,113 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.toggleExampleBar();
     this.loadExample('Simple function');
 
-    this.child.keyEventInput.subscribe(e => {
+    this.replTerm.write(this.termPrompt);
+
+    this.replTerm.underlying.textarea.addEventListener("paste", (ev) => 
+    {
+      const text = ev.clipboardData.getData('Text');
+      if (this.posInCommand < this.currentCommand.length) {
+          this.replTerm.write(FunctionsUsingCSI.insertBlank(text.length));
+        }
+      this.replTerm.write(text);
+      this.currentCommand=this.currentCommand.substring(0,this.posInCommand) + text
+          + this.currentCommand.substring(this.posInCommand, this.currentCommand.length);
+      this.posInCommand+=text.length;
+     });
+
+
+
+    this.replTerm.keyEventInput.subscribe(e => {
       console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
  
       const ev = e.domEvent;
       const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
- 
+
       if (ev.keyCode === 13) {
-        alert(this.currentCommmad);
-        this.currentCommmad='';
-        this.child.write('\r\n$ ');
+      //  alert(this.currentCommand);
+        if (this.currentCommand !== '') {
+          this.commandBuffer.push(this.currentCommand);
+          this.commandBufferPos++;
+        }
+        this.replDweeve(this.currentCommand);
+        this.currentCommand = '';
+        this.posInCommand = 0;
+      } else if (ev.keyCode === 35) {
+          if (this.posInCommand < this.currentCommand.length) {
+            this.replTerm.write(FunctionsUsingCSI.cursorForward(this.currentCommand.length-this.posInCommand));
+            this.posInCommand = this.currentCommand.length;
+          }
+      } else  if (ev.keyCode === 38) { //up
+        if (this.commandBuffer.length > 0 && this.commandBufferPos > 0) {
+          if (this.currentCommand !== '') {
+            this.commandBuffer.push(this.currentCommand);
+            this.replTerm.write(FunctionsUsingCSI.cursorBackward(this.posInCommand));
+            this.replTerm.write(FunctionsUsingCSI.deleteCharacter(this.currentCommand.length));
+          }
+          this.currentCommand = (this.commandBuffer[--this.commandBufferPos]);
+          this.replTerm.write(this.currentCommand);
+          this.posInCommand = this.currentCommand.length;
+        }
+      } else  if (ev.keyCode === 40) { //down
+        if (this.currentCommand !== '') {
+          this.replTerm.write(FunctionsUsingCSI.cursorBackward(this.posInCommand));
+          this.replTerm.write(FunctionsUsingCSI.deleteCharacter(this.currentCommand.length));
+        }
+        if (this.commandBuffer.length > this.commandBufferPos+1) {
+          this.currentCommand = (this.commandBuffer[++this.commandBufferPos]);
+          this.replTerm.write(this.currentCommand);
+          this.posInCommand = this.currentCommand.length;
+        }
+      } else  if (ev.keyCode === 39) { //right
+        if (this.posInCommand < (this.currentCommand.length)) {
+      //    alert(this.posInCommand + ':' + this.replTerm.underlying.buffer.cursorX);
+          this.posInCommand++;
+          this.replTerm.write(e.key);
+        }
+      } else  if (ev.keyCode === 37) { //left
+        if (this.posInCommand > 0) {
+          this.posInCommand--;
+          this.replTerm.write(e.key);
+        }
+      } else if (ev.keyCode === 46) {
+        if (this.posInCommand < (this.currentCommand.length - 1)) {
+          this.replTerm.write(FunctionsUsingCSI.deleteCharacter(1));
+           this.currentCommand = this.currentCommand.substring(0,this.posInCommand)
+            + this.currentCommand.substring(this.posInCommand + 1, this.currentCommand.length);
+        }
       } else if (ev.keyCode === 8) {
         // Do not delete the prompt
-        if (this.child.underlying.buffer.cursorX > 2) {
-          this.child.write('\b \b');
+        if (this.posInCommand > 0) {
+        //  alert(this.currentCommand);
+          this.replTerm.write('\b \b' + FunctionsUsingCSI.deleteCharacter(1));
           this.posInCommand--;
-          this.currentCommmad=this.currentCommmad.substring(0,this.posInCommand)
-            + this.currentCommmad.substring(this.posInCommand+1, this.currentCommmad.length);
+          this.currentCommand = this.currentCommand.substring(0,this.posInCommand)
+            + this.currentCommand.substring(this.posInCommand + 1, this.currentCommand.length);
+        //  alert(this.currentCommand);
         }
       } else if (printable) {
+        if (this.posInCommand < this.currentCommand.length) {
+          this.replTerm.write(FunctionsUsingCSI.insertBlank(1));
+        }
+        this.replTerm.write(e.key);
+        this.currentCommand=this.currentCommand.substring(0,this.posInCommand) + e.key
+            + this.currentCommand.substring(this.posInCommand, this.currentCommand.length);
         this.posInCommand++;
-        this.child.write(e.key);
+        
       }
     });
 
+  }
+
+  replDweeve(command) {
+    let dwScript = command;
+    const dwSplit = this.dweditor.text.split('\n---\n');
+    if (dwSplit.length === 2) {
+      dwScript = dwSplit[0] + '\n---\n' + dwScript;
+    }
+    const response =  dwrun.run(dwScript, this.pleditor.text, '', '');
+
+    this.replTerm.write('\r\n' + String(response).replace(/\n/g, '\r\n') + '\r\n' + this.termPrompt);
   }
 
   reDweeve() {

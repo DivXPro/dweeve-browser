@@ -1699,7 +1699,7 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGT
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<!DOCTYPE>\r\n<div id=\"wrapper\">\r\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\r\n        <ul class=\"sidebar-nav\">\r\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\r\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\r\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\r\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\r\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\r\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\r\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\r\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\r\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\r\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\r\n        </ul>\r\n    </div>\r\n    <div id=\"page-content-wrapper\">\r\n        <div class=\"page-content\">\r\n  \r\n\r\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\r\n\r\n              \r\n              \r\n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\r\n                  <div class=\"col-lg-10\" role=\"banner\">\r\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\r\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\r\n                  </div>\r\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\r\n                    <as-split-area size=\"390\">\r\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\r\n                      <div class=\"col-lg-12\">\r\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\r\n                          <as-split-area size=\"50\">\r\n                            <div  style=\"margin-right: 10px; \">\r\n                              <p>d~weeve:</p>\r\n                              <div #dweditorDiv style=\"height:340px\">\r\n                                <ace-editor #dweditor style=\"height:100%;\">\r\n                                </ace-editor>\r\n                              </div>\r\n                            </div>\r\n                          </as-split-area>\r\n                          <as-split-area size=\"50\">\r\n                            <div style=\"margin-left: 10px;\">\r\n                              <mat-tab-group disableRipple=\"true\">\r\n                                <mat-tab label=\"Payload\">\r\n                                  <div #pleditorDiv style=\"height:330px\">\r\n                                    <ace-editor #pleditor style=\"height:100%;\">\r\n                                    </ace-editor>\r\n                                  </div>\r\n                                </mat-tab>\r\n                                <mat-tab label=\"Resource\">\r\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\r\n                                  \r\n                                  <div #rseditorDiv style=\"height:277px\">\r\n                                    <ace-editor #rseditor style=\"height:100%;\">\r\n                                    </ace-editor>\r\n                                  </div>\r\n                                </mat-tab>\r\n                              \r\n                              </mat-tab-group>\r\n                              \r\n\r\n                            </div>\r\n                          </as-split-area>\r\n                        \r\n                      </as-split>\r\n                    </div>\r\n                    </div>\r\n                    </as-split-area>\r\n                    <as-split-area size=\"*\">\r\n                    <div class=\"row\">\r\n                      <div class=\"col-md-12\">\r\n                        <mat-tab-group disableRipple=\"true\">\r\n                          <mat-tab label=\"Result:\">\r\n                        \r\n                            <div #reditorDiv style=\"height:180px\">\r\n                              <ace-editor #reditor style=\"height:100%;\">\r\n                              </ace-editor>\r\n                            </div>\r\n                          </mat-tab>\r\n                          <mat-tab label=\"REPL:\">\r\n                            <div #termDiv style=\"height:180px\" class=\"ui-terminal\">\r\n                              <!--p-terminal  #termnial welcomeMessage=\"d~weeve REPL:\" prompt=\"d~weeve->\"></p-terminal -->\r\n                              <ng-terminal #term></ng-terminal>\r\n                              <!--div class=\"ui-terminal\" #terminalBottom>^</div-->\r\n                            </div>\r\n                          </mat-tab>\r\n                        </mat-tab-group>\r\n                      </div>\r\n                    </div>\r\n                    </as-split-area>\r\n\r\n                  </as-split>\r\n                  <br>\r\n                  <br>\r\n                </div>\r\n              \r\n            </div>  \r\n\r\n          </div>\r\n        </div>\r\n    </div>\r\n\r\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<!DOCTYPE>\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\n                    <as-split-area size=\"390\">\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\n                      <div class=\"col-lg-12\">\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\n                          <as-split-area size=\"50\">\n                            <div  style=\"margin-right: 10px; \">\n                              <p>d~weeve:</p>\n                              <div #dweditorDiv style=\"height:340px\">\n                                <ace-editor #dweditor style=\"height:100%;\">\n                                </ace-editor>\n                              </div>\n                            </div>\n                          </as-split-area>\n                          <as-split-area size=\"50\">\n                            <div style=\"margin-left: 10px;\">\n                              <mat-tab-group disableRipple=\"true\">\n                                <mat-tab label=\"Payload\">\n                                  <div #pleditorDiv style=\"height:330px\">\n                                    <ace-editor #pleditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                <mat-tab label=\"Resource\">\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                                  \n                                  <div #rseditorDiv style=\"height:277px\">\n                                    <ace-editor #rseditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                              \n                              </mat-tab-group>\n                              \n\n                            </div>\n                          </as-split-area>\n                        \n                      </as-split>\n                    </div>\n                    </div>\n                    </as-split-area>\n                    <as-split-area size=\"*\">\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Result:\">\n                        \n                            <div #reditorDiv style=\"height:180px\">\n                              <ace-editor #reditor style=\"height:100%;\">\n                              </ace-editor>\n                            </div>\n                          </mat-tab>\n                          <mat-tab label=\"REPL:\">\n                            <div #termDiv style=\"height:180px\" class=\"ui-terminal\">\n                              <!--p-terminal  #termnial welcomeMessage=\"d~weeve REPL:\" prompt=\"d~weeve->\"></p-terminal -->\n                              <ng-terminal #term></ng-terminal>\n                              <!--div class=\"ui-terminal\" #terminalBottom>^</div-->\n                            </div>\n                          </mat-tab>\n                        </mat-tab-group>\n                      </div>\n                    </div>\n                    </as-split-area>\n\n                  </as-split>\n                  <br>\n                  <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
 
 /***/ }),
 
@@ -1960,34 +1960,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dweeve/src/exe/dweeve.js */ "./src/app/dweeve/src/exe/dweeve.js");
 /* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dweeve/src/functions/core.js */ "./src/app/dweeve/src/functions/core.js");
 /* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var primeng_terminal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! primeng/terminal */ "./node_modules/primeng/fesm5/primeng-terminal.js");
+/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
 
 
 
 
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent(zone, terminalService) {
-        var _this = this;
+    function AppComponent(zone) {
         this.zone = zone;
-        this.terminalService = terminalService;
         this.title = 'dweeve-ui';
         this.exampleBar = false;
         this.resourceNameText = '';
         this.examples = {};
         this.winH = 500;
-        this.currentCommmad = '';
+        this.currentCommand = '';
         this.posInCommand = 0;
-        this.terminalService.commandHandler.subscribe(function (command) {
-            var dwScript = command;
-            var dwSplit = _this.dweditor.text.split('\n---\n');
-            if (dwSplit.length === 2) {
-                dwScript = dwSplit[0] + '\n---\n' + dwScript;
-            }
-            var response = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](dwScript, _this.pleditor.text, '', '');
-            _this.terminalService.sendResponse(response);
-            //    this.terminalBottom.nativeElement.scrollIntoView();
-        });
+        this.termPrompt = '$ ';
+        this.commandBuffer = [];
+        this.commandBufferPos = 0;
     }
     AppComponent.prototype.onResize = function (event) {
         this.winH = event.target.innerHeight;
@@ -2008,6 +1999,7 @@ var AppComponent = /** @class */ (function () {
         this.pleditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 60) + 'px');
         this.rseditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 123) + 'px');
         this.reditorDiv.nativeElement.setAttribute('style', 'height:' + (this.winH - th - 150) + 'px');
+        this.termDiv.nativeElement.setAttribute('style', 'height:' + (this.winH - th - 150) + 'px');
     };
     AppComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -2030,29 +2022,110 @@ var AppComponent = /** @class */ (function () {
         this.rseditor.registerOnChange(function () { _this.reDweeve(); });
         this.toggleExampleBar();
         this.loadExample('Simple function');
-        this.child.keyEventInput.subscribe(function (e) {
+        this.replTerm.write(this.termPrompt);
+        this.replTerm.underlying.textarea.addEventListener("paste", function (ev) {
+            var text = ev.clipboardData.getData('Text');
+            if (_this.posInCommand < _this.currentCommand.length) {
+                _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].insertBlank(text.length));
+            }
+            _this.replTerm.write(text);
+            _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand) + text
+                + _this.currentCommand.substring(_this.posInCommand, _this.currentCommand.length);
+            _this.posInCommand += text.length;
+        });
+        this.replTerm.keyEventInput.subscribe(function (e) {
             console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
             var ev = e.domEvent;
             var printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
             if (ev.keyCode === 13) {
-                alert(_this.currentCommmad);
-                _this.currentCommmad = '';
-                _this.child.write('\r\n$ ');
+                //  alert(this.currentCommand);
+                if (_this.currentCommand !== '') {
+                    _this.commandBuffer.push(_this.currentCommand);
+                    _this.commandBufferPos++;
+                }
+                _this.replDweeve(_this.currentCommand);
+                _this.currentCommand = '';
+                _this.posInCommand = 0;
+            }
+            else if (ev.keyCode === 35) {
+                if (_this.posInCommand < _this.currentCommand.length) {
+                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorForward(_this.currentCommand.length - _this.posInCommand));
+                    _this.posInCommand = _this.currentCommand.length;
+                }
+            }
+            else if (ev.keyCode === 38) { //up
+                if (_this.commandBuffer.length > 0 && _this.commandBufferPos > 0) {
+                    if (_this.currentCommand !== '') {
+                        _this.commandBuffer.push(_this.currentCommand);
+                        _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorBackward(_this.posInCommand));
+                        _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(_this.currentCommand.length));
+                    }
+                    _this.currentCommand = (_this.commandBuffer[--_this.commandBufferPos]);
+                    _this.replTerm.write(_this.currentCommand);
+                    _this.posInCommand = _this.currentCommand.length;
+                }
+            }
+            else if (ev.keyCode === 40) { //down
+                if (_this.currentCommand !== '') {
+                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorBackward(_this.posInCommand));
+                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(_this.currentCommand.length));
+                }
+                if (_this.commandBuffer.length > _this.commandBufferPos + 1) {
+                    _this.currentCommand = (_this.commandBuffer[++_this.commandBufferPos]);
+                    _this.replTerm.write(_this.currentCommand);
+                    _this.posInCommand = _this.currentCommand.length;
+                }
+            }
+            else if (ev.keyCode === 39) { //right
+                if (_this.posInCommand < (_this.currentCommand.length)) {
+                    //    alert(this.posInCommand + ':' + this.replTerm.underlying.buffer.cursorX);
+                    _this.posInCommand++;
+                    _this.replTerm.write(e.key);
+                }
+            }
+            else if (ev.keyCode === 37) { //left
+                if (_this.posInCommand > 0) {
+                    _this.posInCommand--;
+                    _this.replTerm.write(e.key);
+                }
+            }
+            else if (ev.keyCode === 46) {
+                if (_this.posInCommand < (_this.currentCommand.length - 1)) {
+                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(1));
+                    _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand)
+                        + _this.currentCommand.substring(_this.posInCommand + 1, _this.currentCommand.length);
+                }
             }
             else if (ev.keyCode === 8) {
                 // Do not delete the prompt
-                if (_this.child.underlying.buffer.cursorX > 2) {
-                    _this.child.write('\b \b');
+                if (_this.posInCommand > 0) {
+                    //  alert(this.currentCommand);
+                    _this.replTerm.write('\b \b' + ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(1));
                     _this.posInCommand--;
-                    _this.currentCommmad = _this.currentCommmad.substring(0, _this.posInCommand)
-                        + _this.currentCommmad.substring(_this.posInCommand + 1, _this.currentCommmad.length);
+                    _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand)
+                        + _this.currentCommand.substring(_this.posInCommand + 1, _this.currentCommand.length);
+                    //  alert(this.currentCommand);
                 }
             }
             else if (printable) {
+                if (_this.posInCommand < _this.currentCommand.length) {
+                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].insertBlank(1));
+                }
+                _this.replTerm.write(e.key);
+                _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand) + e.key
+                    + _this.currentCommand.substring(_this.posInCommand, _this.currentCommand.length);
                 _this.posInCommand++;
-                _this.child.write(e.key);
             }
         });
+    };
+    AppComponent.prototype.replDweeve = function (command) {
+        var dwScript = command;
+        var dwSplit = this.dweditor.text.split('\n---\n');
+        if (dwSplit.length === 2) {
+            dwScript = dwSplit[0] + '\n---\n' + dwScript;
+        }
+        var response = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](dwScript, this.pleditor.text, '', '');
+        this.replTerm.write('\r\n' + String(response).replace(/\n/g, '\r\n') + '\r\n' + this.termPrompt);
     };
     AppComponent.prototype.reDweeve = function () {
         _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
@@ -2104,8 +2177,7 @@ var AppComponent = /** @class */ (function () {
         };
     };
     AppComponent.ctorParameters = function () { return [
-        { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] },
-        { type: primeng_terminal__WEBPACK_IMPORTED_MODULE_4__["TerminalService"] }
+        { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }
     ]; };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('dweditor', { static: false })
@@ -2136,7 +2208,10 @@ var AppComponent = /** @class */ (function () {
     ], AppComponent.prototype, "vsplit", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('term', { static: true })
-    ], AppComponent.prototype, "child", void 0);
+    ], AppComponent.prototype, "replTerm", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('termDiv', { static: false })
+    ], AppComponent.prototype, "termDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["HostListener"])('window:resize', ['$event'])
     ], AppComponent.prototype, "onResize", null);
@@ -2144,7 +2219,6 @@ var AppComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
             template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./app.component.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/app.component.html")).default,
-            providers: [primeng_terminal__WEBPACK_IMPORTED_MODULE_4__["TerminalService"]],
             styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./app.component.css */ "./src/app/app.component.css")).default]
         })
     ], AppComponent);
@@ -5627,7 +5701,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_2__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\cornwi\repos\dweeve-ui\dweeve-browser\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! C:\Users\ian\source\repos\dweeve-ui\src\main.ts */"./src/main.ts");
 
 
 /***/ })
