@@ -1956,43 +1956,51 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dweeve/src/exe/dweeve.js */ "./src/app/dweeve/src/exe/dweeve.js");
-/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dweeve/src/functions/core.js */ "./src/app/dweeve/src/functions/core.js");
-/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
+/* harmony import */ var _xterm_keyhandler_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./xterm-keyhandler.service */ "./src/app/xterm-keyhandler.service.ts");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dweeve/src/exe/dweeve.js */ "./src/app/dweeve/src/exe/dweeve.js");
+/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dweeve/src/functions/core.js */ "./src/app/dweeve/src/functions/core.js");
+/* harmony import */ var _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _examples_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./examples.service */ "./src/app/examples.service.ts");
+
 
 
 
 
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent(zone) {
+    function AppComponent(zone, xtermKeys, examples) {
+        var _this = this;
         this.zone = zone;
+        this.xtermKeys = xtermKeys;
+        this.examples = examples;
         this.title = 'dweeve-ui';
         this.exampleBar = false;
         this.resourceNameText = '';
-        this.examples = {};
         this.winH = 500;
-        this.currentCommand = '';
-        this.posInCommand = 0;
-        this.termPrompt = '$ ';
-        this.commandBuffer = [];
-        this.commandBufferPos = 0;
+        this.replDweeve = function (command) {
+            var dwScript = command;
+            var dwSplit = _this.dweditor.text.split('\n---\n');
+            if (dwSplit.length === 2) {
+                dwScript = dwSplit[0] + '\n---\n' + dwScript;
+            }
+            var response = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_3__["run"](dwScript, _this.pleditor.text, '', '');
+            return response;
+        };
     }
     AppComponent.prototype.onResize = function (event) {
-        this.winH = event.target.innerHeight;
+        this.winH = event.target.innerHeight - 50;
         this.resizeEditors();
     };
     AppComponent.prototype.ngOnInit = function () {
-        this.createExamples();
+        this.winH = window.innerHeight - 80;
     };
     AppComponent.prototype.toggleExampleBar = function () {
         this.exampleBar = !this.exampleBar;
     };
     AppComponent.prototype.resizeEditors = function () {
         var th = 350;
-        if (this.splitResizeProgress.sizes) {
+        if (this.splitResizeProgress && this.splitResizeProgress.sizes) {
             th = this.splitResizeProgress.sizes[0];
         }
         this.dweditorDiv.nativeElement.setAttribute('style', 'height:' + (th - 50) + 'px');
@@ -2005,135 +2013,31 @@ var AppComponent = /** @class */ (function () {
         var _this = this;
         var that = this;
         this.vsplit.dragProgress$.subscribe(function (x) { return _this.zone.run(function () { that.splitResizeProgress = x; window.dispatchEvent(new Event('resize')); }); });
-        this.dweditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
-        this.dweditor.theme = 'textmate';
-        this.dweditor.mode = 'dweeve';
-        this.dweditor.registerOnChange(function () { _this.reDweeve(); });
-        this.pleditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
-        this.pleditor.theme = 'textmate';
-        this.pleditor.mode = 'json';
-        this.pleditor.registerOnChange(function () { _this.reDweeve(); });
+        this.configureEditor(this.dweditor, 'dweeve');
+        this.configureEditor(this.pleditor, 'json');
+        this.configureEditor(this.rseditor, 'json');
         this.reditor.theme = 'sqlserver';
         this.reditor.mode = 'json';
         this.reditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
-        this.rseditor.theme = 'textmate';
-        this.rseditor.mode = 'json';
-        this.rseditor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
-        this.rseditor.registerOnChange(function () { _this.reDweeve(); });
         this.toggleExampleBar();
         this.loadExample('Simple function');
-        this.replTerm.write(this.termPrompt);
-        this.replTerm.underlying.textarea.addEventListener("paste", function (ev) {
-            var text = ev.clipboardData.getData('Text');
-            if (_this.posInCommand < _this.currentCommand.length) {
-                _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].insertBlank(text.length));
-            }
-            _this.replTerm.write(text);
-            _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand) + text
-                + _this.currentCommand.substring(_this.posInCommand, _this.currentCommand.length);
-            _this.posInCommand += text.length;
-        });
-        this.replTerm.keyEventInput.subscribe(function (e) {
-            console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
-            var ev = e.domEvent;
-            var printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
-            if (ev.keyCode === 13) {
-                //  alert(this.currentCommand);
-                if (_this.currentCommand !== '') {
-                    _this.commandBuffer.push(_this.currentCommand);
-                    _this.commandBufferPos++;
-                }
-                _this.replDweeve(_this.currentCommand);
-                _this.currentCommand = '';
-                _this.posInCommand = 0;
-            }
-            else if (ev.keyCode === 35) {
-                if (_this.posInCommand < _this.currentCommand.length) {
-                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorForward(_this.currentCommand.length - _this.posInCommand));
-                    _this.posInCommand = _this.currentCommand.length;
-                }
-            }
-            else if (ev.keyCode === 38) { //up
-                if (_this.commandBuffer.length > 0 && _this.commandBufferPos > 0) {
-                    if (_this.currentCommand !== '') {
-                        _this.commandBuffer.push(_this.currentCommand);
-                        _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorBackward(_this.posInCommand));
-                        _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(_this.currentCommand.length));
-                    }
-                    _this.currentCommand = (_this.commandBuffer[--_this.commandBufferPos]);
-                    _this.replTerm.write(_this.currentCommand);
-                    _this.posInCommand = _this.currentCommand.length;
-                }
-            }
-            else if (ev.keyCode === 40) { //down
-                if (_this.currentCommand !== '') {
-                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].cursorBackward(_this.posInCommand));
-                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(_this.currentCommand.length));
-                }
-                if (_this.commandBuffer.length > _this.commandBufferPos + 1) {
-                    _this.currentCommand = (_this.commandBuffer[++_this.commandBufferPos]);
-                    _this.replTerm.write(_this.currentCommand);
-                    _this.posInCommand = _this.currentCommand.length;
-                }
-            }
-            else if (ev.keyCode === 39) { //right
-                if (_this.posInCommand < (_this.currentCommand.length)) {
-                    //    alert(this.posInCommand + ':' + this.replTerm.underlying.buffer.cursorX);
-                    _this.posInCommand++;
-                    _this.replTerm.write(e.key);
-                }
-            }
-            else if (ev.keyCode === 37) { //left
-                if (_this.posInCommand > 0) {
-                    _this.posInCommand--;
-                    _this.replTerm.write(e.key);
-                }
-            }
-            else if (ev.keyCode === 46) {
-                if (_this.posInCommand < (_this.currentCommand.length - 1)) {
-                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(1));
-                    _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand)
-                        + _this.currentCommand.substring(_this.posInCommand + 1, _this.currentCommand.length);
-                }
-            }
-            else if (ev.keyCode === 8) {
-                // Do not delete the prompt
-                if (_this.posInCommand > 0) {
-                    //  alert(this.currentCommand);
-                    _this.replTerm.write('\b \b' + ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].deleteCharacter(1));
-                    _this.posInCommand--;
-                    _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand)
-                        + _this.currentCommand.substring(_this.posInCommand + 1, _this.currentCommand.length);
-                    //  alert(this.currentCommand);
-                }
-            }
-            else if (printable) {
-                if (_this.posInCommand < _this.currentCommand.length) {
-                    _this.replTerm.write(ng_terminal__WEBPACK_IMPORTED_MODULE_4__["FunctionsUsingCSI"].insertBlank(1));
-                }
-                _this.replTerm.write(e.key);
-                _this.currentCommand = _this.currentCommand.substring(0, _this.posInCommand) + e.key
-                    + _this.currentCommand.substring(_this.posInCommand, _this.currentCommand.length);
-                _this.posInCommand++;
-            }
-        });
+        this.xtermKeys.initialiseWithTerminal(this.replTerm, this.replDweeve);
+        this.resizeEditors();
     };
-    AppComponent.prototype.replDweeve = function (command) {
-        var dwScript = command;
-        var dwSplit = this.dweditor.text.split('\n---\n');
-        if (dwSplit.length === 2) {
-            dwScript = dwSplit[0] + '\n---\n' + dwScript;
-        }
-        var response = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](dwScript, this.pleditor.text, '', '');
-        this.replTerm.write('\r\n' + String(response).replace(/\n/g, '\r\n') + '\r\n' + this.termPrompt);
+    AppComponent.prototype.configureEditor = function (editor, mode) {
+        var _this = this;
+        editor.getEditor().setOptions({ showLineNumbers: true, tabSize: 2 });
+        editor.theme = 'textmate';
+        editor.mode = mode;
+        editor.registerOnChange(function () { _this.reDweeve(); });
     };
     AppComponent.prototype.reDweeve = function () {
-        _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_3__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
-        this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_2__["run"](this.dweditor.text, this.pleditor.text, '', '');
+        _dweeve_src_functions_core_js__WEBPACK_IMPORTED_MODULE_4__["setResourceFileContent"](this.resourceNameText, this.rseditor.text);
+        this.reditor.text = _dweeve_src_exe_dweeve_js__WEBPACK_IMPORTED_MODULE_3__["run"](this.dweditor.text, this.pleditor.text, '', '');
     };
     AppComponent.prototype.loadExample = function (name) {
-        if (this.examples[name]) {
-            var example = this.examples[name];
+        if (this.examples.GetExample(name)) {
+            var example = this.examples.GetExample(name);
             this.reditor.text = '';
             this.rseditor.text = example.resourceText !== undefined ? example.resourceText : '';
             this.resourceNameText = example.resourceName !== undefined ? example.resourceName : '';
@@ -2142,81 +2046,49 @@ var AppComponent = /** @class */ (function () {
             this.toggleExampleBar();
         }
     };
-    AppComponent.prototype.createExamples = function () {
-        this.examples['Simple function'] = { "dwl": "%dw 2.0\nfun toUser(obj) = {\n  firstName: obj.field1,\n  lastName: obj.field2\n}\n---\ntoUser(payload)",
-            "payload": "{\n  \"field1\": \"Bob\",\n  \"field2\": \"Jones\"\n}" };
-        this.examples['Get people'] = {
-            "dwl": "%dw 2.0\n\noutput application/json\n---\npayload.people.person.address.street",
-            "payload": "{\n\"people\": [\n    {\n    \"person\": {\n        \"name\": \"Nial\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Italia\",\n            \"number\": 2164\n        },\n        \"area\": {\n            \"zone\": \"San Isidro\",\n            \"name\": \"Martinez\"\n        }\n        }\n    }\n    },\n    {\n    \"person\": {\n        \"name\": \"Coty\",\n        \"address\": {\n        \"street\": {\n            \"name\": \"Monroe\",\n            \"number\": 323\n        },\n        \"area\": {\n            \"zone\": \"BA\",\n            \"name\": \"Belgrano\"\n        }\n        }\n    }\n    }\n]\n}"
-        };
-        this.examples['All descendents'] = {
-            "dwl": "%dw 2.0\noutput application/json\n---\npayload.users..*name",
-            "payload": "{ \"users\" : {\n  \"user\": {\"name\":\"a\"},\n  \"user\": {\"name\":\"b\"},\n  \"user\": {\"name\":\"c\", \"name\":\"d\"}\n  }\n}"
-        };
-        this.examples['Mixed matching'] = {
-            "dwl": "%dw 2.0\n---\n{\n  a: payload.string match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  b: payload.bool match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  c: payload.name match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  d: payload.object match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  e: payload.strings match {\n    case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n    case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n    case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n  },\n  f: payload.object.name match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  g: payload.bangtest match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  },\n  h: payload.number match {\n    case num is Boolean -> \"could be true or false:\" ++ num\n    case is Object -> \"we got an Object\"\n    case \"bob\"  -> \"is bob!\"\n    case word: \"bang\" ->  word ++ \" was matched\"\n  }\n}",
-            "payload": "{ \"string\": \"hello fred\", \"number\": 90,\n      \"object\" : {\"name\" : \"bob\"}, \"bool\" : true,\n      \"name\" : \"Emiliano\", \"strings\" : \"strings\", \"bangtest\" : \"bang\"}"
-        };
-        this.examples['Simple Lambda'] = {
-            "dwl": "%dw 2.0\nvar myLambda = (a,b)-> { (a) : b}\n---\nmyLambda(\"key\",\"value\")",
-            "payload": ""
-        };
-        this.examples['Do scope'] = {
-            "dwl": "%dw 2.0\noutput application/json\nfun test(p) = do {\n    var a = \"Foo\" ++ p\n    ---\n    a\n}\n---\n{ result: test(\" Bar\") }",
-            "payload": ""
-        };
-        this.examples['Xml input'] = {
-            "dwl": "%dw 2.0\noutput application/xml\n---\n{\n    prices: payload.prices mapObject (value, key) -> {\n        (key): (value + 5)\n    }\n}",
-            "payload": "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n    <basic>14.99</basic>\n    <premium>53.01</premium>\n    <vip>398.99</vip>\n</prices>"
-        };
-        this.examples['Recursion!'] = {
-            "payload": "{\n        \"command\":{\n          \"version\":\"1.0.0\",\n          \"user\":\"ian\",\n          \"commandDate\":\"2019-10-20T11:15:30\",\n          \"response\":[\n            {\n              \"object\":{\n                \"type\":\"policyHeader\",\n                \"schema\":\"policyHeader\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"PH001\",\n                \"content\":{\n                  \"polifcyRef\":\"xyz-124\",\n                  \"inceptionDate\":\"2019-11-01T00:00:00\",\n                  \"expiryDate\":\"2020-10-31T23:59:59\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"customer\",\n                \"schema\":\"customer\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"CU001\",\n                \"content\":{\n                  \"extRef\":\"sf00001abc\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"broker\",\n                \"schema\":\"broker\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"BR001\",\n                \"content\":{\n                  \"brokerRef\":\"br00111\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"coverage\",\n                \"schema\":\"coverage\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"CV001\",\n                \"content\":{\n                  \"coverageRef\":\"covRef00111\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"insuredObject\",\n                \"schema\":\"insuredObject\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"IO001\",\n                \"content\":{\n                  \"insuredType\":\"motor\",\n                  \"make\":\"Ford\",\n                  \"model\":\"Fiesta\",\n                  \"engine\": \"2.0\"\n                }\n              }\n            },\n            {\n              \"object\":{\n                \"type\":\"insuredObject\",\n                \"schema\":\"insuredObject\",\n                \"schemaVersion\":\"1.0.0\",\n                \"commandId\":\"IO002\",\n                \"content\":{\n                  \"insuredType\":\"property\",\n                  \"description\":\"office\",\n                  \"fire\":\"yes\"\n                }\n              }\n            },\n            {\n              \"relation\":{\n                \"from\":\"PH001\",\n                \"to\":\"CU001\",\n                \"rType\":\"belongsTo\"\n              }\n            },\n            {\n              \"relation\":{\n                \"from\":\"CU001\",\n                \"to\":\"PH001\",\n                \"rType\":\"hasPolicy\"\n              }\n            }\n          ]\n        }\n      }",
-            "resourceText": "{\n        \"view\":{\n          \"name\":\"motorPolicy-quote\",\n          \"version\":\"1.0.0\",\n          \"viewStyle\":\"hierarchy\",\n          \"viewElement\":{\n            \"object\":\"policyHeader\",\n            \"elementRef\":\"PH001\",\n            \"childObjects\":[\n              {\n                \"viewElement\":{\n                  \"object\":\"customer\",\n                  \"elementRef\":\"CU001\",\n                  \"multiplicity\":\"single\",\n                  \"relationFromParent\":\"belongsTo\",\n                  \"relationToParent\":\"hasPolicy\"\n                }\n              },\n              {\n                \"viewElement\":{\n                  \"object\":\"broker\",\n                  \"elementRef\":\"BR001\",\n                  \"multiplicity\":\"single\",\n                  \"relationFromParent\":\"managedBy\",\n                  \"relationToParent\":\"managesPolicy\"\n                }\n              },\n              {\n                \"viewElement\":{\n                  \"object\":\"coverage\",\n                  \"elementRef\":\"CV001\",\n                  \"multiplicity\":\"oneOrMore\",\n                  \"relationFromParent\":\"hasCover\",\n                  \"relationToParent\":\"coveredBy\",\n                  \"relationToOther\":{\n                    \"elementRef\":\"C001\",\n                    \"type\":\"hasCover\"\n                  },\n                  \"childObjects\":[\n                    {\n                      \"viewElement\":{\n                        \"object\":\"insuredObject\",\n                        \"elementRef\":\"IO001\",\n                        \"multiplicity\":\"oneOrMore\",\n                        \"relationFromParent\":\"covers\",\n                        \"relationToParent\":\"coveredBy\"\n                      }\n                    },\n                    {\n                      \"viewElement\":{\n                        \"object\":\"insuredObject\",\n                        \"elementRef\":\"IO002\",\n                        \"multiplicity\":\"oneOrMore\",\n                        \"relationFromParent\":\"covers\",\n                        \"relationToParent\":\"coveredBy\"\n                      }\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        }\n      }",
-            "resourceName": 'classpath://dw/data/view-metadata-policyHeader.json',
-            "dwl": "%dw 2.0\n    output application/json\n    \n    var policyHeaderView = readUrl(\"classpath://dw/data/view-metadata-policyHeader.json\")\n    \n    fun findObjectContent(objectType, commandId) = {\n         (objectType): payload.command.response filter ($.object.schema == objectType and $.object.commandId == commandId) map (object , index) ->\n            object.object.content\n    }\n    \n    fun findRelation(relation, relationFrom, relationType) = \n      (relation filter (($.from == relationFrom) and ($.rType == relationType))).to\n    \n    fun renderChildObjects(childObjectsArray) = {\n      children: childObjectsArray map ((child, childIndex) -> {\n        (child.viewElement.object) : findObjectContent(child.viewElement.object, child.viewElement.elementRef),\n        (if (child.viewElement.childObjects != null) \n           renderChildObjects(child.viewElement.childObjects) else {}\n        )\n      }\n      )\n    }\n    \n    var firstViewElement = policyHeaderView.view.viewElement\n    ---\n    \n    \n    {\n      (findObjectContent(firstViewElement.object, firstViewElement.elementRef)),\n      (if (firstViewElement.childObjects != null) renderChildObjects(firstViewElement.childObjects) else {})\n        //relation: findRelation(payload.command.response.relation, \"PH001\", policyHeaderView.view.viewElement.childObjects.viewElement[0].relationFromParent),\n    }"
-        };
-    };
     AppComponent.ctorParameters = function () { return [
-        { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }
+        { type: _angular_core__WEBPACK_IMPORTED_MODULE_2__["NgZone"] },
+        { type: _xterm_keyhandler_service__WEBPACK_IMPORTED_MODULE_1__["XtermKeyhandlerService"] },
+        { type: _examples_service__WEBPACK_IMPORTED_MODULE_5__["ExamplesService"] }
     ]; };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('dweditor', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('dweditor', { static: false })
     ], AppComponent.prototype, "dweditor", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('pleditor', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('pleditor', { static: false })
     ], AppComponent.prototype, "pleditor", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('reditor', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('reditor', { static: false })
     ], AppComponent.prototype, "reditor", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('rseditor', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('rseditor', { static: false })
     ], AppComponent.prototype, "rseditor", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('dweditorDiv', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('dweditorDiv', { static: false })
     ], AppComponent.prototype, "dweditorDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('pleditorDiv', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('pleditorDiv', { static: false })
     ], AppComponent.prototype, "pleditorDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('reditorDiv', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('reditorDiv', { static: false })
     ], AppComponent.prototype, "reditorDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('rseditorDiv', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('rseditorDiv', { static: false })
     ], AppComponent.prototype, "rseditorDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('vsplit', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('vsplit', { static: false })
     ], AppComponent.prototype, "vsplit", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('term', { static: true })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('term', { static: true })
     ], AppComponent.prototype, "replTerm", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('termDiv', { static: false })
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('termDiv', { static: false })
     ], AppComponent.prototype, "termDiv", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["HostListener"])('window:resize', ['$event'])
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["HostListener"])('window:resize', ['$event'])
     ], AppComponent.prototype, "onResize", null);
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["Component"])({
             selector: 'app-root',
             template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! raw-loader!./app.component.html */ "./node_modules/raw-loader/dist/cjs.js!./src/app/app.component.html")).default,
             styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(/*! ./app.component.css */ "./src/app/app.component.css")).default]
@@ -5132,6 +5004,74 @@ module.exports = { transpile: transpile};
 
 /***/ }),
 
+/***/ "./src/app/examples.service.ts":
+/*!*************************************!*\
+  !*** ./src/app/examples.service.ts ***!
+  \*************************************/
+/*! exports provided: ExamplesService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExamplesService", function() { return ExamplesService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+
+
+var ExamplesService = /** @class */ (function () {
+    function ExamplesService() {
+        this.examples = {};
+        this.createExamples();
+    }
+    ExamplesService.prototype.GetExample = function (name) {
+        return this.examples[name];
+    };
+    ExamplesService.prototype.createExamples = function () {
+        this.examples['Simple function'] = { "dwl": "%dw 2.0\nfun toUser(obj) = {\nfirstName: obj.field1,\nlastName: obj.field2\n}\n---\ntoUser(payload)",
+            "payload": "{\n\"field1\": \"Bob\",\n\"field2\": \"Jones\"\n}" };
+        this.examples['Get people'] = {
+            "dwl": "%dw 2.0\n\noutput application/json\n---\npayload.people.person.address.street",
+            "payload": "{\n\"people\": [\n  {\n  \"person\": {\n      \"name\": \"Nial\",\n      \"address\": {\n      \"street\": {\n          \"name\": \"Italia\",\n          \"number\": 2164\n      },\n      \"area\": {\n          \"zone\": \"San Isidro\",\n          \"name\": \"Martinez\"\n      }\n      }\n  }\n  },\n  {\n  \"person\": {\n      \"name\": \"Coty\",\n      \"address\": {\n      \"street\": {\n          \"name\": \"Monroe\",\n          \"number\": 323\n      },\n      \"area\": {\n          \"zone\": \"BA\",\n          \"name\": \"Belgrano\"\n      }\n      }\n  }\n  }\n]\n}"
+        };
+        this.examples['All descendents'] = {
+            "dwl": "%dw 2.0\noutput application/json\n---\npayload.users..*name",
+            "payload": "{ \"users\" : {\n\"user\": {\"name\":\"a\"},\n\"user\": {\"name\":\"b\"},\n\"user\": {\"name\":\"c\", \"name\":\"d\"}\n}\n}"
+        };
+        this.examples['Mixed matching'] = {
+            "dwl": "%dw 2.0\n---\n{\na: payload.string match {\n  case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n  case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n  case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n},\nb: payload.bool match {\n  case num is Boolean -> \"could be true or false:\" ++ num\n  case is Object -> \"we got an Object\"\n  case \"bob\"  -> \"is bob!\"\n  case word: \"bang\" ->  word ++ \" was matched\"\n},\nc: payload.name match {\n  case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n  case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n  case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n},\nd: payload.object match {\n  case num is Boolean -> \"could be true or false:\" ++ num\n  case is Object -> \"we got an Object\"\n  case \"bob\"  -> \"is bob!\"\n  case word: \"bang\" ->  word ++ \" was matched\"\n},\ne: payload.strings match {\n  case str if str == \"Emiliano\" -> str ++ \" Lesende\"\n  case myVar if (myVar == \"strings\") -> (\"strings =\" ++ myVar)\n  case word matches /(hello)\\s\\w+/ ->  word[1]  ++ \" was matched\"\n},\nf: payload.object.name match {\n  case num is Boolean -> \"could be true or false:\" ++ num\n  case is Object -> \"we got an Object\"\n  case \"bob\"  -> \"is bob!\"\n  case word: \"bang\" ->  word ++ \" was matched\"\n},\ng: payload.bangtest match {\n  case num is Boolean -> \"could be true or false:\" ++ num\n  case is Object -> \"we got an Object\"\n  case \"bob\"  -> \"is bob!\"\n  case word: \"bang\" ->  word ++ \" was matched\"\n},\nh: payload.number match {\n  case num is Boolean -> \"could be true or false:\" ++ num\n  case is Object -> \"we got an Object\"\n  case \"bob\"  -> \"is bob!\"\n  case word: \"bang\" ->  word ++ \" was matched\"\n}\n}",
+            "payload": "{ \"string\": \"hello fred\", \"number\": 90,\n    \"object\" : {\"name\" : \"bob\"}, \"bool\" : true,\n    \"name\" : \"Emiliano\", \"strings\" : \"strings\", \"bangtest\" : \"bang\"}"
+        };
+        this.examples['Simple Lambda'] = {
+            "dwl": "%dw 2.0\nvar myLambda = (a,b)-> { (a) : b}\n---\nmyLambda(\"key\",\"value\")",
+            "payload": ""
+        };
+        this.examples['Do scope'] = {
+            "dwl": "%dw 2.0\noutput application/json\nfun test(p) = do {\n  var a = \"Foo\" ++ p\n  ---\n  a\n}\n---\n{ result: test(\" Bar\") }",
+            "payload": ""
+        };
+        this.examples['Xml input'] = {
+            "dwl": "%dw 2.0\noutput application/xml\n---\n{\n  prices: payload.prices mapObject (value, key) -> {\n      (key): (value + 5)\n  }\n}",
+            "payload": "<?xml version='1.0' encoding='UTF-8'?>\n<prices>\n  <basic>14.99</basic>\n  <premium>53.01</premium>\n  <vip>398.99</vip>\n</prices>"
+        };
+        this.examples['Recursion!'] = {
+            "payload": "{\n      \"command\":{\n        \"version\":\"1.0.0\",\n        \"user\":\"ian\",\n        \"commandDate\":\"2019-10-20T11:15:30\",\n        \"response\":[\n          {\n            \"object\":{\n              \"type\":\"policyHeader\",\n              \"schema\":\"policyHeader\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"PH001\",\n              \"content\":{\n                \"polifcyRef\":\"xyz-124\",\n                \"inceptionDate\":\"2019-11-01T00:00:00\",\n                \"expiryDate\":\"2020-10-31T23:59:59\"\n              }\n            }\n          },\n          {\n            \"object\":{\n              \"type\":\"customer\",\n              \"schema\":\"customer\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"CU001\",\n              \"content\":{\n                \"extRef\":\"sf00001abc\"\n              }\n            }\n          },\n          {\n            \"object\":{\n              \"type\":\"broker\",\n              \"schema\":\"broker\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"BR001\",\n              \"content\":{\n                \"brokerRef\":\"br00111\"\n              }\n            }\n          },\n          {\n            \"object\":{\n              \"type\":\"coverage\",\n              \"schema\":\"coverage\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"CV001\",\n              \"content\":{\n                \"coverageRef\":\"covRef00111\"\n              }\n            }\n          },\n          {\n            \"object\":{\n              \"type\":\"insuredObject\",\n              \"schema\":\"insuredObject\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"IO001\",\n              \"content\":{\n                \"insuredType\":\"motor\",\n                \"make\":\"Ford\",\n                \"model\":\"Fiesta\",\n                \"engine\": \"2.0\"\n              }\n            }\n          },\n          {\n            \"object\":{\n              \"type\":\"insuredObject\",\n              \"schema\":\"insuredObject\",\n              \"schemaVersion\":\"1.0.0\",\n              \"commandId\":\"IO002\",\n              \"content\":{\n                \"insuredType\":\"property\",\n                \"description\":\"office\",\n                \"fire\":\"yes\"\n              }\n            }\n          },\n          {\n            \"relation\":{\n              \"from\":\"PH001\",\n              \"to\":\"CU001\",\n              \"rType\":\"belongsTo\"\n            }\n          },\n          {\n            \"relation\":{\n              \"from\":\"CU001\",\n              \"to\":\"PH001\",\n              \"rType\":\"hasPolicy\"\n            }\n          }\n        ]\n      }\n    }",
+            "resourceText": "{\n      \"view\":{\n        \"name\":\"motorPolicy-quote\",\n        \"version\":\"1.0.0\",\n        \"viewStyle\":\"hierarchy\",\n        \"viewElement\":{\n          \"object\":\"policyHeader\",\n          \"elementRef\":\"PH001\",\n          \"childObjects\":[\n            {\n              \"viewElement\":{\n                \"object\":\"customer\",\n                \"elementRef\":\"CU001\",\n                \"multiplicity\":\"single\",\n                \"relationFromParent\":\"belongsTo\",\n                \"relationToParent\":\"hasPolicy\"\n              }\n            },\n            {\n              \"viewElement\":{\n                \"object\":\"broker\",\n                \"elementRef\":\"BR001\",\n                \"multiplicity\":\"single\",\n                \"relationFromParent\":\"managedBy\",\n                \"relationToParent\":\"managesPolicy\"\n              }\n            },\n            {\n              \"viewElement\":{\n                \"object\":\"coverage\",\n                \"elementRef\":\"CV001\",\n                \"multiplicity\":\"oneOrMore\",\n                \"relationFromParent\":\"hasCover\",\n                \"relationToParent\":\"coveredBy\",\n                \"relationToOther\":{\n                  \"elementRef\":\"C001\",\n                  \"type\":\"hasCover\"\n                },\n                \"childObjects\":[\n                  {\n                    \"viewElement\":{\n                      \"object\":\"insuredObject\",\n                      \"elementRef\":\"IO001\",\n                      \"multiplicity\":\"oneOrMore\",\n                      \"relationFromParent\":\"covers\",\n                      \"relationToParent\":\"coveredBy\"\n                    }\n                  },\n                  {\n                    \"viewElement\":{\n                      \"object\":\"insuredObject\",\n                      \"elementRef\":\"IO002\",\n                      \"multiplicity\":\"oneOrMore\",\n                      \"relationFromParent\":\"covers\",\n                      \"relationToParent\":\"coveredBy\"\n                    }\n                  }\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }",
+            "resourceName": 'classpath://dw/data/view-metadata-policyHeader.json',
+            "dwl": "%dw 2.0\n  output application/json\n  \n  var policyHeaderView = readUrl(\"classpath://dw/data/view-metadata-policyHeader.json\")\n  \n  fun findObjectContent(objectType, commandId) = {\n       (objectType): payload.command.response filter ($.object.schema == objectType and $.object.commandId == commandId) map (object , index) ->\n          object.object.content\n  }\n  \n  fun findRelation(relation, relationFrom, relationType) = \n    (relation filter (($.from == relationFrom) and ($.rType == relationType))).to\n  \n  fun renderChildObjects(childObjectsArray) = {\n    children: childObjectsArray map ((child, childIndex) -> {\n      (child.viewElement.object) : findObjectContent(child.viewElement.object, child.viewElement.elementRef),\n      (if (child.viewElement.childObjects != null) \n         renderChildObjects(child.viewElement.childObjects) else {}\n      )\n    }\n    )\n  }\n  \n  var firstViewElement = policyHeaderView.view.viewElement\n  ---\n  \n  \n  {\n    (findObjectContent(firstViewElement.object, firstViewElement.elementRef)),\n    (if (firstViewElement.childObjects != null) renderChildObjects(firstViewElement.childObjects) else {})\n      //relation: findRelation(payload.command.response.relation, \"PH001\", policyHeaderView.view.viewElement.childObjects.viewElement[0].relationFromParent),\n  }"
+        };
+    };
+    ExamplesService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        })
+    ], ExamplesService);
+    return ExamplesService;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/strip-comments/index.js":
 /*!*****************************************!*\
   !*** ./src/app/strip-comments/index.js ***!
@@ -5632,6 +5572,169 @@ const parse = (input, options = {}) => {
 };
 
 module.exports = parse;
+
+
+/***/ }),
+
+/***/ "./src/app/xterm-keyhandler.service.ts":
+/*!*********************************************!*\
+  !*** ./src/app/xterm-keyhandler.service.ts ***!
+  \*********************************************/
+/*! exports provided: XtermKeyhandlerService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "XtermKeyhandlerService", function() { return XtermKeyhandlerService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
+
+
+
+var XtermKeyhandlerService = /** @class */ (function () {
+    function XtermKeyhandlerService() {
+        this.currentCommand = '';
+        this.posInCommand = 0;
+        this.termPrompt = '$ ';
+        this.commandBuffer = [];
+        this.commandBufferPos = 0;
+    }
+    XtermKeyhandlerService.prototype.initialiseWithTerminal = function (terminal, dweeveCommandCallback) {
+        var _this = this;
+        this.term = terminal;
+        this.dweeveCommandCallback = dweeveCommandCallback;
+        this.term.write(this.termPrompt);
+        this.term.underlying.textarea.addEventListener('paste', function (ev) { _this.pasteHandler(ev); });
+        this.term.keyEventInput.subscribe(function (e) {
+            _this.keyHandler(e);
+        });
+    };
+    XtermKeyhandlerService.prototype.pasteHandler = function (ev) {
+        var text = ev.clipboardData.getData('Text');
+        if (this.posInCommand < this.currentCommand.length) {
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].insertBlank(text.length));
+        }
+        this.term.write(text);
+        this.currentCommand = this.currentCommand.substring(0, this.posInCommand) + text
+            + this.currentCommand.substring(this.posInCommand, this.currentCommand.length);
+        this.posInCommand += text.length;
+    };
+    XtermKeyhandlerService.prototype.keyHandler = function (e) {
+        console.log('keyboard event:' + e.domEvent.keyCode + ', ' + e.key);
+        var ev = e.domEvent;
+        var printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+        if (ev.keyCode === 13) { // enter
+            this.keyEnterHandler();
+        }
+        else if (ev.keyCode === 35) { // end
+            this.keyEndHandler();
+        }
+        else if (ev.keyCode === 38) { // up
+            this.keyUpHandler();
+        }
+        else if (ev.keyCode === 40) { // down
+            this.keyDownHandler();
+        }
+        else if (ev.keyCode === 39) { // right
+            this.keyRightHandler(e);
+        }
+        else if (ev.keyCode === 37) { // left
+            this.keyLeftHandler(e);
+        }
+        else if (ev.keyCode === 46) { // del
+            this.keyDelHandler();
+        }
+        else if (ev.keyCode === 8) { // back-space
+            this.keyDeleteHandler();
+        }
+        else if (printable) {
+            this.keyDefaultPrintableHandler(e);
+        }
+    };
+    XtermKeyhandlerService.prototype.keyDefaultPrintableHandler = function (e) {
+        if (this.posInCommand < this.currentCommand.length) {
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].insertBlank(1));
+        }
+        this.term.write(e.key);
+        this.currentCommand = this.currentCommand.substring(0, this.posInCommand) + e.key
+            + this.currentCommand.substring(this.posInCommand, this.currentCommand.length);
+        this.posInCommand++;
+    };
+    XtermKeyhandlerService.prototype.keyEnterHandler = function () {
+        if (this.currentCommand !== '') {
+            this.commandBuffer.push(this.currentCommand);
+            this.commandBufferPos++;
+        }
+        var response = this.dweeveCommandCallback(this.currentCommand);
+        this.term.write('\r\n' + String(response).replace(/\n/g, '\r\n') + '\r\n' + this.termPrompt);
+        this.currentCommand = '';
+        this.posInCommand = 0;
+    };
+    XtermKeyhandlerService.prototype.keyUpHandler = function () {
+        if (this.commandBuffer.length > 0 && this.commandBufferPos > 0) {
+            if (this.currentCommand !== '') {
+                this.commandBuffer.push(this.currentCommand);
+                this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].cursorBackward(this.posInCommand));
+                this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].deleteCharacter(this.currentCommand.length));
+            }
+            this.currentCommand = (this.commandBuffer[--this.commandBufferPos]);
+            this.term.write(this.currentCommand);
+            this.posInCommand = this.currentCommand.length;
+        }
+    };
+    XtermKeyhandlerService.prototype.keyDownHandler = function () {
+        if (this.currentCommand !== '') {
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].cursorBackward(this.posInCommand));
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].deleteCharacter(this.currentCommand.length));
+        }
+        if (this.commandBuffer.length > this.commandBufferPos + 1) {
+            this.currentCommand = (this.commandBuffer[++this.commandBufferPos]);
+            this.term.write(this.currentCommand);
+            this.posInCommand = this.currentCommand.length;
+        }
+    };
+    XtermKeyhandlerService.prototype.keyRightHandler = function (e) {
+        if (this.posInCommand < (this.currentCommand.length)) {
+            this.posInCommand++;
+            this.term.write(e.key);
+        }
+    };
+    XtermKeyhandlerService.prototype.keyLeftHandler = function (e) {
+        if (this.posInCommand > 0) {
+            this.posInCommand--;
+            this.term.write(e.key);
+        }
+    };
+    XtermKeyhandlerService.prototype.keyDelHandler = function () {
+        if (this.posInCommand < (this.currentCommand.length - 1)) {
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].deleteCharacter(1));
+            this.currentCommand = this.currentCommand.substring(0, this.posInCommand)
+                + this.currentCommand.substring(this.posInCommand + 1, this.currentCommand.length);
+        }
+    };
+    XtermKeyhandlerService.prototype.keyDeleteHandler = function () {
+        if (this.posInCommand > 0) {
+            this.term.write('\b \b' + ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].deleteCharacter(1));
+            this.posInCommand--;
+            this.currentCommand = this.currentCommand.substring(0, this.posInCommand)
+                + this.currentCommand.substring(this.posInCommand + 1, this.currentCommand.length);
+        }
+    };
+    XtermKeyhandlerService.prototype.keyEndHandler = function () {
+        if (this.posInCommand < this.currentCommand.length) {
+            this.term.write(ng_terminal__WEBPACK_IMPORTED_MODULE_2__["FunctionsUsingCSI"].cursorForward(this.currentCommand.length - this.posInCommand));
+            this.posInCommand = this.currentCommand.length;
+        }
+    };
+    XtermKeyhandlerService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        })
+    ], XtermKeyhandlerService);
+    return XtermKeyhandlerService;
+}());
+
 
 
 /***/ }),
