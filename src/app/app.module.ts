@@ -12,7 +12,6 @@ import {AceEditorModule} from 'ng2-ace-editor';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { AngularSplitModule } from 'angular-split';
-
 import {TerminalModule} from 'primeng/terminal';
 import { NgTerminalModule } from 'ng-terminal';
 
@@ -29,7 +28,7 @@ import { NgTerminalModule } from 'ng-terminal';
     BrowserAnimationsModule,
     AngularSplitModule.forRoot(),
     AceEditorModule,
-    MatTabsModule,
+   MatTabsModule,
     TerminalModule,
     NgTerminalModule
   ],

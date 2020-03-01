@@ -8,6 +8,7 @@ import * as core from './dweeve/src/functions/core.js';
 import { NgTerminal } from 'ng-terminal';
 import { ExamplesService } from './examples.service';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -104,7 +105,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   reDweeve() {
-    core.setResourceFileContent(this.resourceNameText, this.rseditor.text);
+    core.setResourceFileContent(this.resourceNameText, this.rseditor.text, 
+      (name, content)=> {this.resourceNameText=name; this.rseditor.text = content; });
     this.reditor.text = dwrun.run(this.dweditor.text, this.pleditor.text, '', '');
   }
 
@@ -119,6 +121,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.toggleExampleBar();
     }
+  }
+
+  public getResourceFileContent() {
+    return Object.keys(core.resourceFileContent);
   }
 
 }

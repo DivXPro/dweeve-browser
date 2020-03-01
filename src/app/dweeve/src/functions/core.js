@@ -22,6 +22,9 @@ function addFunctions(context) {
     context['readUrl'] = readUrl
     context['__add'] = __add
     context['__indexed'] = __indexed
+
+    context['listUrls'] = _listResources
+    context['removeUrl'] = _removeResource
 }
 
 function isOdd(number) {
@@ -329,15 +332,27 @@ function mapObject(source, mapFunc){
     return out;
 }
 
-function setResourceFileContent(name, text) {
-    resourceFileContent[name]=text
+
+
+function setResourceFileContent(name, text, callBack) {
+    this.resourceFileContent[name]=text;
+    this.changeCallBack['resource'] = callBack;
 }
 
 var resourceFileContent = {}
+var changeCallBack = {};
 
 function readUrl(path, contentType){
+    if (resourceFileContent[path]==undefined || resourceFileContent[path]==null)
+    {
+        resourceFileContent[path] = ''
+        throw new Error("Resource file did not exist, so empty placeholded has been created.")
+    }
     try {
         const content = resourceFileContent[path]
+        if (changeCallBack['resource']!=undefined) 
+            changeCallBack['resource'](path, content)
+
         if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
             return JSON.parse(content)
 
@@ -346,6 +361,20 @@ function readUrl(path, contentType){
         err.message="Could not read url: "+ path
         throw err
     }
+}
+
+function _listResources() {
+    return Object.keys(resourceFileContent);
+}
+
+function _removeResource(name) {
+    if (resourceFileContent[name]) {
+        delete resourceFileContent[name]
+        if (changeCallBack['resource']!=undefined) 
+            changeCallBack['resource']('', '')
+        return "Resource file removed"
+    } else
+        return "Could not find named resource";
 }
 
 function __add(lhs, rhs) {
@@ -394,4 +423,5 @@ function __indexed(obj, indexer){
     throw new Error ('Indexer out of bounds or not found')
 }
 
-module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent}
+module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent,
+    resourceFileContent: resourceFileContent, changeCallBack: changeCallBack}
