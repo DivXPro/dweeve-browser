@@ -1,3 +1,4 @@
+const formatn = require('format-number-with-string');
 
 function addFunctions(context) {
     context['isOdd'] = isOdd
@@ -22,6 +23,7 @@ function addFunctions(context) {
     context['readUrl'] = readUrl
     context['__add'] = __add
     context['__indexed'] = __indexed
+    context['__format'] = __format
 
     context['listUrls'] = _listResources
     context['removeUrl'] = _removeResource
@@ -421,6 +423,10 @@ function __indexed(obj, indexer){
     }
     catch (err) {}
     throw new Error ('Indexer out of bounds or not found')
+}
+
+function __format(text, format) {
+    return formatn(text, format)
 }
 
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent,

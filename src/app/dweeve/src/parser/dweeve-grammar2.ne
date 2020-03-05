@@ -25,7 +25,8 @@ const lexer = moo.compile({
             bang: /!/,
             mimetype:  /(?:application|text)\/\w+/,
             word:  { match : /[A-Za-z$][\w0-9_$]*/, type:moo.keywords({
-                keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not']
+                keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not', 'as','using','type'],
+                type: ['Array','String','Boolean','CData','Date','DateTime','Time','Number','Object','Regex']
             })},
             number:  /(?:(?:0|[1-9][0-9]*)\.?[0-9]*)/,
             dotbinop: /[.]/,
@@ -135,7 +136,7 @@ matchcond      -> (%word ":"):? literal {% (data) => ( { type:'match-literal', v
                  | %word "if" expression {% (data) => ( { type:'match-if-exp', var:data[0], expMatch:data[2] } ) %}
                  | %word "matches" %regex {% (data) => ( { type:'match-regex', var:data[0], regex:data[2] } ) %}
         #         | operand {% (data) => ( { type:'match-vlaue', valMatch:data[0] } ) %}
-                 | (%word):? "is" %word {% (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
+                 | (%word):? "is" %type {% (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
                         typeName:data[2] } ) %}
 
 
@@ -170,7 +171,12 @@ l50ops           -> l50ops l4operator l60ops        {% (data) =>( { type:'sum', 
                  | l60ops                           {% (data) =>( data[0] ) %}
 l60ops           -> l60ops l3operator l70ops        {% (data) =>( { type:'product',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } ) %}
                  | l70ops                           {% (data) =>( data[0] ) %}
-l70ops           -> l70ops l2operator l75ops        {% (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } ) %}
+l70ops           -> l70ops "default" l75ops         {% (data) =>( { type:'default',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } ) %}
+                 | l70ops "as" %type (%lbrace "format" %keyvalsep %dblstring %rbrace):? 
+                                                    {% (data) =>( { type:'as',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2]),
+                                                        format: data[3]!=null ? data[3][3] : null  } ) %}
+                 | l70ops "as" %word         {% (data) =>( { type:'as',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } ) %}
+                                                    
                  | l75ops                           {% (data) =>( data[0] ) %}
 l75ops           -> l0operator l80ops               {% (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } ) %}
                  | l80ops                           {% (data) =>( data[0] ) %}

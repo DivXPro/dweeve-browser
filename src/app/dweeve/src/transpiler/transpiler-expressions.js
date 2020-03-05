@@ -68,6 +68,26 @@ codeGenFor['default'] = (context, code) => {
     return false; 
 };
 
+codeGenFor['as'] = (context, code) => { 
+    code.addCode('(');
+    if (context.node.rhs === 'String') {
+        if (context.node.format) {
+            code.addCode('__format((')
+            context.compiler({parentType: 'as', node: context.node.lhs, compiler:context.compiler}, code);
+            code.addCode('),')
+            context.compiler({parentType: 'as', node: context.node.format, compiler:context.compiler}, code);
+            code.addCode(')')
+        } else {
+            code.addCode('String(')
+            context.compiler({parentType: 'as', node: context.node.lhs, compiler:context.compiler}, code);
+            code.addCode(')')
+        }
+        code.addCode(')') 
+    }
+    return false; 
+};
+
+
 codeGenFor['idx-identifier'] = (context, code) => { 
     let id = context.node;
    
