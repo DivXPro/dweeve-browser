@@ -2126,9 +2126,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ng2-ace-editor */ "./node_modules/ng2-ace-editor/index.js");
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ "./node_modules/@ng-bootstrap/ng-bootstrap/fesm5/ng-bootstrap.js");
 /* harmony import */ var angular_split__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! angular-split */ "./node_modules/angular-split/fesm5/angular-split.js");
-/* harmony import */ var primeng_terminal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! primeng/terminal */ "./node_modules/primeng/fesm5/primeng-terminal.js");
-/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
-
+/* harmony import */ var ng_terminal__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ng-terminal */ "./node_modules/ng-terminal/fesm5/ng-terminal.js");
 
 
 
@@ -2157,8 +2155,7 @@ var AppModule = /** @class */ (function () {
                 angular_split__WEBPACK_IMPORTED_MODULE_10__["AngularSplitModule"].forRoot(),
                 ng2_ace_editor__WEBPACK_IMPORTED_MODULE_8__["AceEditorModule"],
                 _angular_material_tabs__WEBPACK_IMPORTED_MODULE_5__["MatTabsModule"],
-                primeng_terminal__WEBPACK_IMPORTED_MODULE_11__["TerminalModule"],
-                ng_terminal__WEBPACK_IMPORTED_MODULE_12__["NgTerminalModule"]
+                ng_terminal__WEBPACK_IMPORTED_MODULE_11__["NgTerminalModule"]
             ],
             providers: [],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
@@ -3127,8 +3124,9 @@ module.exports = {toJsObj: toJsObj}
   !*** ./src/app/dweeve/src/functions/core.js ***!
   \**********************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+const formatn = __webpack_require__(/*! format-number-with-string */ "./node_modules/format-number-with-string/index.js");
 
 function addFunctions(context) {
     context['isOdd'] = isOdd
@@ -3153,6 +3151,7 @@ function addFunctions(context) {
     context['readUrl'] = readUrl
     context['__add'] = __add
     context['__indexed'] = __indexed
+    context['__format'] = __format
 
     context['listUrls'] = _listResources
     context['removeUrl'] = _removeResource
@@ -3554,6 +3553,10 @@ function __indexed(obj, indexer){
     throw new Error ('Indexer out of bounds or not found')
 }
 
+function __format(text, format) {
+    return formatn(text, format)
+}
+
 module.exports = { addFunctions: addFunctions, setResourceFileContent: setResourceFileContent,
     resourceFileContent: resourceFileContent, changeCallBack: changeCallBack}
 
@@ -3596,6 +3599,8 @@ function addFunctions(context) {
     context['pluralize'] = pluralize
     context['trim'] = trim
     context['to'] = to
+    context['sizeOf'] = sizeOf
+    context['keySet'] = keySet
 }
 
 function isEven(number) {
@@ -3833,6 +3838,25 @@ function orderBy(arr, orderFunc, isReversed) {
 function pluralize(s)
 {
     return pluralizer(s);
+}
+
+function sizeOf(arr){
+    if (Array.isArray(arr))
+        return arr.length
+
+    return 0;
+}
+
+function keySet(obj) {
+    if (typeof obj !== 'object')
+        return []
+
+    if (!obj['__ukey-obj'])
+        return Object.keys(obj)
+
+    if (obj['__ukey-obj'])
+        return Object.keys(obj).filter(k=>k.startsWith('__key'))
+        .map(k=>Object.keys(obj[k])[0])
 }
 
 
@@ -4123,7 +4147,8 @@ const lexer = moo.compile({
     bang: /!/,
     mimetype:  /(?:application|text)\/\w+/,
     word:  { match : /[A-Za-z$][\w0-9_$]*/, type:moo.keywords({
-        keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not']
+        keyword: ['case', 'if', 'default', 'matches', 'match', 'var', 'fun', 'else', 'do', 'and', 'or', 'not', 'as','using','type'],
+        type: ['Array','String','Boolean','CData','Date','DateTime','Time','Number','Object','Regex']
     })},
     number:  /(?:(?:0|[1-9][0-9]*)\.?[0-9]*)/,
     dotbinop: /[.]/,
@@ -4241,7 +4266,7 @@ litMatch:data[1] } ) },
 {"name": "matchcond$ebnf$2$subexpression$1", "symbols": [(lexer.has("word") ? {type: "word"} : word)]},
 {"name": "matchcond$ebnf$2", "symbols": ["matchcond$ebnf$2$subexpression$1"], "postprocess": id},
 {"name": "matchcond$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-{"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
+{"name": "matchcond", "symbols": ["matchcond$ebnf$2", {"literal":"is"}, (lexer.has("type") ? {type: "type"} : type)], "postprocess":  (data) => ( { type:'match-type',var:(data[0]==null) ? null : data[0][0],
 typeName:data[2] } ) },
 {"name": "expression", "symbols": ["result"], "postprocess": (data) => ( data[0] )},
 {"name": "expression", "symbols": ["ifconditional"], "postprocess": (data) => ( data[0] )},
@@ -4271,7 +4296,13 @@ typeName:data[2] } ) },
 {"name": "l50ops", "symbols": ["l60ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l60ops", "symbols": ["l60ops", "l3operator", "l70ops"], "postprocess": (data) =>( { type:'product',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
 {"name": "l60ops", "symbols": ["l70ops"], "postprocess": (data) =>( data[0] )},
-{"name": "l70ops", "symbols": ["l70ops", "l2operator", "l75ops"], "postprocess": (data) =>( { type:data[1].type,  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l70ops", "symbols": ["l70ops", {"literal":"default"}, "l75ops"], "postprocess": (data) =>( { type:'default',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
+{"name": "l70ops$ebnf$1$subexpression$1", "symbols": [(lexer.has("lbrace") ? {type: "lbrace"} : lbrace), {"literal":"format"}, (lexer.has("keyvalsep") ? {type: "keyvalsep"} : keyvalsep), (lexer.has("dblstring") ? {type: "dblstring"} : dblstring), (lexer.has("rbrace") ? {type: "rbrace"} : rbrace)]},
+{"name": "l70ops$ebnf$1", "symbols": ["l70ops$ebnf$1$subexpression$1"], "postprocess": id},
+{"name": "l70ops$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+{"name": "l70ops", "symbols": ["l70ops", {"literal":"as"}, (lexer.has("type") ? {type: "type"} : type), "l70ops$ebnf$1"], "postprocess":  (data) =>( { type:'as',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2]),
+format: data[3]!=null ? data[3][3] : null  } ) },
+{"name": "l70ops", "symbols": ["l70ops", {"literal":"as"}, (lexer.has("word") ? {type: "word"} : word)], "postprocess": (data) =>( { type:'as',  lhs: newOpData(data[0]), op: data[1].value, rhs: newOpData(data[2])  } )},
 {"name": "l70ops", "symbols": ["l75ops"], "postprocess": (data) =>( data[0] )},
 {"name": "l75ops", "symbols": ["l0operator", "l80ops"], "postprocess": (data) =>( { type:'un-op',  op: data[0].value, rhs: newOpData(data[1])  } )},
 {"name": "l75ops", "symbols": ["l80ops"], "postprocess": (data) =>( data[0] )},
@@ -4586,6 +4617,26 @@ codeGenFor['default'] = (context, code) => {
     code.addCode('); if (v!==null && v!==undefined) {return v;} else {return d;} } catch {return d} } )()\n ') 
     return false; 
 };
+
+codeGenFor['as'] = (context, code) => { 
+    code.addCode('(');
+    if (context.node.rhs === 'String') {
+        if (context.node.format) {
+            code.addCode('__format((')
+            context.compiler({parentType: 'as', node: context.node.lhs, compiler:context.compiler}, code);
+            code.addCode('),')
+            context.compiler({parentType: 'as', node: context.node.format, compiler:context.compiler}, code);
+            code.addCode(')')
+        } else {
+            code.addCode('String(')
+            context.compiler({parentType: 'as', node: context.node.lhs, compiler:context.compiler}, code);
+            code.addCode(')')
+        }
+        code.addCode(')') 
+    }
+    return false; 
+};
+
 
 codeGenFor['idx-identifier'] = (context, code) => { 
     let id = context.node;
@@ -4935,7 +4986,7 @@ function selector(lhs, op, rhs, context,code) {
 
 function emitOperand(operand, context, code) {
     const opCode = getSubCode(code)
-    if (operand.op)
+    if (operand.op  && operand.type!=='as')
         opCodeGen(operand.lhs, operand.op, operand.rhs, context, opCode)
     else
         context.compiler({parentType: 'math-result', node: operand, compiler:context.compiler}, opCode);
