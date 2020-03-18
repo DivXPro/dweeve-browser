@@ -9,6 +9,10 @@ import { NgTerminal } from 'ng-terminal';
 import { ExamplesService } from './examples.service';
 
 
+
+
+declare var Blockly: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -26,6 +30,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('vsplit', {static: false}) vsplit: SplitComponent;
   @ViewChild('term', { static: true }) replTerm: NgTerminal;
   @ViewChild('termDiv', {static: false}) termDiv: ElementRef;
+  @ViewChild('blocklyDiv', {static: false}) blocklyDivE: ElementRef;
+
+  programName: string;
+  program: any;
+  workspace: any;
 
   constructor(private zone: NgZone, private xtermKeys: XtermKeyhandlerService,
               private examples: ExamplesService) {}
@@ -45,6 +54,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.winH = window.innerHeight - 80;
+
+    
   }
 
   public toggleExampleBar() {
@@ -84,6 +95,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.xtermKeys.initialiseWithTerminal(this.replTerm, this.replDweeve);
 
     this.resizeEditors();
+
+  /*  let con = document.getElementById('blocklyDiv');
+    let con2 =this.blocklyDivE.nativeElement; 
+
+    this.workspace = Blockly.inject(con2, {
+      toolbox: document.getElementById('toolbox'),
+      scrollbars: false
+    });
+
+    if (this.program.xmlData) {
+      this.workspace.clear();
+      Blockly.Xml.domToWorkspace(
+        Blockly.Xml.textToDom(this.program.xmlData),
+        this.workspace
+      );
+    } */
   }
 
   private configureEditor(editor, mode) {

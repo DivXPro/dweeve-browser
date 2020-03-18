@@ -24,6 +24,8 @@
     "@ng-bootstrap/ng-bootstrap": "^5.2.1",
     "angular": "^1.7.9",
     "angular-split": "^3.0.3",
+    "blockly": "^3.20200123.1",
+    "child_process": "^1.0.2",
     "date-fns": "^2.9.0",
     "dictionaryjs": "^1.0.9",
     "format-number-with-string": "0.0.2",

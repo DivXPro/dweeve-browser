@@ -44,7 +44,10 @@
               "node_modules/ace-builds/src-min/mode-json.js",
               "node_modules/ace-builds/src-min/mode-xml.js",
               "node_modules/ace-builds/src-min/mode-html.js",
-              "src/app/dweeve/src/ace-mode/mode-dweeve.js"
+              "src/app/dweeve/src/ace-mode/mode-dweeve.js",
+              "node_modules/blockly/blockly.js",
+              "node_modules/blockly/blocks.js",
+              "node_modules/blockly/msg/en.js"
             ]
           },
           "configurations": {

@@ -1699,7 +1699,7 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGT
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<!DOCTYPE>\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\n                    <as-split-area size=\"390\">\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\n                      <div class=\"col-lg-12\">\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\n                          <as-split-area size=\"50\">\n                            <div  style=\"margin-right: 10px; \">\n                              <p>d~weeve:</p>\n                              <div #dweditorDiv style=\"height:340px\">\n                                <ace-editor #dweditor style=\"height:100%;\">\n                                </ace-editor>\n                              </div>\n                            </div>\n                          </as-split-area>\n                          <as-split-area size=\"50\">\n                            <div style=\"margin-left: 10px;\">\n                              <mat-tab-group disableRipple=\"true\">\n                                <mat-tab label=\"Payload\">\n                                  <div #pleditorDiv style=\"height:330px\">\n                                    <ace-editor #pleditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                <mat-tab label=\"Resource\">\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                                  <div #rseditorDiv style=\"height:277px\">\n                                    <ace-editor #rseditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                              \n                              </mat-tab-group>\n                              \n\n                            </div>\n                          </as-split-area>\n                        \n                      </as-split>\n                    </div>\n                    </div>\n                    </as-split-area>\n                    <as-split-area size=\"*\">\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Result:\">\n                        \n                            <div #reditorDiv style=\"height:180px\">\n                              <ace-editor #reditor style=\"height:100%;\">\n                              </ace-editor>\n                            </div>\n                          </mat-tab>\n                          <mat-tab label=\"REPL:\">\n                            <div #termDiv style=\"height:180px\" class=\"ui-terminal\">\n                              <!--p-terminal  #termnial welcomeMessage=\"d~weeve REPL:\" prompt=\"d~weeve->\"></p-terminal -->\n                              <ng-terminal #term></ng-terminal>\n                              <!--div class=\"ui-terminal\" #terminalBottom>^</div-->\n                            </div>\n                          </mat-tab>\n                        </mat-tab-group>\n                      </div>\n                    </div>\n                    </as-split-area>\n\n                  </as-split>\n                  <br>\n                  <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
+/* harmony default export */ __webpack_exports__["default"] = ("<!DOCTYPE>\n<div id=\"wrapper\">\n    <div *ngIf=\"exampleBar\" id=\"sidebar-wrapper\">\n        <ul class=\"sidebar-nav\">\n            <li><button (click)=\"toggleExampleBar()\" >&lt;-- Hide</button></li>\n            <li class=\"sidebar-brand\"><ul>Dweeve Examples</ul></li>\n            <li><a (click)=\"loadExample('Simple function')\" href=\"#\">Simple function</a></li>\n            <li><a (click)=\"loadExample('Get people')\"href=\"#\">Get people</a></li>\n            <li><a (click)=\"loadExample('All descendents')\"href=\"#\">All descendents</a></li>\n            <li><a (click)=\"loadExample('Mixed matching')\"href=\"#\">Mixed matching</a></li>\n            <li><a (click)=\"loadExample('Simple Lambda')\"href=\"#\">Simple Lambda</a></li>\n            <li><a (click)=\"loadExample('Do scope')\"href=\"#\">Do scope</a></li>\n            <li><a (click)=\"loadExample('Xml input')\"href=\"#\">Xml input</a></li>\n            <li><a (click)=\"loadExample('Recursion!')\"href=\"#\">Recurse with resource</a></li>\n        </ul>\n    </div>\n    <div id=\"page-content-wrapper\">\n        <div class=\"page-content\">\n  \n\n            <div class=\"xxcontainer\" style = \"background-color: lightgrey\">\n\n              \n              \n              <div class=\"content\" style=\"padding-left: 20px; padding-right: 20px\">\n                  <div class=\"col-lg-10\" role=\"banner\">\n                    <h2>d~weeve - a Dataweave(ish) javascript thing.</h2>\n                    <button (click)=\"toggleExampleBar()\"  >--&gt;Examples Bar</button>\n                  </div>\n                  <as-split #vsplit unit=\"pixel\" direction=\"vertical\" >\n                    <as-split-area size=\"390\">\n                    <div class=\"row\" style=\"margin-bottom: 10px;\">\n                      <div class=\"col-lg-12\">\n                        <as-split unit=\"percent\" direction=\"horizontal\" >\n                          <as-split-area size=\"50\">\n                            <div  style=\"margin-right: 10px; \">\n                              <p>d~weeve:</p>\n                              <div #dweditorDiv style=\"height:340px\">\n                                <ace-editor #dweditor style=\"height:100%;\">\n                                </ace-editor>\n                              </div>\n                            </div>\n                          </as-split-area>\n                          <as-split-area size=\"50\">\n                            <div style=\"margin-left: 10px;\">\n                              <mat-tab-group disableRipple=\"true\">\n                                <!--mat-tab label = \"Blockly\">\n                                  <div #blocklyDiv id=\"blocklyDiv\" style=\"width: 400px; height: 277px\"></div>\n                                  <xml id=\"toolbox\" style=\"display: none\">\n                                    <category name=\"Control\" colour=\"120\">\n                                      <block type=\"controls_if\"></block>\n                                      <block type=\"controls_repeat_ext\" disabled=\"true\"></block>\n                                    </category>\n                                    <category name=\"Text\" colour=\"230\">\n                                      <block type=\"text\"></block>\n                                      <block type=\"text_print\"></block>\n                                    </category>\n                                    <category name=\"Custom\" colour=\"360\">\n                                      <block type=\"begin\"></block>\n                                      <block type=\"move\"></block>\n                                      <block type=\"end\"></block>\n                                    </category>\n                                  </xml>\n                                </mat-tab-->\n                                <mat-tab label=\"Payload\">\n                                  <div #pleditorDiv style=\"height:330px\">\n                                    <ace-editor #pleditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                <mat-tab label=\"Resource\">\n                                  <div>Resource name :<input [(ngModel)]=\"resourceNameText\" #resourceName type=\"text\" placeholder=\"classpath://myfolder/myFile.txt\" style=\"width: 100%;\"></div>\n                                  <div #rseditorDiv style=\"height:277px\">\n                                    <ace-editor #rseditor style=\"height:100%;\">\n                                    </ace-editor>\n                                  </div>\n                                </mat-tab>\n                                \n                              </mat-tab-group>\n                              \n\n                            </div>\n                          </as-split-area>\n                        \n                      </as-split>\n                    </div>\n                    </div>\n                    </as-split-area>\n                    <as-split-area size=\"*\">\n                    <div class=\"row\">\n                      <div class=\"col-md-12\">\n                        <mat-tab-group disableRipple=\"true\">\n                          <mat-tab label=\"Result:\">\n                        \n                            <div #reditorDiv style=\"height:180px\">\n                              <ace-editor #reditor style=\"height:100%;\">\n                              </ace-editor>\n                            </div>\n                          </mat-tab>\n                          <mat-tab label=\"REPL:\">\n                            <div #termDiv style=\"height:180px\" class=\"ui-terminal\">\n                              <!--p-terminal  #termnial welcomeMessage=\"d~weeve REPL:\" prompt=\"d~weeve->\"></p-terminal -->\n                              <ng-terminal #term></ng-terminal>\n                              <!--div class=\"ui-terminal\" #terminalBottom>^</div-->\n                            </div>\n                          </mat-tab>\n                        </mat-tab-group>\n                      </div>\n                    </div>\n                    </as-split-area>\n\n                  </as-split>\n                  <br>\n                  <br>\n                </div>\n              \n            </div>  \n\n          </div>\n        </div>\n    </div>\n\n");
 
 /***/ }),
 
@@ -2023,6 +2023,21 @@ var AppComponent = /** @class */ (function () {
         this.loadExample('Simple function');
         this.xtermKeys.initialiseWithTerminal(this.replTerm, this.replDweeve);
         this.resizeEditors();
+        /*  let con = document.getElementById('blocklyDiv');
+          let con2 =this.blocklyDivE.nativeElement;
+      
+          this.workspace = Blockly.inject(con2, {
+            toolbox: document.getElementById('toolbox'),
+            scrollbars: false
+          });
+      
+          if (this.program.xmlData) {
+            this.workspace.clear();
+            Blockly.Xml.domToWorkspace(
+              Blockly.Xml.textToDom(this.program.xmlData),
+              this.workspace
+            );
+          } */
     };
     AppComponent.prototype.configureEditor = function (editor, mode) {
         var _this = this;
@@ -2088,6 +2103,9 @@ var AppComponent = /** @class */ (function () {
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('termDiv', { static: false })
     ], AppComponent.prototype, "termDiv", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ViewChild"])('blocklyDiv', { static: false })
+    ], AppComponent.prototype, "blocklyDivE", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["HostListener"])('window:resize', ['$event'])
     ], AppComponent.prototype, "onResize", null);
@@ -2158,7 +2176,8 @@ var AppModule = /** @class */ (function () {
                 ng_terminal__WEBPACK_IMPORTED_MODULE_11__["NgTerminalModule"]
             ],
             providers: [],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]]
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]],
+            schemas: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["NO_ERRORS_SCHEMA"]]
         })
     ], AppModule);
     return AppModule;
@@ -3155,6 +3174,7 @@ function addFunctions(context) {
 
     context['listUrls'] = _listResources
     context['removeUrl'] = _removeResource
+    context['switchUrl'] = _switchUrl
 }
 
 function isOdd(number) {
@@ -3473,6 +3493,25 @@ var resourceFileContent = {}
 var changeCallBack = {};
 
 function readUrl(path, contentType){
+    if (resourceFileContent[path]==undefined || resourceFileContent[path]==null)
+    {
+        resourceFileContent[path] = ''
+        throw new Error("Resource file did not exist, so empty placeholded has been created.")
+    }
+    try {
+        const content = resourceFileContent[path]
+        
+        if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
+            return JSON.parse(content)
+
+        return content
+    } catch (err) {
+        err.message="Could not read url: "+ path
+        throw err
+    }
+}
+
+function _switchUrl(path){
     if (resourceFileContent[path]==undefined || resourceFileContent[path]==null)
     {
         resourceFileContent[path] = ''

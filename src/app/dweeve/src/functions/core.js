@@ -27,6 +27,7 @@ function addFunctions(context) {
 
     context['listUrls'] = _listResources
     context['removeUrl'] = _removeResource
+    context['switchUrl'] = _switchUrl
 }
 
 function isOdd(number) {
@@ -345,6 +346,25 @@ var resourceFileContent = {}
 var changeCallBack = {};
 
 function readUrl(path, contentType){
+    if (resourceFileContent[path]==undefined || resourceFileContent[path]==null)
+    {
+        resourceFileContent[path] = ''
+        throw new Error("Resource file did not exist, so empty placeholded has been created.")
+    }
+    try {
+        const content = resourceFileContent[path]
+        
+        if (contentType==="application/json" || (content.trim().startsWith('{') && content.trim().endsWith('}')))
+            return JSON.parse(content)
+
+        return content
+    } catch (err) {
+        err.message="Could not read url: "+ path
+        throw err
+    }
+}
+
+function _switchUrl(path){
     if (resourceFileContent[path]==undefined || resourceFileContent[path]==null)
     {
         resourceFileContent[path] = ''
